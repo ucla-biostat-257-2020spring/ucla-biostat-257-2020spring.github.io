@@ -1,6 +1,6 @@
 ---
 layout: course
-title: BIOSTAT 257
+title: Biostat 257
 ---
 
 ## Course Schedule
