@@ -13,8 +13,8 @@ Computational algorithms for research in (bio)statistics, including numerical li
 
 ### Lecture
 
-Tue 1pm-2:50pm @ Zoom <https://ucla.zoom.us/j/507925583>
-Thu 1pm-1:50pm @ Zoom <https://ucla.zoom.us/j/507925583>
+Tue 1pm-2:50pm @ Zoom <https://ucla.zoom.us/j/507925583>   
+Thu 1pm-2:50pm @ Zoom <https://ucla.zoom.us/j/507925583>
 
 ### Instructor
 
