@@ -1,9 +1,15 @@
 ---
 layout: course
-title: BIOSTAT 257
+title: Biostat 257
 ---
 
+# Biostat 257 - Statistical Computing - 2020 Spring
+
 ## Syllabus
+
+### Course Description
+
+Computational algorithms for research in (bio)statistics, including numerical linear algebra and optimization. 
 
 ### Lecture
 
@@ -16,7 +22,7 @@ Thu 1pm-1:50pm @ Zoom <https://ucla.zoom.us/j/507925583>
 Office: CHS 21-254A  
 Phone: (310)794-7835  
 Email: <huazhou@ucla.edu>  
-Office hours: Tue 3pm-4pm, Thu 2pm-2:50pm @ Zoom <https://ucla.zoom.us/j/507925583>
+Office hours: Tue/Thu 3pm-4pm @ Zoom <https://ucla.zoom.us/j/507925583>
 
 ### Teaching Assistant
 
@@ -53,7 +59,7 @@ Some useful references are listed below. None of them is required.
 
 ### Attendance
 
-I usually require class attendence. But given the COVID-19 pandemic, I totally understand if students occasionally cannot attend certain lectures due to technical reasons. Please proactively communicate with the instructor and TA and notify us your circumstances at earliest chance. 
+I usually require class attendence. But given the COVID-19 pandemic, I totally understand if students cannot attend certain lectures due to technical reasons. Please proactively communicate with the instructor and TA and notify us your circumstances at earliest chance. 
 
 ### Homework
 
@@ -120,6 +126,3 @@ While you are here at UCLA, if you are unsure whether what you are considering d
 •	See a counselor at Student Psychological Services, and/or your school, college or department – UCLA has many resources for students who are feeling the stresses of academic and personal pressures. 
 
 If you would like more information, please come see us at the Dean of Students’ Office in 1206 Murphy Hall, call us at (310)825-3871 or visit their website at <https://www.deanofstudents.ucla.edu>.
-
-
-
