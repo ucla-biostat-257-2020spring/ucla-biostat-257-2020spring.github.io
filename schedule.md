@@ -17,7 +17,7 @@ Readings:
 
 | Week | Tuesday | Thursday | Homework |
 |:-----------|:-----------|:------------|:------------|
-| 1 | [3/31](https://ucla-biostat-257-2020spring.github.io/biostat257spring2020/2020/03/31/week1-day1.html) course introduction and logistics | 4/2 computer languages, Julia intro. | |
+| 1 | [3/31](https://ucla-biostat-257-2020spring.github.io/biostat257spring2020/2020/03/31/week1-day1.html) course introduction and logistics \[slides: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ucla-biostat-257-2020spring/ucla-biostat-257-2020spring.github.io/master?filepath=slides%2F01-intro%2Fintro.ipynb), [html](./slides/01-intro/intro.html)\] | 4/2 computer languages, Julia intro. | |
 | 2 | 4/7 plotting in Julia, Jupyter Notebook | 4/9 computer arithmetic, algo. intro. | HW1 |
 | 3 | 4/14 BLAS, NLA on GPU, triangular systems | 4/16 GE/LU | HW2 |
 | 4 | 4/21 Cholesky, QR (GS, Householder, Givens) | 4/23 Sweep operator | |
