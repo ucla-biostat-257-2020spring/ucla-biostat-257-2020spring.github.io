@@ -2,4 +2,7 @@ dependencies:
   - matplotlib
   - numpy
   - pandas
-
+  - r-base
+  - r-essentials
+  - r-bench
+  - r-microbenchmark
