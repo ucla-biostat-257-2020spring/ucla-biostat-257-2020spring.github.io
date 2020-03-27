@@ -11,10 +11,11 @@ title: Biostat 257
 
 Computational algorithms for research in (bio)statistics, including numerical linear algebra and optimization. 
 
-### Lecture
+### Lecture and Lab
 
 Tue 1pm-2:50pm @ Zoom <https://ucla.zoom.us/j/507925583>   
-Thu 1pm-2:50pm @ Zoom <https://ucla.zoom.us/j/507925583>
+Thu 1pm-1:50pm @ Zoom <https://ucla.zoom.us/j/507925583>  
+Thu 2pm-2:50pm (Lab) @ Zoom <https://ucla.zoom.us/j/507925583>  
 
 ### Instructor
 
@@ -62,7 +63,7 @@ I usually require class attendence. But given the COVID-19 pandemic, I totally u
 
 ### Homework
 
-You will be required to hand in 4-6 homework assignments throughout the quarter.  
+You will be required to work on 4-6 homework assignments throughout the quarter.  
 
 ### Exam
 
