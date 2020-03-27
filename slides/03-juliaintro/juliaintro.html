@@ -13146,256 +13146,6 @@ $( document ).ready(function(){
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Gibbs-sampler-example-by-Doug-Bates">Gibbs sampler example by Doug Bates<a class="anchor-link" href="#Gibbs-sampler-example-by-Doug-Bates">&#182;</a></h2><ul>
-<li><p>An example from Dr. Doug Bates's slides <a href="http://www.stat.wisc.edu/~bates/JuliaForRProgrammers.pdf">Julia for R Programmers</a>.</p>
-</li>
-<li><p>The task is to create a Gibbs sampler for the density<br>
-$$
-f(x, y) = k x^2 exp(- x y^2 - y^2 + 2y - 4x), x &gt; 0
-$$
-using the conditional distributions
-$$
-\begin{eqnarray*}
-X | Y &amp;\sim&amp; \Gamma \left( 3, \frac{1}{y^2 + 4} \right) \\
-Y | X &amp;\sim&amp; N \left(\frac{1}{1+x}, \frac{1}{2(1+x)} \right).
-\end{eqnarray*}
-$$</p>
-</li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<ul>
-<li>R solution. The <code>RCall.jl</code> package allows us to execute R code without leaving the <code>Julia</code> environment. We first define an R function <code>Rgibbs()</code>.</li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">RCall</span>
-
-<span class="n">R</span><span class="s">&quot;&quot;&quot;</span>
-<span class="s">library(Matrix)</span>
-
-<span class="s">Rgibbs &lt;- function(N, thin) {</span>
-<span class="s">  mat &lt;- matrix(0, nrow=N, ncol=2)</span>
-<span class="s">  x &lt;- y &lt;- 0</span>
-<span class="s">  for (i in 1:N) {</span>
-<span class="s">    for (j in 1:thin) {</span>
-<span class="s">      x &lt;- rgamma(1, 3, y * y + 4) # 3rd arg is rate</span>
-<span class="s">      y &lt;- rnorm(1, 1 / (x + 1), 1 / sqrt(2 * (x + 1)))</span>
-<span class="s">    }</span>
-<span class="s">    mat[i,] &lt;- c(x, y)</span>
-<span class="s">  }</span>
-<span class="s">  mat</span>
-<span class="s">}</span>
-<span class="s">&quot;&quot;&quot;</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[1]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>RObject{ClosSxp}
-function (N, thin) 
-{
-    mat &lt;- matrix(0, nrow = N, ncol = 2)
-    x &lt;- y &lt;- 0
-    for (i in 1:N) {
-        for (j in 1:thin) {
-            x &lt;- rgamma(1, 3, y * y + 4)
-            y &lt;- rnorm(1, 1/(x + 1), 1/sqrt(2 * (x + 1)))
-        }
-        mat[i, ] &lt;- c(x, y)
-    }
-    mat
-}
-</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>To generate a sample of size 10,000 with a thinning of 500. How long does it take?</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">R</span><span class="s">&quot;&quot;&quot;</span>
-<span class="s">system.time(Rgibbs(10000, 500))</span>
-<span class="s">&quot;&quot;&quot;</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[2]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>RObject{RealSxp}
-   user  system elapsed 
- 21.843   1.554  23.418 
-</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<ul>
-<li>This is a Julia function for the simple Gibbs sampler:</li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">Distributions</span>
-
-<span class="k">function</span> <span class="n">jgibbs</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">thin</span><span class="p">)</span>
-    <span class="n">mat</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">y</span> <span class="o">=</span> <span class="mf">0.0</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="kp">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span>
-        <span class="k">for</span> <span class="n">j</span> <span class="kp">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">thin</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="n">Gamma</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">y</span> <span class="o">*</span> <span class="n">y</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)))</span>
-            <span class="n">y</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="n">Normal</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))))</span>
-        <span class="k">end</span>
-        <span class="n">mat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
-        <span class="n">mat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
-    <span class="k">end</span>
-    <span class="n">mat</span>
-<span class="k">end</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[3]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>jgibbs (generic function with 1 method)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Generate the same number of samples. How long does it take?</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">jgibbs</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span> <span class="c"># warm-up</span>
-<span class="nd">@elapsed</span> <span class="n">jgibbs</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[4]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>0.370531903</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>We see 40-80 fold speed up of <code>Julia</code> over <code>R</code> on this example, <strong>with similar coding effort</strong>!</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Learning-resources">Learning resources<a class="anchor-link" href="#Learning-resources">&#182;</a></h2><ol>
 <li><p>The (free) online course <a href="https://juliaacademy.com/p/intro-to-julia">Introduction to Julia</a>, by Jane Herriman.</p>
 </li>
@@ -13521,10 +13271,10 @@ Google search with <code>PackageName.jl</code> usually leads to the package on g
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="p">;</span><span class="n">ls</span> <span class="o">~/.</span><span class="n">julia</span><span class="o">/</span><span class="n">packages</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">readdir</span><span class="p">(</span><span class="n">Sys</span><span class="o">.</span><span class="n">islinux</span><span class="p">()</span> <span class="o">?</span> <span class="nb">ENV</span><span class="p">[</span><span class="s">&quot;JULIA_PATH&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="s">&quot;/pkg/packages&quot;</span> <span class="o">:</span> <span class="nb">ENV</span><span class="p">[</span><span class="s">&quot;HOME&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="s">&quot;/.julia/packages&quot;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13537,433 +13287,41 @@ Google search with <code>PackageName.jl</code> usually leads to the package on g
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+    <div class="prompt output_prompt">Out[1]:</div>
 
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>┌ Warning: Parsing command &#34;ls ~/.julia/packages&#34;. Special characters &#34;#{}()[]&lt;&gt;|&amp;*?~;&#34; should now be quoted in commands
-│   caller = shell_parse(::String, ::Bool; special::String) at shell.jl:107
-└ @ Base ./shell.jl:107
-</pre>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>409-element Array{String,1}:
+ &#34;.DS_Store&#34;
+ &#34;AbstractFFTs&#34;
+ &#34;AbstractMCMC&#34;
+ &#34;AbstractTrees&#34;
+ &#34;AccurateArithmetic&#34;
+ &#34;Adapt&#34;
+ &#34;AlgebraicMultigrid&#34;
+ &#34;AlgorithmsFromTheBook&#34;
+ &#34;ArgCheck&#34;
+ &#34;ArnoldiMethod&#34;
+ &#34;Arpack&#34;
+ &#34;Arpack_jll&#34;
+ &#34;ArrayFire&#34;
+ ⋮
+ &#34;ZMQ&#34;
+ &#34;ZeroMQ_jll&#34;
+ &#34;ZipFile&#34;
+ &#34;Zlib_jll&#34;
+ &#34;Zstd_jll&#34;
+ &#34;Zygote&#34;
+ &#34;ZygoteRules&#34;
+ &#34;libass_jll&#34;
+ &#34;libfdk_aac_jll&#34;
+ &#34;libvorbis_jll&#34;
+ &#34;x264_jll&#34;
+ &#34;x265_jll&#34;</pre>
 </div>
-</div>
 
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>AbstractFFTs
-AbstractMCMC
-AbstractTrees
-AccurateArithmetic
-Adapt
-AlgebraicMultigrid
-AlgorithmsFromTheBook
-ArgCheck
-ArnoldiMethod
-Arpack
-Arpack_jll
-ArrayFire
-ArrayInterface
-ArrayLayouts
-AssetRegistry
-Automa
-AxisAlgorithms
-AxisArrays
-BEDFiles
-BGZFStreams
-BSON
-BenchmarkTools
-BinDeps
-BinaryProvider
-BioCore
-BioSequences
-BioSymbols
-Blink
-BlockArrays
-BlockDiagonals
-BufferedStreams
-Bzip2_jll
-CEnum
-CMake
-CMakeWrapper
-CPLEX
-CRlibm
-CSSUtil
-CSTParser
-CSV
-CUDAapi
-CUDAdrv
-CUDAnative
-Cairo
-Calculus
-CatIndices
-CategoricalArrays
-Cbc
-Clp
-Clustering
-CodecBzip2
-CodecXz
-CodecZlib
-CodecZstd
-Codecs
-ColorTypes
-ColorVectorSpace
-Colors
-Combinatorics
-CommonSubexpressions
-Compat
-CompilerSupportLibraries_jll
-Compose
-ComputationalResources
-Conda
-ConicBenchmarkUtilities
-Contour
-Convex
-CoordinateTransformations
-CoupledFields
-Crayons
-CuArrays
-CustomUnitRanges
-DSP
-Dagger
-DataAPI
-DataArrays
-DataDeps
-DataFrames
-DataFramesMeta
-DataStreams
-DataStructures
-DataValueInterfaces
-DataValues
-DecFP
-DecisionTree
-DeepDiffs
-Dictionaries
-DiffEqDiffTools
-DiffResults
-DiffRules
-Distances
-Distributions
-DocStringExtensions
-Documenter
-DocumenterTools
-DoubleFloats
-DualNumbers
-ECOS
-ErrorfreeArithmetic
-ExprTools
-EzXML
-FFMPEG
-FFMPEG_jll
-FFTViews
-FFTW
-FFTW_jll
-FactCheck
-FastRounding
-FileIO
-FilePaths
-FilePathsBase
-FillArrays
-FiniteDiff
-FixedPointNumbers
-Flux
-Fontconfig
-Formatting
-ForwardDiff
-FreeType2_jll
-FriBidi_jll
-FunctionalCollections
-GLM
-GLPK
-GLPKMathProgInterface
-GPUArrays
-GR
-GZip
-Gadfly
-GenericLinearAlgebra
-GenericSVD
-GenericSchur
-GeneticVariation
-GeometryTypes
-Glob
-GraphPlot
-GraphRecipes
-Graphics
-Gtk
-GtkReactive
-Gurobi
-HTML_Entities
-HTTP
-HTTPClient
-Hexagons
-Hiccup
-Highlights
-Homebrew
-HttpCommon
-HttpParser
-HypothesisTests
-IJulia
-IRTools
-IdentityRanges
-ImageAxes
-ImageContrastAdjustment
-ImageCore
-ImageDistances
-ImageFiltering
-ImageMagick
-ImageMetadata
-ImageMorphology
-ImageQualityIndexes
-ImageShow
-ImageTransformations
-ImageView
-Images
-IndexableBitVectors
-IndexedTables
-Indexing
-IndirectArrays
-Inflate
-IniFile
-IntelOpenMP_jll
-Interact
-InteractBase
-InteractBulma
-InternedStrings
-Interpolations
-IntervalArithmetic
-IntervalSets
-IntervalTrees
-InvertedIndices
-Ipopt
-IterTools
-IterableTables
-IterativeSolvers
-IteratorInterfaceExtensions
-JLD2
-JSExpr
-JSON
-JSONSchema
-JuMP
-JuliaDB
-Juno
-KNITRO
-KahanSummation
-KernelDensity
-Knockout
-LAME_jll
-LLVM
-LaTeXStrings
-Languages
-Latexify
-Lazy
-LazyArrays
-LearnBase
-LibCURL
-LibExpat
-LibVPX_jll
-Libiconv_jll
-Libz
-LightGraphs
-LimitedLDLFactorizations
-LinQuadOptInterface
-LineSearches
-LinearMaps
-Literate
-Loess
-LossFunctions
-LsqFit
-Luxor
-MATLAB
-MCMCChains
-MKL_jll
-MLBase
-MLDatasets
-MLKernels
-MPI
-MacroTools
-MappedArrays
-MathOptInterface
-MathProgBase
-MatrixDepot
-MatrixNetworks
-MbedTLS
-MbedTLS_jll
-Measures
-Media
-MemPool
-MendelBase
-MendelGeneticCounseling
-MendelIHT
-MendelPlots
-MendelSearch
-MetaGraphs
-Missings
-MixedModels
-Mocking
-Mosek
-MosekTools
-MultivariateStats
-Mustache
-MutableArithmetics
-Mux
-NLSolversBase
-NLopt
-NNlib
-NaNMath
-NamedArrays
-NamedTuples
-NearestNeighbors
-NetworkLayout
-NodeJS
-Nullables
-ORCA
-Observables
-OffsetArrays
-Ogg_jll
-OnlineStats
-OnlineStatsBase
-OnlineStatsDemos
-OpenBLAS_jll
-OpenSSL_jll
-OpenSpecFun_jll
-Optim
-OptimBase
-OptimTestProblems
-Opus_jll
-OrderedCollections
-OrdinalGWAS
-OrdinalMultinomialModels
-PDMats
-PaddedViews
-Pajarito
-Parameters
-Parsers
-PenaltyFunctions
-Permutations
-Pidfile
-PlotRecipes
-PlotReferenceImages
-PlotThemes
-PlotUtils
-Plotly
-PlotlyBase
-PlotlyJS
-Plots
-PolrGWAS
-PolrModels
-Polynomials
-PooledArrays
-PositiveFactorizations
-Preconditioners
-PrettyTables
-Primes
-ProgressMeter
-PyCall
-PyPlot
-QuadGK
-Quadmath
-QuartzImageIO
-Quaternions
-RCall
-RData
-RDatasets
-RangeArrays
-Ratios
-Reactive
-RecipesBase
-RecursiveArrayTools
-Reexport
-Requests
-Requires
-ReverseDiffSparse
-Rmath
-Rmath_jll
-Roots
-Rotations
-RoundingIntegers
-Rsvg
-SCS
-SIUnits
-ScikitLearnBase
-SetRounding
-ShiftedArrays
-ShowItLikeYouBuildIt
-Showoff
-SimpleTraits
-SnpArrays
-SoftGlobalScope
-SortingAlgorithms
-SpecialFunctions
-SplitApplyCombine
-StatPlots
-StaticArrays
-StatsBase
-StatsFuns
-StatsModels
-StatsPlots
-StrTables
-StructArrays
-Suppressor
-SweepOperator
-TableOperations
-TableReader
-TableShowUtils
-TableTraits
-TableTraitsUtils
-Tables
-TestImages
-TestSetExtensions
-TexExtensions
-TextAnalysis
-TextParse
-TiledIteration
-TimeZones
-TimerOutputs
-Tokenize
-Tracker
-TraitSimulation
-TranscodingStreams
-Twiddle
-TypedTables
-URIParser
-UnicodePlots
-Unitful
-VCFTools
-VarianceComponentModels
-VarianceComponentSelect
-VarianceComponentTest
-VegaDatasets
-VegaLite
-VersionParsing
-VisualRegressionTests
-WeakRefStrings
-Weave
-WebIO
-WebSockets
-Widgets
-WinRPM
-WinReg
-WoodburyMatrices
-WordTokenizers
-XML2_jll
-YAML
-ZMQ
-ZeroMQ_jll
-ZipFile
-Zlib_jll
-Zstd_jll
-Zygote
-ZygoteRules
-libass_jll
-libfdk_aac_jll
-libvorbis_jll
-x264_jll
-x265_jll
-</pre>
-</div>
 </div>
 
 </div>
@@ -13982,7 +13340,7 @@ x265_jll
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">Distributions</span>
@@ -14000,7 +13358,7 @@ x265_jll
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[6]:</div>
+    <div class="prompt output_prompt">Out[2]:</div>
 
 
 
@@ -14056,7 +13414,31 @@ x265_jll
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># this chunk is needed to run properly in Binder</span>
+<span class="k">if</span> <span class="n">Base</span><span class="o">.</span><span class="n">Sys</span><span class="o">.</span><span class="n">islinux</span><span class="p">()</span>
+    <span class="c"># install R via Conda</span>
+    <span class="k">using</span> <span class="n">Conda</span>
+    <span class="nb">ENV</span><span class="p">[</span><span class="s">&quot;R_HOME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;*&quot;</span>  
+    <span class="k">using</span> <span class="n">Pkg</span>
+    <span class="n">Pkg</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s">&quot;RCall&quot;</span><span class="p">)</span>
+    <span class="c"># install R packages: ggplot2</span>
+    <span class="k">using</span> <span class="n">Conda</span>
+    <span class="n">Conda</span><span class="o">.</span><span class="n">add</span><span class="p">(</span> <span class="s">&quot;r-ggplot2&quot;</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="s">&quot;conda-forge&quot;</span><span class="p">)</span> 
+    <span class="n">Conda</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+<span class="k">end</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">RCall</span>
@@ -14083,7 +13465,7 @@ x265_jll
 
 
 <div class="output_png output_subarea ">
-<img src="output_22_0.png"
+<img src="output_13_0.png"
 >
 </div>
 
@@ -14091,7 +13473,7 @@ x265_jll
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[7]:</div>
+    <div class="prompt output_prompt">Out[4]:</div>
 
 
 
@@ -14099,18 +13481,18 @@ x265_jll
 <div class="output_text output_subarea output_execute_result">
 <pre>RObject{VecSxp}
 $breaks
- [1] -4.0 -3.5 -3.0 -2.5 -2.0 -1.5 -1.0 -0.5  0.0  0.5  1.0  1.5  2.0  2.5  3.0
+ [1] -3.0 -2.5 -2.0 -1.5 -1.0 -0.5  0.0  0.5  1.0  1.5  2.0  2.5  3.0  3.5
 
 $counts
- [1]   1   1   3  19  37  98 133 186 207 149  93  48  21   4
+ [1]   9  16  47  92 159 184 188 140 107  37  15   5   1
 
 $density
- [1] 0.002 0.002 0.006 0.038 0.074 0.196 0.266 0.372 0.414 0.298 0.186 0.096
-[13] 0.042 0.008
+ [1] 0.018 0.032 0.094 0.184 0.318 0.368 0.376 0.280 0.214 0.074 0.030 0.010
+[13] 0.002
 
 $mids
- [1] -3.75 -3.25 -2.75 -2.25 -1.75 -1.25 -0.75 -0.25  0.25  0.75  1.25  1.75
-[13]  2.25  2.75
+ [1] -2.75 -2.25 -1.75 -1.25 -0.75 -0.25  0.25  0.75  1.25  1.75  2.25  2.75
+[13]  3.25
 
 $xname
 [1] &#34;`#JL`$x&#34;
@@ -14131,7 +13513,7 @@ attr(,&#34;class&#34;)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">R</span><span class="s">&quot;&quot;&quot;</span>
@@ -14156,7 +13538,7 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_png output_subarea ">
-<img src="output_23_0.png"
+<img src="output_14_0.png"
 >
 </div>
 
@@ -14164,7 +13546,7 @@ attr(,&#34;class&#34;)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[8]:</div>
+    <div class="prompt output_prompt">Out[5]:</div>
 
 
 
@@ -14194,7 +13576,7 @@ attr(,&#34;class&#34;)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">R</span><span class="s">&quot;&quot;&quot;</span>
@@ -14212,15 +13594,15 @@ attr(,&#34;class&#34;)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[9]:</div>
+    <div class="prompt output_prompt">Out[6]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
 <pre>RObject{RealSxp}
- [1]  0.07297491 -0.26189616 -1.28250082 -0.52631360 -0.56181989  0.28672889
- [7] -0.66823162 -1.60006316  0.32863610 -1.75180721
+ [1] -0.26018070 -0.83836265  2.19923757 -0.67956760  0.88387827 -0.42125741
+ [7]  0.98405929  0.30954915 -0.12659959 -0.04350664
 </pre>
 </div>
 
@@ -14232,7 +13614,7 @@ attr(,&#34;class&#34;)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># collect R variable into Julia workspace</span>
@@ -14249,23 +13631,23 @@ attr(,&#34;class&#34;)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[10]:</div>
+    <div class="prompt output_prompt">Out[7]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
 <pre>10-element Array{Float64,1}:
-  0.07297491311471144
- -0.26189616396359133
- -1.2825008244976932
- -0.5263136023269718
- -0.5618198888106269
-  0.28672888666426727
- -0.6682316230841069
- -1.600063163916059
-  0.3286360955437114
- -1.751807211443077</pre>
+ -0.2601806959337052
+ -0.8383626511147155
+  2.1992375698705424
+ -0.6795675950726624
+  0.8838782650090073
+ -0.42125741111961534
+  0.9840592868235866
+  0.30954915369134994
+ -0.1265995851279254
+ -0.043506637629098066</pre>
 </div>
 
 </div>
@@ -14313,12 +13695,114 @@ attr(,&#34;class&#34;)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># an integer, same as int in R</span>
 <span class="n">y</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">typeof</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[8]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># a Float64 number, same as double in R</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">typeof</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[9]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># Greek letters:  `\pi&lt;tab&gt;`</span>
+<span class="nb">π</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[10]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>π = 3.1415926535897...</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">typeof</span><span class="p">(</span><span class="nb">π</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14337,7 +13821,7 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>Int64</pre>
+<pre>Irrational{:π}</pre>
 </div>
 
 </div>
@@ -14351,9 +13835,8 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># a Float64 number, same as double in R</span>
-<span class="n">y</span> <span class="o">=</span> <span class="mf">1.0</span>
-<span class="n">typeof</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># Greek letters:  `\theta&lt;tab&gt;`</span>
+<span class="n">θ</span> <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="nb">π</span>
 </pre></div>
 
     </div>
@@ -14372,7 +13855,7 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>Float64</pre>
+<pre>4.141592653589793</pre>
 </div>
 
 </div>
@@ -14386,8 +13869,8 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># Greek letters:  `\pi&lt;tab&gt;`</span>
-<span class="nb">π</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># emoji! `\:kissing_cat:&lt;tab&gt;`</span>
+<span class="n">😽</span> <span class="o">=</span> <span class="mf">5.0</span>
 </pre></div>
 
     </div>
@@ -14406,7 +13889,7 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>π = 3.1415926535897...</pre>
+<pre>5.0</pre>
 </div>
 
 </div>
@@ -14420,7 +13903,8 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">typeof</span><span class="p">(</span><span class="nb">π</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># `\alpha&lt;tab&gt;\hat&lt;tab&gt;`</span>
+<span class="n">α̂</span> <span class="o">=</span> <span class="nb">π</span>
 </pre></div>
 
     </div>
@@ -14439,108 +13923,6 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>Irrational{:π}</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># Greek letters:  `\theta&lt;tab&gt;`</span>
-<span class="n">θ</span> <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="nb">π</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[15]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>4.141592653589793</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># emoji! `\:kissing_cat:&lt;tab&gt;`</span>
-<span class="n">😽</span> <span class="o">=</span> <span class="mf">5.0</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[16]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>5.0</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># `\alpha&lt;tab&gt;\hat&lt;tab&gt;`</span>
-<span class="n">α̂</span> <span class="o">=</span> <span class="nb">π</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[17]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
 <pre>π = 3.1415926535897...</pre>
 </div>
 
@@ -14552,7 +13934,7 @@ attr(,&#34;class&#34;)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># vector of Float64 0s</span>
@@ -14569,7 +13951,7 @@ attr(,&#34;class&#34;)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[18]:</div>
+    <div class="prompt output_prompt">Out[15]:</div>
 
 
 
@@ -14591,7 +13973,7 @@ attr(,&#34;class&#34;)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># vector Int64 0s</span>
@@ -14608,7 +13990,7 @@ attr(,&#34;class&#34;)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[19]:</div>
+    <div class="prompt output_prompt">Out[16]:</div>
 
 
 
@@ -14630,11 +14012,128 @@ attr(,&#34;class&#34;)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># matrix of Float64 0s</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[17]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>5×3 Array{Float64,2}:
+ 0.0  0.0  0.0
+ 0.0  0.0  0.0
+ 0.0  0.0  0.0
+ 0.0  0.0  0.0
+ 0.0  0.0  0.0</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># matrix of Float64 1s</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[18]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>5×3 Array{Float64,2}:
+ 1.0  1.0  1.0
+ 1.0  1.0  1.0
+ 1.0  1.0  1.0
+ 1.0  1.0  1.0
+ 1.0  1.0  1.0</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># define array without initialization</span>
+<span class="n">x</span> <span class="o">=</span> <span class="kt">Matrix</span><span class="p">{</span><span class="kt">Float64</span><span class="p">}(</span><span class="n">undef</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[19]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>5×3 Array{Float64,2}:
+ 3.5e-323      2.26194e-314  3.5e-323
+ 1.0e-323      1.9e-322      2.26194e-314
+ 2.26194e-314  3.0e-323      2.7e-322
+ 1.5e-322      2.26194e-314  4.4e-323
+ 2.5e-323      2.08e-322     2.26064e-314</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># fill a matrix by 0s</span>
+<span class="n">fill!</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14672,123 +14171,6 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># matrix of Float64 1s</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[21]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>5×3 Array{Float64,2}:
- 1.0  1.0  1.0
- 1.0  1.0  1.0
- 1.0  1.0  1.0
- 1.0  1.0  1.0
- 1.0  1.0  1.0</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># define array without initialization</span>
-<span class="n">x</span> <span class="o">=</span> <span class="kt">Matrix</span><span class="p">{</span><span class="kt">Float64</span><span class="p">}(</span><span class="n">undef</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[22]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>5×3 Array{Float64,2}:
- 0.0  0.0  0.0
- 0.0  0.0  0.0
- 0.0  0.0  0.0
- 0.0  0.0  0.0
- 0.0  0.0  0.0</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># fill a matrix by 0s</span>
-<span class="n">fill!</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[23]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>5×3 Array{Float64,2}:
- 0.0  0.0  0.0
- 0.0  0.0  0.0
- 0.0  0.0  0.0
- 0.0  0.0  0.0
- 0.0  0.0  0.0</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
-<div class="inner_cell">
-    <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># initialize an array to be constant 2.5</span>
 <span class="n">fill</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 </pre></div>
@@ -14803,7 +14185,7 @@ attr(,&#34;class&#34;)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[24]:</div>
+    <div class="prompt output_prompt">Out[21]:</div>
 
 
 
@@ -14825,11 +14207,110 @@ attr(,&#34;class&#34;)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># rational number</span>
 <span class="n">a</span> <span class="o">=</span> <span class="mi">3</span><span class="o">//</span><span class="mi">5</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[22]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>3//5</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">typeof</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[23]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Rational{Int64}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">b</span> <span class="o">=</span> <span class="mi">3</span><span class="o">//</span><span class="mi">7</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[24]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>3//7</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
 </pre></div>
 
     </div>
@@ -14848,7 +14329,7 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3//5</pre>
+<pre>36//35</pre>
 </div>
 
 </div>
@@ -14862,7 +14343,8 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">typeof</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># uniform [0, 1) random numbers</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14881,7 +14363,12 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>Rational{Int64}</pre>
+<pre>5×3 Array{Float64,2}:
+ 0.207909   0.516328   0.0910274
+ 0.391999   0.454981   0.19416
+ 0.67934    0.0384635  0.425649
+ 0.0383366  0.410789   0.808712
+ 0.248931   0.896103   0.832465</pre>
 </div>
 
 </div>
@@ -14895,7 +14382,8 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">b</span> <span class="o">=</span> <span class="mi">3</span><span class="o">//</span><span class="mi">7</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># uniform random numbers (in single precision)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="kt">Float16</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14914,7 +14402,12 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3//7</pre>
+<pre>5×3 Array{Float16,2}:
+ 0.5615  0.8867   0.2354
+ 0.549   0.547    0.004883
+ 0.6543  0.3164   0.619
+ 0.4922  0.83     0.3809
+ 0.0166  0.01465  0.9326</pre>
 </div>
 
 </div>
@@ -14928,7 +14421,8 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[28]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># random numbers from {1,...,5}</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14947,7 +14441,12 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>36//35</pre>
+<pre>5×3 Array{Int64,2}:
+ 2  1  1
+ 5  1  2
+ 4  2  4
+ 4  5  4
+ 5  3  5</pre>
 </div>
 
 </div>
@@ -14961,8 +14460,8 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[29]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># uniform [0, 1) random numbers</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># standard normal random numbers</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14982,11 +14481,11 @@ attr(,&#34;class&#34;)
 
 <div class="output_text output_subarea output_execute_result">
 <pre>5×3 Array{Float64,2}:
- 0.864184  0.667057  0.013841
- 0.74435   0.168297  0.0937011
- 0.680342  0.365246  0.757738
- 0.743837  0.495153  0.524222
- 0.637257  0.353181  0.760721</pre>
+ -0.164016  -0.851724   2.23943
+  1.10025    0.595778  -0.825285
+ -0.610082  -1.12177    0.154675
+  0.990563  -0.106033  -1.28773
+ -1.95251   -0.68874   -1.4753</pre>
 </div>
 
 </div>
@@ -15000,8 +14499,8 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[30]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># uniform random numbers (in single precision)</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="kt">Float16</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># range</span>
+<span class="mi">1</span><span class="o">:</span><span class="mi">10</span>
 </pre></div>
 
     </div>
@@ -15020,12 +14519,7 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>5×3 Array{Float16,2}:
- 0.6553    0.3408   0.1338
- 0.001953  0.11523  0.6133
- 0.3398    0.2285   0.126
- 0.02051   0.5137   0.03516
- 0.248     0.2969   0.0537</pre>
+<pre>1:10</pre>
 </div>
 
 </div>
@@ -15039,8 +14533,7 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[31]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># random numbers from {1,...,5}</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">typeof</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -15059,12 +14552,7 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>5×3 Array{Int64,2}:
- 5  4  2
- 5  5  3
- 2  2  1
- 4  5  1
- 4  1  4</pre>
+<pre>UnitRange{Int64}</pre>
 </div>
 
 </div>
@@ -15078,8 +14566,7 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[32]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># standard normal random numbers</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="mi">1</span><span class="o">:</span><span class="mi">2</span><span class="o">:</span><span class="mi">10</span>
 </pre></div>
 
     </div>
@@ -15098,12 +14585,7 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>5×3 Array{Float64,2}:
- -2.76792    0.359259   0.989608
-  0.689269   0.283704   0.526334
- -0.14571    1.56716   -0.32853
-  0.516913   1.30389    0.829142
-  0.113064  -0.202403   0.711031</pre>
+<pre>1:2:9</pre>
 </div>
 
 </div>
@@ -15117,8 +14599,7 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[33]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># range</span>
-<span class="mi">1</span><span class="o">:</span><span class="mi">10</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">typeof</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="mi">2</span><span class="o">:</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -15137,7 +14618,7 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>1:10</pre>
+<pre>StepRange{Int64,Int64}</pre>
 </div>
 
 </div>
@@ -15151,7 +14632,8 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[34]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">typeof</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="mi">10</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># integers 1-10</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -15170,7 +14652,17 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>UnitRange{Int64}</pre>
+<pre>10-element Array{Int64,1}:
+  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10</pre>
 </div>
 
 </div>
@@ -15184,7 +14676,8 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[35]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="mi">1</span><span class="o">:</span><span class="mi">2</span><span class="o">:</span><span class="mi">10</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># or equivalently</span>
+<span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="mf">10.</span><span class="o">..</span><span class="p">]</span>
 </pre></div>
 
     </div>
@@ -15203,7 +14696,17 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>1:2:9</pre>
+<pre>10-element Array{Int64,1}:
+  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10</pre>
 </div>
 
 </div>
@@ -15215,127 +14718,6 @@ attr(,&#34;class&#34;)
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[36]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">typeof</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="mi">2</span><span class="o">:</span><span class="mi">10</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[36]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>StepRange{Int64,Int64}</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[37]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># integers 1-10</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="mi">10</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[37]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>10-element Array{Int64,1}:
-  1
-  2
-  3
-  4
-  5
-  6
-  7
-  8
-  9
- 10</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[38]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># or equivalently</span>
-<span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="mf">10.</span><span class="o">..</span><span class="p">]</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[38]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>10-element Array{Int64,1}:
-  1
-  2
-  3
-  4
-  5
-  6
-  7
-  8
-  9
- 10</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[39]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># Float64 numbers 1-10</span>
@@ -15352,7 +14734,7 @@ attr(,&#34;class&#34;)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[39]:</div>
+    <div class="prompt output_prompt">Out[36]:</div>
 
 
 
@@ -15379,7 +14761,7 @@ attr(,&#34;class&#34;)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[40]:</div>
+<div class="prompt input_prompt">In&nbsp;[37]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># convert to a specific type</span>
@@ -15396,7 +14778,7 @@ attr(,&#34;class&#34;)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[40]:</div>
+    <div class="prompt output_prompt">Out[37]:</div>
 
 
 
@@ -15437,10 +14819,114 @@ attr(,&#34;class&#34;)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[41]:</div>
+<div class="prompt input_prompt">In&nbsp;[38]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[38]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>5×3 Array{Float64,2}:
+  0.0881193   0.551791  -0.531613
+ -1.01354     0.60457    0.453895
+  0.31429     0.26606   -0.846303
+  0.763635   -1.2162    -0.317739
+  0.208275   -1.34889   -0.068942</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[39]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">size</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[39]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(5, 3)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[40]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">size</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c"># nrow() in R</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[40]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>5</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[41]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">size</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -15459,110 +14945,6 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>5×3 Array{Float64,2}:
-  0.252907   1.74115    0.570302
-  0.890889   0.89529   -0.438601
- -0.928798   0.749426   0.636384
-  0.405128   2.07365    0.124728
- -0.627884  -1.55847    1.09365</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[42]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">size</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[42]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>(5, 3)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[43]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">size</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c"># nrow() in R</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[43]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>5</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[44]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">size</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[44]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
 <pre>3</pre>
 </div>
 
@@ -15574,7 +14956,7 @@ attr(,&#34;class&#34;)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[45]:</div>
+<div class="prompt input_prompt">In&nbsp;[42]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># total number of elements</span>
@@ -15591,7 +14973,7 @@ attr(,&#34;class&#34;)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[45]:</div>
+    <div class="prompt output_prompt">Out[42]:</div>
 
 
 
@@ -15615,11 +14997,128 @@ attr(,&#34;class&#34;)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[46]:</div>
+<div class="prompt input_prompt">In&nbsp;[43]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># 5 × 5 matrix of random Normal(0, 1)</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[43]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>5×5 Array{Float64,2}:
+ -0.723709   0.588452   0.411403     1.82401    0.840184
+ -1.61218   -1.06654   -0.137418    -1.4248    -0.158875
+ -0.118322  -0.151277   0.00327339   0.162756   0.263771
+ -0.515368   0.769579  -0.286109     1.90346   -0.802887
+ -0.157853  -1.62264   -0.897511    -1.29446    2.36274</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[44]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># first column</span>
+<span class="n">x</span><span class="p">[</span><span class="o">:</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[44]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>5-element Array{Float64,1}:
+ -0.7237092465901487
+ -1.6121828404791563
+ -0.11832231335678683
+ -0.5153675260868668
+ -0.15785338337122773</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[45]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># first row</span>
+<span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">:</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[45]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>5-element Array{Float64,1}:
+ -0.7237092465901487
+  0.5884521516246544
+  0.4114030185185206
+  1.8240056317249158
+  0.8401844927170787</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[46]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># sub-array</span>
+<span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="o">:</span><span class="mi">3</span><span class="p">]</span>
 </pre></div>
 
     </div>
@@ -15638,12 +15137,9 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>5×5 Array{Float64,2}:
-  0.196016  -0.347294  -1.41162      0.966873   0.947238
- -1.1353    -0.538387   0.410519    -0.692463  -1.30473
-  1.69318   -1.3031    -0.00373175   0.179274  -0.0568892
- -2.17074    0.587662   1.42013      2.05106    0.31392
- -1.47161   -0.278476  -0.261075     0.595869   0.0773843</pre>
+<pre>2×2 Array{Float64,2}:
+  0.588452   0.411403
+ -1.06654   -0.137418</pre>
 </div>
 
 </div>
@@ -15657,8 +15153,8 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[47]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># first column</span>
-<span class="n">x</span><span class="p">[</span><span class="o">:</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># getting a subset of a matrix creates a copy, but you can also create &quot;views&quot;</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">view</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="o">:</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="o">:</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -15677,12 +15173,9 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>5-element Array{Float64,1}:
-  0.19601611074953604
- -1.1353034539205629
-  1.6931782619351814
- -2.1707400420139793
- -1.4716113475059722</pre>
+<pre>2×2 view(::Array{Float64,2}, 1:2, 2:3) with eltype Float64:
+  0.588452   0.411403
+ -1.06654   -0.137418</pre>
 </div>
 
 </div>
@@ -15696,8 +15189,8 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[48]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># first row</span>
-<span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">:</span><span class="p">]</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># same as</span>
+<span class="nd">@views</span> <span class="n">z</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="o">:</span><span class="mi">3</span><span class="p">]</span>
 </pre></div>
 
     </div>
@@ -15716,12 +15209,9 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>5-element Array{Float64,1}:
-  0.19601611074953604
- -0.347293842558731
- -1.4116234767285563
-  0.9668727646023443
-  0.9472377048542803</pre>
+<pre>2×2 view(::Array{Float64,2}, 1:2, 2:3) with eltype Float64:
+  0.588452   0.411403
+ -1.06654   -0.137418</pre>
 </div>
 
 </div>
@@ -15735,8 +15225,9 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[49]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># sub-array</span>
-<span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="o">:</span><span class="mi">3</span><span class="p">]</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># change in z (view) changes x as well</span>
+<span class="n">z</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">x</span>
 </pre></div>
 
     </div>
@@ -15755,9 +15246,12 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>2×2 Array{Float64,2}:
- -0.347294  -1.41162
- -0.538387   0.410519</pre>
+<pre>5×5 Array{Float64,2}:
+ -0.723709   0.588452   0.411403     1.82401    0.840184
+ -1.61218   -1.06654    0.0         -1.4248    -0.158875
+ -0.118322  -0.151277   0.00327339   0.162756   0.263771
+ -0.515368   0.769579  -0.286109     1.90346   -0.802887
+ -0.157853  -1.62264   -0.897511    -1.29446    2.36274</pre>
 </div>
 
 </div>
@@ -15771,8 +15265,8 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[50]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># getting a subset of a matrix creates a copy, but you can also create &quot;views&quot;</span>
-<span class="n">z</span> <span class="o">=</span> <span class="n">view</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="o">:</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="o">:</span><span class="mi">3</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># y points to same data as x</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span>
 </pre></div>
 
     </div>
@@ -15791,9 +15285,12 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>2×2 view(::Array{Float64,2}, 1:2, 2:3) with eltype Float64:
- -0.347294  -1.41162
- -0.538387   0.410519</pre>
+<pre>5×5 Array{Float64,2}:
+ -0.723709   0.588452   0.411403     1.82401    0.840184
+ -1.61218   -1.06654    0.0         -1.4248    -0.158875
+ -0.118322  -0.151277   0.00327339   0.162756   0.263771
+ -0.515368   0.769579  -0.286109     1.90346   -0.802887
+ -0.157853  -1.62264   -0.897511    -1.29446    2.36274</pre>
 </div>
 
 </div>
@@ -15807,8 +15304,8 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[51]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># same as</span>
-<span class="nd">@views</span> <span class="n">z</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="o">:</span><span class="mi">3</span><span class="p">]</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># x and y point to same data</span>
+<span class="n">pointer</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">pointer</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -15827,9 +15324,7 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>2×2 view(::Array{Float64,2}, 1:2, 2:3) with eltype Float64:
- -0.347294  -1.41162
- -0.538387   0.410519</pre>
+<pre>(Ptr{Float64} @0x0000000124fb3bf0, Ptr{Float64} @0x0000000124fb3bf0)</pre>
 </div>
 
 </div>
@@ -15843,8 +15338,8 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[52]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># change in z (view) changes x as well</span>
-<span class="n">z</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># changing y also changes x</span>
+<span class="n">y</span><span class="p">[</span><span class="o">:</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">.=</span> <span class="mi">0</span>
 <span class="n">x</span>
 </pre></div>
 
@@ -15865,11 +15360,11 @@ attr(,&#34;class&#34;)
 
 <div class="output_text output_subarea output_execute_result">
 <pre>5×5 Array{Float64,2}:
-  0.196016  -0.347294  -1.41162      0.966873   0.947238
- -1.1353    -0.538387   0.0         -0.692463  -1.30473
-  1.69318   -1.3031    -0.00373175   0.179274  -0.0568892
- -2.17074    0.587662   1.42013      2.05106    0.31392
- -1.47161   -0.278476  -0.261075     0.595869   0.0773843</pre>
+ 0.0   0.588452   0.411403     1.82401    0.840184
+ 0.0  -1.06654    0.0         -1.4248    -0.158875
+ 0.0  -0.151277   0.00327339   0.162756   0.263771
+ 0.0   0.769579  -0.286109     1.90346   -0.802887
+ 0.0  -1.62264   -0.897511    -1.29446    2.36274</pre>
 </div>
 
 </div>
@@ -15883,8 +15378,8 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[53]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># y points to same data as x</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">x</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># create a new copy of data</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -15904,11 +15399,11 @@ attr(,&#34;class&#34;)
 
 <div class="output_text output_subarea output_execute_result">
 <pre>5×5 Array{Float64,2}:
-  0.196016  -0.347294  -1.41162      0.966873   0.947238
- -1.1353    -0.538387   0.0         -0.692463  -1.30473
-  1.69318   -1.3031    -0.00373175   0.179274  -0.0568892
- -2.17074    0.587662   1.42013      2.05106    0.31392
- -1.47161   -0.278476  -0.261075     0.595869   0.0773843</pre>
+ 0.0   0.588452   0.411403     1.82401    0.840184
+ 0.0  -1.06654    0.0         -1.4248    -0.158875
+ 0.0  -0.151277   0.00327339   0.162756   0.263771
+ 0.0   0.769579  -0.286109     1.90346   -0.802887
+ 0.0  -1.62264   -0.897511    -1.29446    2.36274</pre>
 </div>
 
 </div>
@@ -15922,8 +15417,7 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[54]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># x and y point to same data</span>
-<span class="n">pointer</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">pointer</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">pointer</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">pointer</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -15942,7 +15436,7 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>(Ptr{Float64} @0x000000011b175370, Ptr{Float64} @0x000000011b175370)</pre>
+<pre>(Ptr{Float64} @0x0000000124fb3bf0, Ptr{Float64} @0x0000000111eb6210)</pre>
 </div>
 
 </div>
@@ -15950,15 +15444,21 @@ attr(,&#34;class&#34;)
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Concatenate-matrices">Concatenate matrices<a class="anchor-link" href="#Concatenate-matrices">&#182;</a></h3>
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[55]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># changing y also changes x</span>
-<span class="n">y</span><span class="p">[</span><span class="o">:</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">.=</span> <span class="mi">0</span>
-<span class="n">x</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># 1-by-3 array</span>
+<span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">]</span>
 </pre></div>
 
     </div>
@@ -15977,124 +15477,6 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>5×5 Array{Float64,2}:
- 0.0  -0.347294  -1.41162      0.966873   0.947238
- 0.0  -0.538387   0.0         -0.692463  -1.30473
- 0.0  -1.3031    -0.00373175   0.179274  -0.0568892
- 0.0   0.587662   1.42013      2.05106    0.31392
- 0.0  -0.278476  -0.261075     0.595869   0.0773843</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[56]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># create a new copy of data</span>
-<span class="n">z</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[56]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>5×5 Array{Float64,2}:
- 0.0  -0.347294  -1.41162      0.966873   0.947238
- 0.0  -0.538387   0.0         -0.692463  -1.30473
- 0.0  -1.3031    -0.00373175   0.179274  -0.0568892
- 0.0   0.587662   1.42013      2.05106    0.31392
- 0.0  -0.278476  -0.261075     0.595869   0.0773843</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[57]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">pointer</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">pointer</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[57]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>(Ptr{Float64} @0x000000011b175370, Ptr{Float64} @0x000000011b9772f0)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Concatenate-matrices">Concatenate matrices<a class="anchor-link" href="#Concatenate-matrices">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[58]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># 1-by-3 array</span>
-<span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">]</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[58]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
 <pre>1×3 Array{Int64,2}:
  1  2  3</pre>
 </div>
@@ -16107,7 +15489,7 @@ attr(,&#34;class&#34;)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[59]:</div>
+<div class="prompt input_prompt">In&nbsp;[56]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># 3-by-1 vector</span>
@@ -16124,7 +15506,7 @@ attr(,&#34;class&#34;)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[59]:</div>
+    <div class="prompt output_prompt">Out[56]:</div>
 
 
 
@@ -16144,7 +15526,7 @@ attr(,&#34;class&#34;)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[60]:</div>
+<div class="prompt input_prompt">In&nbsp;[57]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># multiple assignment by tuple</span>
@@ -16161,13 +15543,13 @@ attr(,&#34;class&#34;)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[60]:</div>
+    <div class="prompt output_prompt">Out[57]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>([-0.9265714935733538 -0.23490594228411318 -1.2925452705138236; -1.3178740422929363 0.6225305013698572 -1.6762088711368086; … ; -0.7648104275212142 -0.9934845002619249 -0.15493393317526732; 1.116394135236587 -0.6753538605318147 -0.3107258745214049], [0.709456703249026 0.41023759908147295; -1.8968207846663312 -0.8192628466998002; … ; -0.09880866562726695 -0.2200072071900828; 0.5555235627427726 -0.9490973561354383], [0.379616175267704 -1.5527610830838878 … 0.6553199194964368 -0.09441419365993445; 0.028736589971803027 1.6759032151329691 … 1.56730317595261 0.37877048147376463; 0.2208087734338444 -1.4043690388639036 … -1.011878456362023 1.2612568771423383])</pre>
+<pre>([0.7093188825453249 -1.0547302177768474 -0.041014039702676225; -0.6749641015465512 -0.4817784707055156 -0.0032208308594425636; … ; -0.8436417410057984 -0.3927980308830967 -0.49605436702031463; 0.4170301620360865 0.6122997922447635 -1.5970645408938902], [0.24589626904698292 -1.8452627576164247; -2.0091479703294115 0.19917005898755075; … ; -0.1653149744963572 0.5906401988646329; -0.809300948463853 -0.8828020599334371], [-0.6278475742328751 -0.802532250211124 … -1.663415840966539 0.9781815151117406; -0.3604081401533432 -0.189685594198944 … 1.1581949621282641 2.069048487449768; 0.23397518715356838 0.7839563082376726 … -0.06413011652629322 1.1518283750548306])</pre>
 </div>
 
 </div>
@@ -16178,7 +15560,7 @@ attr(,&#34;class&#34;)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[61]:</div>
+<div class="prompt input_prompt">In&nbsp;[58]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="p">[</span><span class="n">x</span> <span class="n">y</span><span class="p">]</span> <span class="c"># 5-by-5 matrix</span>
@@ -16194,18 +15576,18 @@ attr(,&#34;class&#34;)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[61]:</div>
+    <div class="prompt output_prompt">Out[58]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
 <pre>5×5 Array{Float64,2}:
- -0.926571  -0.234906  -1.29255    0.709457    0.410238
- -1.31787    0.622531  -1.67621   -1.89682    -0.819263
-  0.978233  -0.346049   0.160273  -1.241       0.0781606
- -0.76481   -0.993485  -0.154934  -0.0988087  -0.220007
-  1.11639   -0.675354  -0.310726   0.555524   -0.949097</pre>
+  0.709319   -1.05473   -0.041014     0.245896  -1.84526
+ -0.674964   -0.481778  -0.00322083  -2.00915    0.19917
+  0.0733098  -0.467173   0.425824    -1.27322   -2.18352
+ -0.843642   -0.392798  -0.496054    -0.165315   0.59064
+  0.41703     0.6123    -1.59706     -0.809301  -0.882802</pre>
 </div>
 
 </div>
@@ -16216,7 +15598,7 @@ attr(,&#34;class&#34;)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[62]:</div>
+<div class="prompt input_prompt">In&nbsp;[59]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="p">[</span><span class="n">x</span> <span class="n">y</span><span class="p">;</span> <span class="n">z</span><span class="p">]</span> <span class="c"># 8-by-5 matrix</span>
@@ -16232,21 +15614,21 @@ attr(,&#34;class&#34;)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[62]:</div>
+    <div class="prompt output_prompt">Out[59]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
 <pre>8×5 Array{Float64,2}:
- -0.926571   -0.234906  -1.29255    0.709457    0.410238
- -1.31787     0.622531  -1.67621   -1.89682    -0.819263
-  0.978233   -0.346049   0.160273  -1.241       0.0781606
- -0.76481    -0.993485  -0.154934  -0.0988087  -0.220007
-  1.11639    -0.675354  -0.310726   0.555524   -0.949097
-  0.379616   -1.55276   -0.733183   0.65532    -0.0944142
-  0.0287366   1.6759     0.235406   1.5673      0.37877
-  0.220809   -1.40437   -0.574919  -1.01188     1.26126</pre>
+  0.709319   -1.05473   -0.041014     0.245896   -1.84526
+ -0.674964   -0.481778  -0.00322083  -2.00915     0.19917
+  0.0733098  -0.467173   0.425824    -1.27322    -2.18352
+ -0.843642   -0.392798  -0.496054    -0.165315    0.59064
+  0.41703     0.6123    -1.59706     -0.809301   -0.882802
+ -0.627848   -0.802532  -0.63414     -1.66342     0.978182
+ -0.360408   -0.189686  -1.01909      1.15819     2.06905
+  0.233975    0.783956   0.214877    -0.0641301   1.15183</pre>
 </div>
 
 </div>
@@ -16265,7 +15647,7 @@ attr(,&#34;class&#34;)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[63]:</div>
+<div class="prompt input_prompt">In&nbsp;[60]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
@@ -16281,18 +15663,18 @@ attr(,&#34;class&#34;)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[63]:</div>
+    <div class="prompt output_prompt">Out[60]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
 <pre>5×3 Array{Float64,2}:
- -1.18919    -0.326353   -1.37576
-  0.0769754   0.0780664   0.927808
- -0.306137    1.94488    -0.292377
-  2.31936    -1.32453     0.618337
-  0.292103   -0.115953   -0.25595</pre>
+  0.00725353  -0.20128    0.101416
+ -0.658147    -0.628286  -0.191761
+ -1.32184     -0.328919  -1.77577
+ -1.00453     -1.00405    0.84863
+  0.00136835  -0.142488  -3.00299</pre>
 </div>
 
 </div>
@@ -16303,7 +15685,7 @@ attr(,&#34;class&#34;)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[64]:</div>
+<div class="prompt input_prompt">In&nbsp;[61]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">y</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
@@ -16319,7 +15701,7 @@ attr(,&#34;class&#34;)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[64]:</div>
+    <div class="prompt output_prompt">Out[61]:</div>
 
 
 
@@ -16341,10 +15723,131 @@ attr(,&#34;class&#34;)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[65]:</div>
+<div class="prompt input_prompt">In&nbsp;[62]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">x</span> <span class="o">.*</span> <span class="n">y</span> <span class="c"># same x * y in R</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[62]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>5×3 Array{Float64,2}:
+  0.00725353  -0.20128    0.101416
+ -0.658147    -0.628286  -0.191761
+ -1.32184     -0.328919  -1.77577
+ -1.00453     -1.00405    0.84863
+  0.00136835  -0.142488  -3.00299</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[63]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">x</span> <span class="o">.^</span> <span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[63]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>5×3 Array{Float64,2}:
+  19006.5       24.6831    97.2271
+      2.30863    2.5333    27.1944
+      0.572326   9.2432     0.317122
+      0.991009   0.991956   1.38855
+ 534080.0       49.2545     0.11089</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[64]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">sin</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[64]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>5×3 Array{Float64,2}:
+  0.00725346  -0.199923   0.101242
+ -0.611652    -0.587759  -0.190588
+ -0.96917     -0.32302   -0.979066
+ -0.843908    -0.84365    0.750376
+  0.00136835  -0.142006  -0.138155</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Basic-linear-algebra">Basic linear algebra<a class="anchor-link" href="#Basic-linear-algebra">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[65]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -16363,12 +15866,12 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>5×3 Array{Float64,2}:
- -1.18919    -0.326353   -1.37576
-  0.0769754   0.0780664   0.927808
- -0.306137    1.94488    -0.292377
-  2.31936    -1.32453     0.618337
-  0.292103   -0.115953   -0.25595</pre>
+<pre>5-element Array{Float64,1}:
+  1.8634325733601513
+  0.600771613755727
+  0.3969696936743607
+ -0.9898160511100909
+  2.9636274006122996</pre>
 </div>
 
 </div>
@@ -16382,7 +15885,9 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[66]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">x</span> <span class="o">.^</span> <span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">LinearAlgebra</span>
+<span class="c"># vector L2 norm</span>
+<span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -16401,12 +15906,7 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>5×3 Array{Float64,2}:
-   0.707126    9.38913    0.528343
- 168.771     164.086      1.16167
-  10.6701      0.264372  11.6981
-   0.185894    0.570001   2.61547
-  11.72       74.3765    15.2648</pre>
+<pre>3.7086002224215813</pre>
 </div>
 
 </div>
@@ -16420,7 +15920,8 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[67]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">sin</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># same as</span>
+<span class="n">sqrt</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="n">abs2</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -16439,12 +15940,7 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>5×3 Array{Float64,2}:
- -0.928068   -0.320591   -0.98104
-  0.0768994   0.0779871   0.800308
- -0.301378    0.930844   -0.288229
-  0.732669   -0.96983     0.579681
-  0.287967   -0.115693   -0.253164</pre>
+<pre>3.7086002224215813</pre>
 </div>
 
 </div>
@@ -16452,20 +15948,15 @@ attr(,&#34;class&#34;)
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Basic-linear-algebra">Basic linear algebra<a class="anchor-link" href="#Basic-linear-algebra">&#182;</a></h3>
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[68]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">y</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="c"># another vector</span>
+<span class="c"># dot product</span>
+<span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="c"># x&#39; * y</span>
 </pre></div>
 
     </div>
@@ -16484,12 +15975,7 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>5-element Array{Float64,1}:
-  0.050479765284945875
-  0.7408842796988775
- -0.43541127126385476
-  1.5283473920395898
- -0.13720866531006393</pre>
+<pre>1.3995940678168974</pre>
 </div>
 
 </div>
@@ -16503,9 +15989,8 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[69]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">LinearAlgebra</span>
-<span class="c"># vector L2 norm</span>
-<span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># same as</span>
+<span class="n">x</span><span class="o">&#39;</span><span class="n">y</span>
 </pre></div>
 
     </div>
@@ -16524,7 +16009,7 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>1.759463743969207</pre>
+<pre>1.3995940678168974</pre>
 </div>
 
 </div>
@@ -16538,8 +16023,9 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[70]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># same as</span>
-<span class="n">sqrt</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="n">abs2</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="c"># matrix multiplication, same as %*% in R</span>
+<span class="n">x</span> <span class="o">*</span> <span class="n">y</span>
 </pre></div>
 
     </div>
@@ -16558,7 +16044,12 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>1.759463743969207</pre>
+<pre>5×2 Array{Float64,2}:
+ -0.169488   1.11564
+ -0.719638   0.110662
+  0.947442  -2.67033
+  0.703882  -3.24025
+ -0.325729  -0.14008</pre>
 </div>
 
 </div>
@@ -16572,9 +16063,7 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[71]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">y</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="c"># another vector</span>
-<span class="c"># dot product</span>
-<span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="c"># x&#39; * y</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -16593,7 +16082,10 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>1.6359951129098869</pre>
+<pre>3×3 Array{Float64,2}:
+ -0.234362  -0.191773  0.566269
+ -2.06105   -1.45933   0.703242
+ -1.01243   -0.448085  1.34018</pre>
 </div>
 
 </div>
@@ -16607,8 +16099,8 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[72]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># same as</span>
-<span class="n">x</span><span class="o">&#39;</span><span class="n">y</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># conjugate transpose</span>
+<span class="n">x</span><span class="o">&#39;</span>
 </pre></div>
 
     </div>
@@ -16627,7 +16119,10 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>1.6359951129098869</pre>
+<pre>3×3 Adjoint{Float64,Array{Float64,2}}:
+ -0.234362  -2.06105   -1.01243
+ -0.191773  -1.45933   -0.448085
+  0.566269   0.703242   1.34018</pre>
 </div>
 
 </div>
@@ -16641,9 +16136,8 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[73]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="c"># matrix multiplication, same as %*% in R</span>
-<span class="n">x</span> <span class="o">*</span> <span class="n">y</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">b</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">x</span><span class="o">&#39;</span><span class="n">b</span> <span class="c"># same as x&#39; * b</span>
 </pre></div>
 
     </div>
@@ -16662,12 +16156,10 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>5×2 Array{Float64,2}:
- -0.148874   2.43297
-  3.5159    -4.16918
- -1.93855    1.80167
- -1.16795    0.9105
- -1.44269    2.92481</pre>
+<pre>3-element Array{Float64,1}:
+ -0.9766548022175737
+ -0.4897564744017935
+  1.1164536692800309</pre>
 </div>
 
 </div>
@@ -16681,7 +16173,8 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[74]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># trace</span>
+<span class="n">tr</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -16700,10 +16193,7 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3×3 Array{Float64,2}:
-  1.33913   -1.15969    1.12462
- -0.73417   -1.76891   -0.751803
- -0.119323   0.160245   0.551634</pre>
+<pre>-0.35350878440207234</pre>
 </div>
 
 </div>
@@ -16717,8 +16207,7 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[75]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># conjugate transpose</span>
-<span class="n">x</span><span class="o">&#39;</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">det</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -16737,10 +16226,7 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3×3 Adjoint{Float64,Array{Float64,2}}:
-  1.33913  -0.73417   -0.119323
- -1.15969  -1.76891    0.160245
-  1.12462  -0.751803   0.551634</pre>
+<pre>-0.32234929864097855</pre>
 </div>
 
 </div>
@@ -16752,110 +16238,6 @@ attr(,&#34;class&#34;)
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[76]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">b</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-<span class="n">x</span><span class="o">&#39;</span><span class="n">b</span> <span class="c"># same as x&#39; * b</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[76]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>3-element Array{Float64,1}:
-  0.5087616391242095
- -1.632483101613376
-  1.0025773659014325</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[77]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># trace</span>
-<span class="n">tr</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[77]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>0.12184961246790549</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[78]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">det</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[78]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>-2.088768242436558</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[79]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">rank</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -16871,7 +16253,7 @@ attr(,&#34;class&#34;)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[79]:</div>
+    <div class="prompt output_prompt">Out[76]:</div>
 
 
 
@@ -16895,7 +16277,7 @@ attr(,&#34;class&#34;)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[80]:</div>
+<div class="prompt input_prompt">In&nbsp;[77]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">SparseArrays</span>
@@ -16914,25 +16296,162 @@ attr(,&#34;class&#34;)
 
 <div class="output_area">
 
+    <div class="prompt output_prompt">Out[77]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>10×10 SparseMatrixCSC{Float64,Int64} with 13 stored entries:
+  [1 , 1]  =  0.802495
+  [8 , 1]  =  -0.427986
+  [3 , 3]  =  1.48789
+  [5 , 3]  =  0.846218
+  [7 , 4]  =  0.773656
+  [10, 4]  =  2.03278
+  [8 , 5]  =  -0.379637
+  [1 , 6]  =  0.574831
+  [3 , 7]  =  0.373771
+  [1 , 8]  =  -0.994052
+  [5 , 8]  =  -0.740423
+  [8 , 8]  =  1.32441
+  [7 , 9]  =  -1.35675</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[78]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># convert to dense matrix; be cautious when dealing with big data</span>
+<span class="n">Xfull</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="kt">Matrix</span><span class="p">{</span><span class="kt">Float64</span><span class="p">},</span> <span class="n">X</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[78]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>10×10 Array{Float64,2}:
+  0.802495  0.0  0.0       0.0       …  0.0       -0.994052   0.0      0.0
+  0.0       0.0  0.0       0.0          0.0        0.0        0.0      0.0
+  0.0       0.0  1.48789   0.0          0.373771   0.0        0.0      0.0
+  0.0       0.0  0.0       0.0          0.0        0.0        0.0      0.0
+  0.0       0.0  0.846218  0.0          0.0       -0.740423   0.0      0.0
+  0.0       0.0  0.0       0.0       …  0.0        0.0        0.0      0.0
+  0.0       0.0  0.0       0.773656     0.0        0.0       -1.35675  0.0
+ -0.427986  0.0  0.0       0.0          0.0        1.32441    0.0      0.0
+  0.0       0.0  0.0       0.0          0.0        0.0        0.0      0.0
+  0.0       0.0  0.0       2.03278      0.0        0.0        0.0      0.0</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[79]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># convert a dense matrix to sparse matrix</span>
+<span class="n">sparse</span><span class="p">(</span><span class="n">Xfull</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[79]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>10×10 SparseMatrixCSC{Float64,Int64} with 13 stored entries:
+  [1 , 1]  =  0.802495
+  [8 , 1]  =  -0.427986
+  [3 , 3]  =  1.48789
+  [5 , 3]  =  0.846218
+  [7 , 4]  =  0.773656
+  [10, 4]  =  2.03278
+  [8 , 5]  =  -0.379637
+  [1 , 6]  =  0.574831
+  [3 , 7]  =  0.373771
+  [1 , 8]  =  -0.994052
+  [5 , 8]  =  -0.740423
+  [8 , 8]  =  1.32441
+  [7 , 9]  =  -1.35675</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[80]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># syntax for sparse linear algebra is same as dense linear algebra</span>
+<span class="n">β</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">*</span> <span class="n">β</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
     <div class="prompt output_prompt">Out[80]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>10×10 SparseMatrixCSC{Float64,Int64} with 12 stored entries:
-  [2 ,  1]  =  1.35145
-  [6 ,  1]  =  -0.432692
-  [1 ,  2]  =  0.374393
-  [4 ,  4]  =  0.707614
-  [9 ,  5]  =  1.17571
-  [3 ,  6]  =  0.455006
-  [6 ,  6]  =  -0.408252
-  [10,  6]  =  -1.04615
-  [9 ,  7]  =  1.34838
-  [4 ,  8]  =  0.743496
-  [7 , 10]  =  -1.33939
-  [10, 10]  =  0.969118</pre>
+<pre>10-element Array{Float64,1}:
+  0.3832738599029557
+  0.0
+  1.8616564033114806
+  0.0
+  0.10579420477827506
+  0.0
+ -0.5830899037415349
+  0.5167851519500277
+  0.0
+  2.0327767235319967</pre>
 </div>
 
 </div>
@@ -16946,8 +16465,8 @@ attr(,&#34;class&#34;)
 <div class="prompt input_prompt">In&nbsp;[81]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># convert to dense matrix; be cautious when dealing with big data</span>
-<span class="n">Xfull</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="kt">Matrix</span><span class="p">{</span><span class="kt">Float64</span><span class="p">},</span> <span class="n">X</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># many functions apply to sparse matrices as well</span>
+<span class="n">sum</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -16966,142 +16485,7 @@ attr(,&#34;class&#34;)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>10×10 Array{Float64,2}:
-  0.0       0.374393  0.0  0.0       …  0.0      0.0       0.0   0.0
-  1.35145   0.0       0.0  0.0          0.0      0.0       0.0   0.0
-  0.0       0.0       0.0  0.0          0.0      0.0       0.0   0.0
-  0.0       0.0       0.0  0.707614     0.0      0.743496  0.0   0.0
-  0.0       0.0       0.0  0.0          0.0      0.0       0.0   0.0
- -0.432692  0.0       0.0  0.0       …  0.0      0.0       0.0   0.0
-  0.0       0.0       0.0  0.0          0.0      0.0       0.0  -1.33939
-  0.0       0.0       0.0  0.0          0.0      0.0       0.0   0.0
-  0.0       0.0       0.0  0.0          1.34838  0.0       0.0   0.0
-  0.0       0.0       0.0  0.0          0.0      0.0       0.0   0.969118</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[82]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># convert a dense matrix to sparse matrix</span>
-<span class="n">sparse</span><span class="p">(</span><span class="n">Xfull</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[82]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>10×10 SparseMatrixCSC{Float64,Int64} with 12 stored entries:
-  [2 ,  1]  =  1.35145
-  [6 ,  1]  =  -0.432692
-  [1 ,  2]  =  0.374393
-  [4 ,  4]  =  0.707614
-  [9 ,  5]  =  1.17571
-  [3 ,  6]  =  0.455006
-  [6 ,  6]  =  -0.408252
-  [10,  6]  =  -1.04615
-  [9 ,  7]  =  1.34838
-  [4 ,  8]  =  0.743496
-  [7 , 10]  =  -1.33939
-  [10, 10]  =  0.969118</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[83]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># syntax for sparse linear algebra is same as dense linear algebra</span>
-<span class="n">β</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">X</span> <span class="o">*</span> <span class="n">β</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[83]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>10-element Array{Float64,1}:
-  0.3743926225517301
-  1.3514487029660478
-  0.45500621342172404
-  1.4511101813943639
-  0.0
- -0.840943361009018
- -1.3393860996864435
-  0.0
-  2.524084925703213
- -0.07703314780419313</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[84]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># many functions apply to sparse matrices as well</span>
-<span class="n">sum</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[84]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>3.8986800375374235</pre>
+<pre>4.3171964397332</pre>
 </div>
 
 </div>
@@ -17219,7 +16603,7 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[85]:</div>
+<div class="prompt input_prompt">In&nbsp;[82]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">function</span> <span class="n">myfunc</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -17240,18 +16624,18 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[85]:</div>
+    <div class="prompt output_prompt">Out[82]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
 <pre>5×3 Array{Float64,2}:
- 0.985811     0.710421   0.289238
- 3.42597e-5   0.790743   0.93964
- 0.214372     0.241586  -0.95857
- 0.00624871  -0.690391   0.517814
- 0.0762659   -0.527303   0.93597</pre>
+  0.0055533  0.961862  0.755072
+  0.785966   0.983531  0.369406
+  0.816043   0.272113  0.258941
+  0.858308   0.673003  0.389191
+ -0.4963     0.226569  0.0218142</pre>
 </div>
 
 </div>
@@ -17280,7 +16664,7 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[86]:</div>
+<div class="prompt input_prompt">In&nbsp;[83]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">map</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="p">),</span> <span class="n">x</span><span class="p">)</span>
@@ -17296,18 +16680,18 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[86]:</div>
+    <div class="prompt output_prompt">Out[83]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
 <pre>5×3 Array{Float64,2}:
- 0.985811     0.710421   0.289238
- 3.42597e-5   0.790743   0.93964
- 0.214372     0.241586  -0.95857
- 0.00624871  -0.690391   0.517814
- 0.0762659   -0.527303   0.93597</pre>
+  0.0055533  0.961862  0.755072
+  0.785966   0.983531  0.369406
+  0.816043   0.272113  0.258941
+  0.858308   0.673003  0.389191
+ -0.4963     0.226569  0.0218142</pre>
 </div>
 
 </div>
@@ -17318,7 +16702,7 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[87]:</div>
+<div class="prompt input_prompt">In&nbsp;[84]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">map</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">do</span> <span class="n">elem</span>
@@ -17337,18 +16721,18 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[87]:</div>
+    <div class="prompt output_prompt">Out[84]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
 <pre>5×3 Array{Float64,2}:
- 0.985811     0.710421   0.289238
- 3.42597e-5   0.790743   0.93964
- 0.214372     0.241586  -0.95857
- 0.00624871  -0.690391   0.517814
- 0.0762659   -0.527303   0.93597</pre>
+  0.0055533  0.961862  0.755072
+  0.785966   0.983531  0.369406
+  0.816043   0.272113  0.258941
+  0.858308   0.673003  0.389191
+ -0.4963     0.226569  0.0218142</pre>
 </div>
 
 </div>
@@ -17359,7 +16743,7 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[88]:</div>
+<div class="prompt input_prompt">In&nbsp;[85]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># Mapreduce</span>
@@ -17376,13 +16760,13 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[88]:</div>
+    <div class="prompt output_prompt">Out[85]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3.5318794413054544</pre>
+<pre>6.881074294551349</pre>
 </div>
 
 </div>
@@ -17393,7 +16777,7 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[89]:</div>
+<div class="prompt input_prompt">In&nbsp;[86]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># same as</span>
@@ -17410,13 +16794,13 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[89]:</div>
+    <div class="prompt output_prompt">Out[86]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3.5318794413054544</pre>
+<pre>6.881074294551349</pre>
 </div>
 
 </div>
@@ -17437,7 +16821,7 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[90]:</div>
+<div class="prompt input_prompt">In&nbsp;[87]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="p">[</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="kp">in</span> <span class="mi">1</span><span class="o">:</span><span class="mi">5</span><span class="p">,</span> <span class="n">j</span> <span class="kp">in</span> <span class="mi">1</span><span class="o">:</span><span class="mi">3</span><span class="p">]</span> <span class="c"># similar to Python</span>
@@ -17453,7 +16837,7 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[90]:</div>
+    <div class="prompt output_prompt">Out[87]:</div>
 
 
 
@@ -17499,7 +16883,7 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[91]:</div>
+<div class="prompt input_prompt">In&nbsp;[88]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">typeof</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span> <span class="n">typeof</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -17515,7 +16899,7 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[91]:</div>
+    <div class="prompt output_prompt">Out[88]:</div>
 
 
 
@@ -17532,7 +16916,7 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[92]:</div>
+<div class="prompt input_prompt">In&nbsp;[89]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">supertype</span><span class="p">(</span><span class="kt">Float64</span><span class="p">)</span>
@@ -17548,7 +16932,7 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[92]:</div>
+    <div class="prompt output_prompt">Out[89]:</div>
 
 
 
@@ -17565,7 +16949,7 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[93]:</div>
+<div class="prompt input_prompt">In&nbsp;[90]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">subtypes</span><span class="p">(</span><span class="kt">AbstractFloat</span><span class="p">)</span>
@@ -17581,7 +16965,7 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[93]:</div>
+    <div class="prompt output_prompt">Out[90]:</div>
 
 
 
@@ -17602,11 +16986,113 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[94]:</div>
+<div class="prompt input_prompt">In&nbsp;[91]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># Is Float64 a subtype of AbstractFloat?</span>
 <span class="kt">Float64</span> <span class="o">&lt;:</span> <span class="kt">AbstractFloat</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[91]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>true</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[92]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># On 64bit machine, Int == Int64</span>
+<span class="kt">Int</span> <span class="o">==</span> <span class="kt">Int64</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[92]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>true</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[93]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># convert to Float64</span>
+<span class="n">convert</span><span class="p">(</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[93]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>1.0</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[94]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># same as</span>
+<span class="kt">Float64</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -17625,7 +17111,7 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>true</pre>
+<pre>1.0</pre>
 </div>
 
 </div>
@@ -17639,8 +17125,8 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 <div class="prompt input_prompt">In&nbsp;[95]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># On 64bit machine, Int == Int64</span>
-<span class="kt">Int</span> <span class="o">==</span> <span class="kt">Int64</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># Float32 vector</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="kt">Float32</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -17659,7 +17145,12 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>true</pre>
+<pre>5-element Array{Float32,1}:
+  1.1923288
+ -1.8395027
+  0.22456877
+ -1.2211938
+  0.9869009</pre>
 </div>
 
 </div>
@@ -17674,7 +17165,7 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># convert to Float64</span>
-<span class="n">convert</span><span class="p">(</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">convert</span><span class="p">(</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">Float64</span><span class="p">},</span> <span class="n">x</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -17693,7 +17184,12 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>1.0</pre>
+<pre>5-element Array{Float64,1}:
+  1.1923288106918335
+ -1.8395026922225952
+  0.22456876933574677
+ -1.221193790435791
+  0.9869009256362915</pre>
 </div>
 
 </div>
@@ -17708,7 +17204,7 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># same as</span>
-<span class="kt">Float64</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="kt">Float64</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -17727,7 +17223,12 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>1.0</pre>
+<pre>5-element Array{Float64,1}:
+  1.1923288106918335
+ -1.8395026922225952
+  0.22456876933574677
+ -1.221193790435791
+  0.9869009256362915</pre>
 </div>
 
 </div>
@@ -17741,8 +17242,8 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 <div class="prompt input_prompt">In&nbsp;[98]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># Float32 vector</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="kt">Float32</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># convert Float64 to Int64</span>
+<span class="n">convert</span><span class="p">(</span><span class="kt">Int</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -17761,123 +17262,6 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>5-element Array{Float32,1}:
-  1.483434
-  1.3830602
-  2.6347678
- -1.0135212
-  1.1938977</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[99]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># convert to Float64</span>
-<span class="n">convert</span><span class="p">(</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">Float64</span><span class="p">},</span> <span class="n">x</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[99]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>5-element Array{Float64,1}:
-  1.4834339618682861
-  1.3830602169036865
-  2.634767770767212
- -1.0135211944580078
-  1.1938977241516113</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[100]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># same as</span>
-<span class="kt">Float64</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[100]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>5-element Array{Float64,1}:
-  1.4834339618682861
-  1.3830602169036865
-  2.634767770767212
- -1.0135211944580078
-  1.1938977241516113</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[101]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># convert Float64 to Int64</span>
-<span class="n">convert</span><span class="p">(</span><span class="kt">Int</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[101]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
 <pre>1</pre>
 </div>
 
@@ -17889,7 +17273,7 @@ Multiple outputs can be returned as a <strong>tuple</strong>, e.g., <code>return
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[102]:</div>
+<div class="prompt input_prompt">In&nbsp;[99]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">convert</span><span class="p">(</span><span class="kt">Int</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span> <span class="c"># should use round(1.5)</span>
@@ -17915,7 +17299,7 @@ InexactError: Int64(1.5)
 Stacktrace:
  [1] Int64 at ./float.jl:710 [inlined]
  [2] convert(::Type{Int64}, ::Float64) at ./number.jl:7
- [3] top-level scope at In[102]:1</pre>
+ [3] top-level scope at In[99]:1</pre>
 </div>
 </div>
 
@@ -17925,7 +17309,7 @@ Stacktrace:
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[103]:</div>
+<div class="prompt input_prompt">In&nbsp;[100]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">round</span><span class="p">(</span><span class="kt">Int</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span>
@@ -17941,7 +17325,7 @@ Stacktrace:
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[103]:</div>
+    <div class="prompt output_prompt">Out[100]:</div>
 
 
 
@@ -17971,7 +17355,7 @@ Stacktrace:
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[104]:</div>
+<div class="prompt input_prompt">In&nbsp;[101]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">x</span>
@@ -17987,7 +17371,7 @@ Stacktrace:
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[104]:</div>
+    <div class="prompt output_prompt">Out[101]:</div>
 
 
 
@@ -18004,7 +17388,7 @@ Stacktrace:
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[105]:</div>
+<div class="prompt input_prompt">In&nbsp;[102]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">g</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span>
@@ -18020,7 +17404,7 @@ Stacktrace:
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[105]:</div>
+    <div class="prompt output_prompt">Out[102]:</div>
 
 
 
@@ -18045,7 +17429,7 @@ Stacktrace:
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[106]:</div>
+<div class="prompt input_prompt">In&nbsp;[103]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">g</span><span class="p">(</span><span class="s">&quot;hello world&quot;</span><span class="p">)</span>
@@ -18071,8 +17455,8 @@ Closest candidates are:
   +(::Any, ::Any, !Matched::Any, !Matched::Any...) at operators.jl:529
 
 Stacktrace:
- [1] g(::String) at ./In[104]:1
- [2] top-level scope at In[106]:1</pre>
+ [1] g(::String) at ./In[101]:1
+ [2] top-level scope at In[103]:1</pre>
 </div>
 </div>
 
@@ -18092,7 +17476,7 @@ Stacktrace:
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[107]:</div>
+<div class="prompt input_prompt">In&nbsp;[104]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="o">::</span><span class="kt">Float64</span><span class="p">)</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">x</span>
@@ -18108,7 +17492,7 @@ Stacktrace:
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[107]:</div>
+    <div class="prompt output_prompt">Out[104]:</div>
 
 
 
@@ -18135,7 +17519,7 @@ Stacktrace:
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[108]:</div>
+<div class="prompt input_prompt">In&nbsp;[105]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="o">::</span><span class="kt">Number</span><span class="p">)</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">x</span>
@@ -18151,7 +17535,7 @@ Stacktrace:
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[108]:</div>
+    <div class="prompt output_prompt">Out[105]:</div>
 
 
 
@@ -18194,7 +17578,7 @@ Stacktrace:
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[109]:</div>
+<div class="prompt input_prompt">In&nbsp;[106]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">methods</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
@@ -18210,12 +17594,12 @@ Stacktrace:
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[109]:</div>
+    <div class="prompt output_prompt">Out[106]:</div>
 
 
 
 <div class="output_html rendered_html output_subarea output_execute_result">
-# 3 methods for generic function <b>g</b>:<ul><li> g(x::<b>Float64</b>) in Main at In[107]:1</li> <li> g(x::<b>Number</b>) in Main at In[108]:1</li> <li> g(x) in Main at In[104]:1</li> </ul>
+# 3 methods for generic function <b>g</b>:<ul><li> g(x::<b>Float64</b>) in Main at In[104]:1</li> <li> g(x::<b>Number</b>) in Main at In[105]:1</li> <li> g(x) in Main at In[101]:1</li> </ul>
 </div>
 
 </div>
@@ -18239,7 +17623,7 @@ Stacktrace:
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[110]:</div>
+<div class="prompt input_prompt">In&nbsp;[107]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># an Int64 input</span>
@@ -18256,12 +17640,12 @@ Stacktrace:
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[110]:</div>
+    <div class="prompt output_prompt">Out[107]:</div>
 
 
 
 <div class="output_html rendered_html output_subarea output_execute_result">
-g(x::<b>Number</b>) in Main at In[108]:1
+g(x::<b>Number</b>) in Main at In[105]:1
 </div>
 
 </div>
@@ -18272,7 +17656,7 @@ g(x::<b>Number</b>) in Main at In[108]:1
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[111]:</div>
+<div class="prompt input_prompt">In&nbsp;[108]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># a Vector{Float64} input</span>
@@ -18289,12 +17673,12 @@ g(x::<b>Number</b>) in Main at In[108]:1
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[111]:</div>
+    <div class="prompt output_prompt">Out[108]:</div>
 
 
 
 <div class="output_html rendered_html output_subarea output_execute_result">
-g(x) in Main at In[104]:1
+g(x) in Main at In[101]:1
 </div>
 
 </div>
@@ -18329,7 +17713,7 @@ g(x) in Main at In[104]:1
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[112]:</div>
+<div class="prompt input_prompt">In&nbsp;[109]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">g</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">g</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
@@ -18345,7 +17729,7 @@ g(x) in Main at In[104]:1
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[112]:</div>
+    <div class="prompt output_prompt">Out[109]:</div>
 
 
 
@@ -18370,7 +17754,7 @@ g(x) in Main at In[104]:1
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[113]:</div>
+<div class="prompt input_prompt">In&nbsp;[110]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@code_lowered</span> <span class="n">g</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
@@ -18386,7 +17770,7 @@ g(x) in Main at In[104]:1
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[113]:</div>
+    <div class="prompt output_prompt">Out[110]:</div>
 
 
 
@@ -18414,7 +17798,7 @@ g(x) in Main at In[104]:1
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[114]:</div>
+<div class="prompt input_prompt">In&nbsp;[111]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@code_warntype</span> <span class="n">g</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
@@ -18451,7 +17835,7 @@ Body<span class="ansi-cyan-fg">::Int64</span>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[115]:</div>
+<div class="prompt input_prompt">In&nbsp;[112]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@code_warntype</span> <span class="n">g</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
@@ -18496,7 +17880,7 @@ Body<span class="ansi-cyan-fg">::Float64</span>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[116]:</div>
+<div class="prompt input_prompt">In&nbsp;[113]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@code_llvm</span> <span class="n">g</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
@@ -18517,8 +17901,8 @@ Body<span class="ansi-cyan-fg">::Float64</span>
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-;  @ In[108]:1 within `g&#39;
-define i64 @julia_g_19464(i64) {
+;  @ In[105]:1 within `g&#39;
+define i64 @julia_g_19421(i64) {
 top:
 ; ┌ @ int.jl:53 within `+&#39;
    %1 = shl i64 %0, 1
@@ -18535,7 +17919,7 @@ top:
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[117]:</div>
+<div class="prompt input_prompt">In&nbsp;[114]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@code_llvm</span> <span class="n">g</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
@@ -18556,8 +17940,8 @@ top:
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-;  @ In[107]:1 within `g&#39;
-define double @julia_g_19465(double) {
+;  @ In[104]:1 within `g&#39;
+define double @julia_g_19422(double) {
 top:
 ; ┌ @ float.jl:401 within `+&#39;
    %1 = fadd double %0, %0
@@ -18588,7 +17972,7 @@ top:
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[118]:</div>
+<div class="prompt input_prompt">In&nbsp;[115]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@code_native</span> <span class="n">g</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
@@ -18609,8 +17993,8 @@ top:
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>	.section	__TEXT,__text,regular,pure_instructions
-; ┌ @ In[108]:1 within `g&#39;
-; │┌ @ In[108]:1 within `+&#39;
+; ┌ @ In[105]:1 within `g&#39;
+; │┌ @ In[105]:1 within `+&#39;
 	leaq	(%rdi,%rdi), %rax
 ; │└
 	retq
@@ -18627,7 +18011,7 @@ top:
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[119]:</div>
+<div class="prompt input_prompt">In&nbsp;[116]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@code_native</span> <span class="n">g</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
@@ -18648,8 +18032,8 @@ top:
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>	.section	__TEXT,__text,regular,pure_instructions
-; ┌ @ In[107]:1 within `g&#39;
-; │┌ @ In[107]:1 within `+&#39;
+; ┌ @ In[104]:1 within `g&#39;
+; │┌ @ In[104]:1 within `+&#39;
 	vaddsd	%xmm0, %xmm0, %xmm0
 ; │└
 	retq
@@ -18674,7 +18058,7 @@ top:
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[120]:</div>
+<div class="prompt input_prompt">In&nbsp;[117]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># a function defined earlier</span>
@@ -18706,14 +18090,14 @@ top:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>  0.032966 seconds (5.43 k allocations: 251.352 KiB)
+<pre>  0.031800 seconds (5.43 k allocations: 251.352 KiB)
 </pre>
 </div>
 </div>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[120]:</div>
+    <div class="prompt output_prompt">Out[117]:</div>
 
 
 
@@ -18730,7 +18114,7 @@ top:
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[121]:</div>
+<div class="prompt input_prompt">In&nbsp;[118]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@time</span> <span class="n">tally</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
@@ -18750,14 +18134,14 @@ top:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>  0.026423 seconds (1 allocation: 16 bytes)
+<pre>  0.025523 seconds (1 allocation: 16 bytes)
 </pre>
 </div>
 </div>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[121]:</div>
+    <div class="prompt output_prompt">Out[118]:</div>
 
 
 
@@ -18782,7 +18166,7 @@ top:
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[122]:</div>
+<div class="prompt input_prompt">In&nbsp;[119]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">BenchmarkTools</span>
@@ -18800,7 +18184,7 @@ top:
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[122]:</div>
+    <div class="prompt output_prompt">Out[119]:</div>
 
 
 
@@ -18810,12 +18194,12 @@ top:
   memory estimate:  0 bytes
   allocs estimate:  0
   --------------
-  minimum time:     24.671 ms (0.00% GC)
-  median time:      24.835 ms (0.00% GC)
-  mean time:        24.923 ms (0.00% GC)
-  maximum time:     30.763 ms (0.00% GC)
+  minimum time:     24.679 ms (0.00% GC)
+  median time:      25.243 ms (0.00% GC)
+  mean time:        25.531 ms (0.00% GC)
+  maximum time:     30.891 ms (0.00% GC)
   --------------
-  samples:          201
+  samples:          196
   evals/sample:     1</pre>
 </div>
 
@@ -18835,7 +18219,7 @@ top:
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[123]:</div>
+<div class="prompt input_prompt">In&nbsp;[120]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">Profile</span>
@@ -18861,49 +18245,49 @@ top:
 <div class="output_subarea output_stream output_stdout output_text">
 <pre> Count  Overhead File                    Line Function
  =====  ======== ====                    ==== ========
-  1443         0 In[120]                    5 tally(::Array{Float64,1})
-     2         0 @Base/array.jl           795 getindex
-  1443         0 @Base/array.jl           763 iterate
-     2         0 @Base/array.jl           360 similar
-     2         2 @Base/boot.jl            405 Array
-  1566       116 @Base/boot.jl            331 eval
-     1         0 ...r/inferencestate.jl   113 Core.Compiler.InferenceState(::...
-     4         0 ...ompiler/optimize.jl   169 optimize(::Core.Compiler.Optimi...
-     1         0 ...ler/ssair/driver.jl   102 just_construct_ssa(::Core.CodeI...
-     2         0 ...ler/ssair/driver.jl   107 just_construct_ssa(::Core.CodeI...
-     3         0 ...ler/ssair/driver.jl   112 run_passes(::Core.CodeInfo, ::I...
-     1         0 ...ler/ssair/driver.jl   121 run_passes(::Core.CodeInfo, ::I...
-     1         0 ...ompiler/ssair/ir.jl   297 getindex(::Core.Compiler.UseRef)
-     1         0 ...ompiler/ssair/ir.jl   391 iterate(::Core.Compiler.UseRefI...
-     1         0 ...ompiler/ssair/ir.jl  1094 iterate
-     1         1 ...ompiler/ssair/ir.jl  1130 iterate(::Core.Compiler.Increme...
-     1         0 ...ler/ssair/passes.jl   535 getfield_elim_pass!(::Core.Comp...
-     1         0 ...r/ssair/slot2ssa.jl   737 construct_ssa!(::Core.CodeInfo,...
-     1         0 ...r/ssair/slot2ssa.jl   868 construct_ssa!(::Core.CodeInfo,...
-     1         0 ...r/ssair/slot2ssa.jl   496 domsort_ssa!(::Core.Compiler.IR...
-     1         0 ...r/ssair/slot2ssa.jl   169 fixemup!(::Core.Compiler.var&#34;#2...
-     1         0 ...r/ssair/slot2ssa.jl   182 rename_uses!
-     1         0 ...r/ssair/slot2ssa.jl    51 scan_slot_def_use(::Int64, ::Co...
+  1416         0 In[117]                    5 tally(::Array{Float64,1})
+  1415         0 @Base/array.jl           763 iterate
+     1         1 @Base/array.jl          1081 sizehint!
+     1         0 @Base/bitset.jl           18 BitSet
+  1545       122 @Base/boot.jl            331 eval
+     1         0 .../inferenceresult.jl    12 InferenceResult
+     1         1 .../inferenceresult.jl    64 matching_cache_argtypes(::Core....
+     1         0 ...r/inferencestate.jl    80 Core.Compiler.InferenceState(::...
+     1         0 ...r/inferencestate.jl   116 Core.Compiler.InferenceState(::...
+     3         0 ...ompiler/optimize.jl   169 optimize(::Core.Compiler.Optimi...
+     1         0 ...ompiler/optimize.jl   227 optimize(::Core.Compiler.Optimi...
+     1         0 ...er/ssair/domtree.jl   130 construct_domtree(::Core.Compil...
+     1         1 ...er/ssair/domtree.jl    42 update_level!(::Array{Core.Comp...
+     1         0 ...ler/ssair/driver.jl   103 just_construct_ssa(::Core.CodeI...
+     1         0 ...ler/ssair/driver.jl   107 just_construct_ssa(::Core.CodeI...
+     2         0 ...ler/ssair/driver.jl   112 run_passes(::Core.CodeInfo, ::I...
+     1         0 ...ler/ssair/driver.jl   115 run_passes(::Core.CodeInfo, ::I...
+     1         0 ...ompiler/ssair/ir.jl  1296 compact!
+     1         0 ...ompiler/ssair/ir.jl  1299 compact!(::Core.Compiler.IRCode...
+     1         0 ...ompiler/ssair/ir.jl  1285 finish
+     1         0 ...ompiler/ssair/ir.jl  1170 maybe_erase_unused!
+     1         0 ...ompiler/ssair/ir.jl  1175 maybe_erase_unused!(::Array{Int...
+     1         0 ...ompiler/ssair/ir.jl  1262 simple_dce!(::Core.Compiler.Inc...
+     1         1 ...er/ssair/queries.jl     ? stmt_effect_free(::Any, ::Any, ...
+     1         1 ...r/ssair/slot2ssa.jl   789 construct_ssa!(::Core.CodeInfo,...
      1         0 ...mpiler/typeinfer.jl   153 finish
-     1         1 ...mpiler/typeinfer.jl   295 type_annotate!(::Core.Compiler....
+     1         1 ...mpiler/typeinfer.jl   299 type_annotate!(::Core.Compiler....
      1         0 ...mpiler/typeinfer.jl    21 typeinf(::Core.Compiler.Inferen...
      4         0 ...mpiler/typeinfer.jl    33 typeinf(::Core.Compiler.Inferen...
-     1         0 ...mpiler/typeinfer.jl   572 typeinf_ext(::Core.MethodInstan...
+     2         0 ...mpiler/typeinfer.jl   572 typeinf_ext(::Core.MethodInstan...
      5         0 ...mpiler/typeinfer.jl   574 typeinf_ext(::Core.MethodInstan...
-     1         1 ...mpiler/typeinfer.jl   603 typeinf_ext(::Core.MethodInstan...
-     6         0 ...mpiler/typeinfer.jl   605 typeinf_ext(::Core.MethodInstan...
-     1         1 ...mpiler/utilities.jl   110 retrieve_code_info
-  1566         0 @Base/essentials.jl      712 #invokelatest#1
-  1566         0 @Base/essentials.jl      711 invokelatest
-     1         1 @Base/int.jl              49 &lt;
-  1443      1443 @Base/int.jl             409 &lt;
-  1443         0 @Base/int.jl             416 &lt;
-     1         0 @Base/operators.jl       294 &gt;
-  1566         0 @Base/task.jl            358 (::IJulia.var&#34;#15#18&#34;)()
-  1566         0 ...ia/src/eventloop.jl     8 eventloop(::ZMQ.Socket)
-  1566         0 .../execute_request.jl    67 execute_request(::ZMQ.Socket, :...
-  1566         0 .../SoftGlobalScope.jl   218 softscope_include_string(::Modu...
-Total snapshots: 6301
+     7         0 ...mpiler/typeinfer.jl   605 typeinf_ext(::Core.MethodInstan...
+  1545         0 @Base/essentials.jl      712 #invokelatest#1
+  1545         0 @Base/essentials.jl      711 invokelatest
+     1         1 @Base/essentials.jl      603 iterate(::Core.SimpleVector, ::...
+     1         1 @Base/float.jl           401 +
+  1415      1415 @Base/int.jl             409 &lt;
+  1415         0 @Base/int.jl             416 &lt;
+  1545         0 @Base/task.jl            358 (::IJulia.var&#34;#15#18&#34;)()
+  1545         0 ...ia/src/eventloop.jl     8 eventloop(::ZMQ.Socket)
+  1545         0 .../execute_request.jl    67 execute_request(::ZMQ.Socket, :...
+  1545         0 .../SoftGlobalScope.jl   218 softscope_include_string(::Modu...
+Total snapshots: 6202
 </pre>
 </div>
 </div>
@@ -18934,7 +18318,7 @@ Total snapshots: 6301
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[124]:</div>
+<div class="prompt input_prompt">In&nbsp;[121]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="p">;</span><span class="n">cat</span> <span class="n">bar</span><span class="o">.</span><span class="n">jl</span>
@@ -18994,7 +18378,7 @@ wrapper()
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[125]:</div>
+<div class="prompt input_prompt">In&nbsp;[122]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c">#;julia --track-allocation=user bar.jl</span>
@@ -19015,7 +18399,7 @@ wrapper()
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[126]:</div>
+<div class="prompt input_prompt">In&nbsp;[123]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="p">;</span><span class="n">cat</span> <span class="n">bar</span><span class="o">.</span><span class="n">jl</span><span class="o">.</span><span class="mf">51116.</span><span class="n">mem</span>

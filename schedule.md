@@ -7,6 +7,10 @@ title: Biostat 257
 
 BIOSTAT 257 tentative schedule and handouts (expect frequent updates)
 
+Zoom link: <https://ucla.zoom.us/j/507925583>
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ucla-biostat-257-2020spring/ucla-biostat-257-2020spring.github.io/master)
+
 Readings:  
 
 * [_50 years of data sicence_](./readings/Donoho15FiftyYearsDataScience.pdf) by David Donoho (2015)  
@@ -17,8 +21,8 @@ Readings:
 
 | Week | Tuesday | Thursday | Homework |
 |:-----------|:-----------|:------------|:------------|
-| 1 | [3/31](https://ucla-biostat-257-2020spring.github.io/biostat257spring2020/2020/03/31/week1-day1.html) course introduction and logistics \[slides: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ucla-biostat-257-2020spring/ucla-biostat-257-2020spring.github.io/master?filepath=slides%2F01-intro%2Fintro.ipynb), [HTML](./slides/01-intro/intro.html)\] | 4/2 computer languages \[slides: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ucla-biostat-257-2020spring/ucla-biostat-257-2020spring.github.io/master?filepath=slides%2F02-langs%2Flangs.ipynb), [HTML](./slides/02-langs/langs.html)\], Julia intro. \[slides: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ucla-biostat-257-2020spring/ucla-biostat-257-2020spring.github.io/master?filepath=slides%2F03-juliaintro%2Fjuliaintro.ipynb), [HTML](./slides/03-juliaintro/juliaintro.html)\] | |
-| 2 | 4/7 plotting in Julia \[slides: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ucla-biostat-257-2020spring/ucla-biostat-257-2020spring.github.io/master?filepath=slides%2F04-juliaplot%2Fjuliaplot.ipynb), [HTML](./slides/04-juliaplot/juliaplot.html)\], Jupyter Notebook \[slides: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ucla-biostat-257-2020spring/ucla-biostat-257-2020spring.github.io/master?filepath=slides%2F05-jupyter%2Fjupyter.ipynb), [HTML](./slides/05-jupyter/jupyter.html)\] | 4/9 computer arithmetic, algo. intro. | HW1 |
+| 1 | [3/31](https://ucla-biostat-257-2020spring.github.io/biostat257spring2020/2020/03/31/week1-day1.html) course introduction and logistics \[slides: [Binder](https://mybinder.org/v2/gh/ucla-biostat-257-2020spring/ucla-biostat-257-2020spring.github.io/master?filepath=slides%2F01-intro%2Fintro.ipynb), [html](./slides/01-intro/intro.html)\] | 4/2 computer languages \[slides: [Binder](https://mybinder.org/v2/gh/ucla-biostat-257-2020spring/ucla-biostat-257-2020spring.github.io/master?filepath=slides%2F02-langs%2Flangs.ipynb), [html](./slides/02-langs/langs.html)\], Julia intro. \[slides: [Binder](https://mybinder.org/v2/gh/ucla-biostat-257-2020spring/ucla-biostat-257-2020spring.github.io/master?filepath=slides%2F03-juliaintro%2Fjuliaintro.ipynb), [html](./slides/03-juliaintro/juliaintro.html)\] | |
+| 2 | 4/7 plotting in Julia \[slides: [Binder](https://mybinder.org/v2/gh/ucla-biostat-257-2020spring/ucla-biostat-257-2020spring.github.io/master?filepath=slides%2F04-juliaplot%2Fjuliaplots.ipynb), [html](./slides/04-juliaplot/juliaplots.html)\], Jupyter Notebook \[slides: [Binder](https://mybinder.org/v2/gh/ucla-biostat-257-2020spring/ucla-biostat-257-2020spring.github.io/master?filepath=slides%2F05-jupyter%2Fjupyter.ipynb), [html](./slides/05-jupyter/jupyter.html)\] | 4/9 computer arithmetic, algo. intro. | HW1 |
 | 3 | 4/14 BLAS, NLA on GPU, triangular systems | 4/16 GE/LU | HW2 |
 | 4 | 4/21 Cholesky, QR (GS, Householder, Givens) | 4/23 Sweep operator | |
 | 5 | 4/28 summary of linear regression, condition number, iterative methods intro | 4/30 conjugate gradient, easy linear system | HW3 |

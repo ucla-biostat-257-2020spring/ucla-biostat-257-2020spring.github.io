@@ -1,0 +1,7 @@
+dependencies:
+  - python=3.7
+  - matplotlib
+  - numpy
+  - pip
+  - pip:
+      - julia

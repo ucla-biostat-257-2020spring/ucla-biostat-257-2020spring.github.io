@@ -1,2 +1,5 @@
-install.packages("tidyverse")
-install.packages("rmarkdown")
+install.packages("Matrix")
+install.packages("bench")
+install.packages("dplyr")
+install.packages("ggplot2")
+

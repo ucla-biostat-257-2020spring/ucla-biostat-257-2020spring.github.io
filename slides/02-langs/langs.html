@@ -13221,7 +13221,88 @@ $$</p>
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># this chunk is needed to run properly in Binder</span>
+<span class="k">if</span> <span class="n">Base</span><span class="o">.</span><span class="n">Sys</span><span class="o">.</span><span class="n">islinux</span><span class="p">()</span>
+    <span class="c"># install R via Conda</span>
+    <span class="k">using</span> <span class="n">Conda</span>
+    <span class="nb">ENV</span><span class="p">[</span><span class="s">&quot;R_HOME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;*&quot;</span>  
+    <span class="k">using</span> <span class="n">Pkg</span>
+    <span class="n">Pkg</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s">&quot;RCall&quot;</span><span class="p">)</span>
+    <span class="c"># install R packages: Matrix, bench</span>
+    <span class="k">using</span> <span class="n">Conda</span>
+    <span class="n">Conda</span><span class="o">.</span><span class="n">add</span><span class="p">(</span> <span class="s">&quot;r-bench&quot;</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="s">&quot;conda-forge&quot;</span><span class="p">)</span> 
+    <span class="n">Conda</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;r-Matrix&quot;</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="s">&quot;conda-forge&quot;</span><span class="p">)</span> 
+    <span class="n">Conda</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+<span class="k">end</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">RCall</span>
+
+<span class="c"># show R information</span>
+<span class="n">R</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">sessionInfo()</span>
+<span class="s">&quot;&quot;&quot;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[2]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>RObject{VecSxp}
+R version 3.6.2 (2019-12-12)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS Catalina 10.15.3
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+loaded via a namespace (and not attached):
+[1] compiler_3.6.2
+</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># define a function for Gibbs sampling</span>
+<span class="k">using</span> <span class="n">RCall</span>
 
 <span class="n">R</span><span class="s">&quot;&quot;&quot;</span>
 <span class="s">library(Matrix)</span>
@@ -13251,7 +13332,7 @@ $$</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[1]:</div>
+    <div class="prompt output_prompt">Out[3]:</div>
 
 
 
@@ -13290,7 +13371,7 @@ function (N, thin)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">R</span><span class="s">&quot;&quot;&quot;</span>
@@ -13308,7 +13389,7 @@ function (N, thin)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[2]:</div>
+    <div class="prompt output_prompt">Out[4]:</div>
 
 
 
@@ -13316,7 +13397,7 @@ function (N, thin)
 <div class="output_text output_subarea output_execute_result">
 <pre>RObject{RealSxp}
    user  system elapsed 
- 25.976   1.782  28.269 
+ 22.071   1.836  23.935 
 </pre>
 </div>
 
@@ -13338,7 +13419,7 @@ function (N, thin)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">Distributions</span>
@@ -13368,7 +13449,7 @@ function (N, thin)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[3]:</div>
+    <div class="prompt output_prompt">Out[5]:</div>
 
 
 
@@ -13393,7 +13474,7 @@ function (N, thin)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">jgibbs</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span> <span class="c"># warm-up</span>
@@ -13410,13 +13491,13 @@ function (N, thin)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[4]:</div>
+    <div class="prompt output_prompt">Out[6]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>0.411166215</pre>
+<pre>0.368470482</pre>
 </div>
 
 </div>
@@ -13451,7 +13532,7 @@ function (N, thin)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">Random</span> <span class="c"># standard library</span>
@@ -13475,14 +13556,14 @@ function (N, thin)
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>  0.035964 seconds (76.55 k allocations: 3.836 MiB)
+<pre>  0.024937 seconds (76.55 k allocations: 3.836 MiB)
 </pre>
 </div>
 </div>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[5]:</div>
+    <div class="prompt output_prompt">Out[7]:</div>
 
 
 
@@ -13499,7 +13580,7 @@ function (N, thin)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@time</span> <span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c"># no compilation time after first run</span>
@@ -13519,14 +13600,14 @@ function (N, thin)
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>  0.000565 seconds (1 allocation: 16 bytes)
+<pre>  0.000490 seconds (1 allocation: 16 bytes)
 </pre>
 </div>
 </div>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[6]:</div>
+    <div class="prompt output_prompt">Out[8]:</div>
 
 
 
@@ -13543,7 +13624,7 @@ function (N, thin)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># just the runtime</span>
@@ -13560,13 +13641,13 @@ function (N, thin)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[7]:</div>
+    <div class="prompt output_prompt">Out[9]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>0.00073795</pre>
+<pre>0.000484379</pre>
 </div>
 
 </div>
@@ -13577,7 +13658,7 @@ function (N, thin)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># just the allocation</span>
@@ -13594,7 +13675,7 @@ function (N, thin)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[8]:</div>
+    <div class="prompt output_prompt">Out[10]:</div>
 
 
 
@@ -13619,7 +13700,7 @@ function (N, thin)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">BenchmarkTools</span>
@@ -13637,7 +13718,7 @@ function (N, thin)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[9]:</div>
+    <div class="prompt output_prompt">Out[11]:</div>
 
 
 
@@ -13647,12 +13728,12 @@ function (N, thin)
   memory estimate:  0 bytes
   allocs estimate:  0
   --------------
-  minimum time:     274.836 μs (0.00% GC)
-  median time:      444.936 μs (0.00% GC)
-  mean time:        496.362 μs (0.00% GC)
-  maximum time:     3.650 ms (0.00% GC)
+  minimum time:     259.994 μs (0.00% GC)
+  median time:      294.616 μs (0.00% GC)
+  mean time:        311.813 μs (0.00% GC)
+  maximum time:     903.038 μs (0.00% GC)
   --------------
-  samples:          9915
+  samples:          10000
   evals/sample:     1</pre>
 </div>
 
@@ -13664,7 +13745,7 @@ function (N, thin)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">Statistics</span> <span class="c"># standard library</span>
@@ -13682,13 +13763,13 @@ function (N, thin)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[10]:</div>
+    <div class="prompt output_prompt">Out[12]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>0.444936</pre>
+<pre>0.294616</pre>
 </div>
 
 </div>
@@ -13707,7 +13788,7 @@ function (N, thin)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">Libdl</span>
@@ -13746,7 +13827,7 @@ function (N, thin)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[11]:</div>
+    <div class="prompt output_prompt">Out[13]:</div>
 
 
 
@@ -13763,88 +13844,11 @@ function (N, thin)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># make sure it gives same answer</span>
 <span class="n">c_sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[12]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>500060.340723512</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">bm</span> <span class="o">=</span> <span class="nd">@benchmark</span> <span class="n">c_sum</span><span class="p">(</span><span class="o">$</span><span class="n">x</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[13]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>BenchmarkTools.Trial: 
-  memory estimate:  0 bytes
-  allocs estimate:  0
-  --------------
-  minimum time:     1.221 ms (0.00% GC)
-  median time:      1.500 ms (0.00% GC)
-  mean time:        1.551 ms (0.00% GC)
-  maximum time:     7.370 ms (0.00% GC)
-  --------------
-  samples:          3199
-  evals/sample:     1</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># store median runtime (in milliseconds)</span>
-<span class="n">benchmark_result</span><span class="p">[</span><span class="s">&quot;C&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">median</span><span class="p">(</span><span class="n">bm</span><span class="o">.</span><span class="n">times</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1e6</span>
 </pre></div>
 
     </div>
@@ -13863,7 +13867,7 @@ function (N, thin)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>1.500243</pre>
+<pre>500060.340723512</pre>
 </div>
 
 </div>
@@ -13871,27 +13875,13 @@ function (N, thin)
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="R,-buildin-sum">R, buildin sum<a class="anchor-link" href="#R,-buildin-sum">&#182;</a></h3><p>Next we compare to the build in <code>sum</code> function in R, which is implemented using C.</p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">RCall</span>
-
-<span class="n">R</span><span class="s">&quot;&quot;&quot;</span>
-<span class="s">library(microbenchmark)</span>
-<span class="s">y &lt;- </span><span class="si">$x</span><span class="s"></span>
-<span class="s">rbm &lt;- microbenchmark(sum(y))</span>
-<span class="s">&quot;&quot;&quot;</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">bm</span> <span class="o">=</span> <span class="nd">@benchmark</span> <span class="n">c_sum</span><span class="p">(</span><span class="o">$</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13910,11 +13900,17 @@ function (N, thin)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>RObject{VecSxp}
-Unit: milliseconds
-   expr      min      lq   mean   median       uq      max neval
- sum(y) 1.238856 1.29021 1.4202 1.341087 1.485662 2.365598   100
-</pre>
+<pre>BenchmarkTools.Trial: 
+  memory estimate:  0 bytes
+  allocs estimate:  0
+  --------------
+  minimum time:     1.067 ms (0.00% GC)
+  median time:      1.142 ms (0.00% GC)
+  mean time:        1.163 ms (0.00% GC)
+  maximum time:     1.854 ms (0.00% GC)
+  --------------
+  samples:          4286
+  evals/sample:     1</pre>
 </div>
 
 </div>
@@ -13929,8 +13925,7 @@ Unit: milliseconds
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># store median runtime (in milliseconds)</span>
-<span class="nd">@rget</span> <span class="n">rbm</span> <span class="c"># dataframe</span>
-<span class="n">benchmark_result</span><span class="p">[</span><span class="s">&quot;R builtin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">median</span><span class="p">(</span><span class="n">rbm</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="o">:</span><span class="n">time</span><span class="p">])</span> <span class="o">/</span> <span class="mf">1e6</span>
+<span class="n">benchmark_result</span><span class="p">[</span><span class="s">&quot;C&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">median</span><span class="p">(</span><span class="n">bm</span><span class="o">.</span><span class="n">times</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1e6</span>
 </pre></div>
 
     </div>
@@ -13949,7 +13944,7 @@ Unit: milliseconds
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>1.341087</pre>
+<pre>1.1415465</pre>
 </div>
 
 </div>
@@ -13961,7 +13956,7 @@ Unit: milliseconds
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="R,-handwritten-loop">R, handwritten loop<a class="anchor-link" href="#R,-handwritten-loop">&#182;</a></h3><p>Handwritten loop in R is much slower.</p>
+<h3 id="R,-buildin-sum">R, buildin sum<a class="anchor-link" href="#R,-buildin-sum">&#182;</a></h3><p>Next we compare to the build in <code>sum</code> function in R, which is implemented using C.</p>
 
 </div>
 </div>
@@ -13974,16 +13969,9 @@ Unit: milliseconds
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">RCall</span>
 
 <span class="n">R</span><span class="s">&quot;&quot;&quot;</span>
-<span class="s">sum_r &lt;- function(x) {</span>
-<span class="s">  s &lt;- 0</span>
-<span class="s">  for (xi in x) {</span>
-<span class="s">    s &lt;- s + xi</span>
-<span class="s">  }</span>
-<span class="s">  s</span>
-<span class="s">}</span>
-<span class="s">library(microbenchmark)</span>
+<span class="s">library(bench)</span>
 <span class="s">y &lt;- </span><span class="si">$x</span><span class="s"></span>
-<span class="s">rbm &lt;- microbenchmark(sum_r(y))</span>
+<span class="s">rbm &lt;- bench::mark(sum(y))</span>
 <span class="s">&quot;&quot;&quot;</span>
 </pre></div>
 
@@ -14004,9 +13992,11 @@ Unit: milliseconds
 
 <div class="output_text output_subarea output_execute_result">
 <pre>RObject{VecSxp}
-Unit: milliseconds
-     expr      min       lq     mean median       uq      max neval
- sum_r(y) 17.46106 18.40698 19.24281 18.958 19.82638 26.13243   100
+# A tibble: 1 x 13
+  expression   min median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time
+  &lt;bch:expr&gt; &lt;bch&gt; &lt;bch:&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;   &lt;bch:tm&gt;
+1 sum(y)     881µs  943µs     1041.        0B        0   521     0      501ms
+# … with 4 more variables: result &lt;list&gt;, memory &lt;list&gt;, time &lt;list&gt;, gc &lt;list&gt;
 </pre>
 </div>
 
@@ -14023,7 +14013,7 @@ Unit: milliseconds
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># store median runtime (in milliseconds)</span>
 <span class="nd">@rget</span> <span class="n">rbm</span> <span class="c"># dataframe</span>
-<span class="n">benchmark_result</span><span class="p">[</span><span class="s">&quot;R loop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">median</span><span class="p">(</span><span class="n">rbm</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="o">:</span><span class="n">time</span><span class="p">])</span> <span class="o">/</span> <span class="mf">1e6</span>
+<span class="n">benchmark_result</span><span class="p">[</span><span class="s">&quot;R builtin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">median</span><span class="p">(</span><span class="n">rbm</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="o">:</span><span class="n">median</span><span class="p">])</span> <span class="o">*</span> <span class="mi">1000</span>
 </pre></div>
 
     </div>
@@ -14042,7 +14032,7 @@ Unit: milliseconds
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>18.958004</pre>
+<pre>0.9427459999997723</pre>
 </div>
 
 </div>
@@ -14054,7 +14044,7 @@ Unit: milliseconds
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Python,-builtin-sum">Python, builtin sum<a class="anchor-link" href="#Python,-builtin-sum">&#182;</a></h3><p>Built in function <code>sum</code> in Python.</p>
+<h3 id="R,-handwritten-loop">R, handwritten loop<a class="anchor-link" href="#R,-handwritten-loop">&#182;</a></h3><p>Handwritten loop in R is much slower.</p>
 
 </div>
 </div>
@@ -14064,8 +14054,20 @@ Unit: milliseconds
 <div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">PyCall</span>
-<span class="n">PyCall</span><span class="o">.</span><span class="n">pyversion</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">RCall</span>
+
+<span class="n">R</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">sum_r &lt;- function(x) {</span>
+<span class="s">  s &lt;- 0</span>
+<span class="s">  for (xi in x) {</span>
+<span class="s">    s &lt;- s + xi</span>
+<span class="s">  }</span>
+<span class="s">  s</span>
+<span class="s">}</span>
+<span class="s">library(bench)</span>
+<span class="s">y &lt;- </span><span class="si">$x</span><span class="s"></span>
+<span class="s">rbm &lt;- bench::mark(sum_r(y))</span>
+<span class="s">&quot;&quot;&quot;</span>
 </pre></div>
 
     </div>
@@ -14084,7 +14086,13 @@ Unit: milliseconds
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>v&#34;3.7.6&#34;</pre>
+<pre>RObject{VecSxp}
+# A tibble: 1 x 13
+  expression    min median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time
+  &lt;bch:expr&gt; &lt;bch:&gt; &lt;bch:&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;   &lt;bch:tm&gt;
+1 sum_r(y)   16.4ms 17.3ms      57.0    12.7KB        0    29     0      509ms
+# … with 4 more variables: result &lt;list&gt;, memory &lt;list&gt;, time &lt;list&gt;, gc &lt;list&gt;
+</pre>
 </div>
 
 </div>
@@ -14098,9 +14106,9 @@ Unit: milliseconds
 <div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># get the Python built-in &quot;sum&quot; function:</span>
-<span class="n">pysum</span> <span class="o">=</span> <span class="n">pybuiltin</span><span class="p">(</span><span class="s">&quot;sum&quot;</span><span class="p">)</span>
-<span class="n">bm</span> <span class="o">=</span> <span class="nd">@benchmark</span> <span class="o">$</span><span class="n">pysum</span><span class="p">(</span><span class="o">$</span><span class="n">x</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># store median runtime (in milliseconds)</span>
+<span class="nd">@rget</span> <span class="n">rbm</span> <span class="c"># dataframe</span>
+<span class="n">benchmark_result</span><span class="p">[</span><span class="s">&quot;R loop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">median</span><span class="p">(</span><span class="n">rbm</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="o">:</span><span class="n">median</span><span class="p">])</span> <span class="o">*</span> <span class="mi">1000</span>
 </pre></div>
 
     </div>
@@ -14119,17 +14127,7 @@ Unit: milliseconds
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>BenchmarkTools.Trial: 
-  memory estimate:  352 bytes
-  allocs estimate:  7
-  --------------
-  minimum time:     157.292 ms (0.00% GC)
-  median time:      162.206 ms (0.00% GC)
-  mean time:        162.168 ms (0.00% GC)
-  maximum time:     173.395 ms (0.00% GC)
-  --------------
-  samples:          31
-  evals/sample:     1</pre>
+<pre>17.255442999996262</pre>
 </div>
 
 </div>
@@ -14137,14 +14135,22 @@ Unit: milliseconds
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Python,-builtin-sum">Python, builtin sum<a class="anchor-link" href="#Python,-builtin-sum">&#182;</a></h3><p>Built in function <code>sum</code> in Python.</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># store median runtime (in miliseconds)</span>
-<span class="n">benchmark_result</span><span class="p">[</span><span class="s">&quot;Python builtin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">median</span><span class="p">(</span><span class="n">bm</span><span class="o">.</span><span class="n">times</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1e6</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">PyCall</span>
+<span class="n">PyCall</span><span class="o">.</span><span class="n">pyversion</span>
 </pre></div>
 
     </div>
@@ -14163,7 +14169,86 @@ Unit: milliseconds
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>162.205624</pre>
+<pre>v&#34;3.7.6&#34;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># get the Python built-in &quot;sum&quot; function:</span>
+<span class="n">pysum</span> <span class="o">=</span> <span class="n">pybuiltin</span><span class="p">(</span><span class="s">&quot;sum&quot;</span><span class="p">)</span>
+<span class="n">bm</span> <span class="o">=</span> <span class="nd">@benchmark</span> <span class="o">$</span><span class="n">pysum</span><span class="p">(</span><span class="o">$</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[22]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>BenchmarkTools.Trial: 
+  memory estimate:  352 bytes
+  allocs estimate:  7
+  --------------
+  minimum time:     136.411 ms (0.00% GC)
+  median time:      141.534 ms (0.00% GC)
+  mean time:        141.767 ms (0.00% GC)
+  maximum time:     148.364 ms (0.00% GC)
+  --------------
+  samples:          36
+  evals/sample:     1</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># store median runtime (in miliseconds)</span>
+<span class="n">benchmark_result</span><span class="p">[</span><span class="s">&quot;Python builtin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">median</span><span class="p">(</span><span class="n">bm</span><span class="o">.</span><span class="n">times</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1e6</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[23]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>141.5342195</pre>
 </div>
 
 </div>
@@ -14181,7 +14266,7 @@ Unit: milliseconds
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">PyCall</span>
@@ -14209,7 +14294,7 @@ Unit: milliseconds
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[22]:</div>
+    <div class="prompt output_prompt">Out[24]:</div>
 
 
 
@@ -14219,89 +14304,13 @@ Unit: milliseconds
   memory estimate:  352 bytes
   allocs estimate:  7
   --------------
-  minimum time:     212.511 ms (0.00% GC)
-  median time:      221.725 ms (0.00% GC)
-  mean time:        224.079 ms (0.00% GC)
-  maximum time:     254.300 ms (0.00% GC)
+  minimum time:     193.435 ms (0.00% GC)
+  median time:      205.604 ms (0.00% GC)
+  mean time:        206.965 ms (0.00% GC)
+  maximum time:     252.722 ms (0.00% GC)
   --------------
-  samples:          23
+  samples:          25
   evals/sample:     1</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># store median runtime (in miliseconds)</span>
-<span class="n">benchmark_result</span><span class="p">[</span><span class="s">&quot;Python loop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">median</span><span class="p">(</span><span class="n">bm</span><span class="o">.</span><span class="n">times</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1e6</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[23]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>221.724851</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Python,-numpy">Python, numpy<a class="anchor-link" href="#Python,-numpy">&#182;</a></h3><p>Numpy is the high-performance scientific computing library for Python.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># bring in sum function from Numpy </span>
-<span class="n">numpy_sum</span> <span class="o">=</span> <span class="n">pyimport</span><span class="p">(</span><span class="s">&quot;numpy&quot;</span><span class="p">)</span><span class="o">.</span><span class="s">&quot;sum&quot;</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[24]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>PyObject &lt;function sum at 0x1515c0950&gt;</pre>
 </div>
 
 </div>
@@ -14315,7 +14324,8 @@ Unit: milliseconds
 <div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">bm</span> <span class="o">=</span> <span class="nd">@benchmark</span> <span class="o">$</span><span class="n">numpy_sum</span><span class="p">(</span><span class="o">$</span><span class="n">x</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># store median runtime (in miliseconds)</span>
+<span class="n">benchmark_result</span><span class="p">[</span><span class="s">&quot;Python loop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">median</span><span class="p">(</span><span class="n">bm</span><span class="o">.</span><span class="n">times</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1e6</span>
 </pre></div>
 
     </div>
@@ -14334,21 +14344,33 @@ Unit: milliseconds
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>BenchmarkTools.Trial: 
-  memory estimate:  352 bytes
-  allocs estimate:  7
-  --------------
-  minimum time:     358.174 μs (0.00% GC)
-  median time:      513.776 μs (0.00% GC)
-  mean time:        559.687 μs (0.00% GC)
-  maximum time:     1.719 ms (0.00% GC)
-  --------------
-  samples:          8814
-  evals/sample:     1</pre>
+<pre>205.603958</pre>
 </div>
 
 </div>
 
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Python,-numpy">Python, numpy<a class="anchor-link" href="#Python,-numpy">&#182;</a></h3><p>Numpy is the high-performance scientific computing library for Python.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># install Numpy if on Binder</span>
+<span class="n">Base</span><span class="o">.</span><span class="n">Sys</span><span class="o">.</span><span class="n">islinux</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">run</span><span class="p">(</span><span class="sb">`conda install numpy`</span><span class="p">)</span>
+</pre></div>
+
+    </div>
 </div>
 </div>
 
@@ -14358,8 +14380,8 @@ Unit: milliseconds
 <div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># store median runtime (in miliseconds)</span>
-<span class="n">benchmark_result</span><span class="p">[</span><span class="s">&quot;Python numpy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">median</span><span class="p">(</span><span class="n">bm</span><span class="o">.</span><span class="n">times</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1e6</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># bring in sum function from Numpy </span>
+<span class="n">numpy_sum</span> <span class="o">=</span> <span class="n">pyimport</span><span class="p">(</span><span class="s">&quot;numpy&quot;</span><span class="p">)</span><span class="o">.</span><span class="s">&quot;sum&quot;</span>
 </pre></div>
 
     </div>
@@ -14378,7 +14400,84 @@ Unit: milliseconds
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>0.513776</pre>
+<pre>PyObject &lt;function sum at 0x14fc6e950&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">bm</span> <span class="o">=</span> <span class="nd">@benchmark</span> <span class="o">$</span><span class="n">numpy_sum</span><span class="p">(</span><span class="o">$</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[27]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>BenchmarkTools.Trial: 
+  memory estimate:  352 bytes
+  allocs estimate:  7
+  --------------
+  minimum time:     330.448 μs (0.00% GC)
+  median time:      422.231 μs (0.00% GC)
+  mean time:        450.145 μs (0.00% GC)
+  maximum time:     3.669 ms (0.00% GC)
+  --------------
+  samples:          10000
+  evals/sample:     1</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># store median runtime (in miliseconds)</span>
+<span class="n">benchmark_result</span><span class="p">[</span><span class="s">&quot;Python numpy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">median</span><span class="p">(</span><span class="n">bm</span><span class="o">.</span><span class="n">times</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1e6</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[28]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.4222305</pre>
 </div>
 
 </div>
@@ -14404,7 +14503,7 @@ Unit: milliseconds
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">sort</span><span class="p">(</span><span class="n">collect</span><span class="p">(</span><span class="n">benchmark_result</span><span class="p">),</span> <span class="n">by</span><span class="o">=</span><span class="n">x</span><span class="o">-&gt;</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
@@ -14420,20 +14519,20 @@ Unit: milliseconds
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[27]:</div>
+    <div class="prompt output_prompt">Out[29]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
 <pre>7-element Array{Pair{Any,Any},1}:
-  &#34;Julia builtin&#34; =&gt; 0.444936
-   &#34;Python numpy&#34; =&gt; 0.513776
-      &#34;R builtin&#34; =&gt; 1.341087
-              &#34;C&#34; =&gt; 1.500243
-         &#34;R loop&#34; =&gt; 18.958004
- &#34;Python builtin&#34; =&gt; 162.205624
-    &#34;Python loop&#34; =&gt; 221.724851</pre>
+  &#34;Julia builtin&#34; =&gt; 0.294616
+   &#34;Python numpy&#34; =&gt; 0.4222305
+      &#34;R builtin&#34; =&gt; 0.9427459999997723
+              &#34;C&#34; =&gt; 1.1415465
+         &#34;R loop&#34; =&gt; 17.255442999996262
+ &#34;Python builtin&#34; =&gt; 141.5342195
+    &#34;Python loop&#34; =&gt; 205.603958</pre>
 </div>
 
 </div>
