@@ -42,7 +42,7 @@ This is a tentative list of topics:
 
 ### Prerequisite
 
-The prerequisite for this course is linear algebra (MATH 115A or [BIOSTAT 216](https://ucla-biostat216-2019fall.github.io/schedule.html)) and linear models (STAT 100C or BIOSTAT 250A). Those wishing to enroll without these prerequisites will need to obtain consent from the instructor.  Homework will use the technical computing language [Julia](http://julialang.org) (preferred) or [R](https://www.r-project.org).  
+The prerequisite for this course is linear algebra (MATH 115A or [BIOSTAT 216](https://ucla-biostat216-2019fall.github.io/schedule.html)) and linear models (STAT 100C or BIOSTAT 250A). Those wishing to enroll without these prerequisites will need to obtain consent from the instructor.  Homework will use the technical computing language [Julia](http://julialang.org).  
 
 ### Course Webpage
 
