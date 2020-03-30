@@ -13,11 +13,11 @@ Zoom link: <https://ucla.zoom.us/j/507925583>
 
 Readings:  
 
-* [_50 years of data sicence_](./readings/Donoho15FiftyYearsDataScience.pdf) by David Donoho (2015)  
-* [_Julia: a fresh approach to numerical computing_](./readings/BezansonEdelmanKarpinskiShah17Julia.pdf) by Bezanson, Edelman, Karpinski, and Shah (2017)  
-* [_What every computer scientist should know about floating-point arithmetic_](readings/Goldberg91FloatingPoint.pdf) by David Goldberg  
+* [_50 years of data sicence_](../readings/Donoho15FiftyYearsDataScience.pdf) by David Donoho (2015)  
+* [_Julia: a fresh approach to numerical computing_](../readings/BezansonEdelmanKarpinskiShah17Julia.pdf) by Bezanson, Edelman, Karpinski, and Shah (2017)  
+* [_What every computer scientist should know about floating-point arithmetic_](../readings/Goldberg91FloatingPoint.pdf) by David Goldberg  
 * Top 10 algorithms in the 20th century  
-[Metropolis](readings/metropolis.pdf), [Simplex](readings/simplex.pdf), [Krylov](readings/krylov.pdf), [Matrix decomposition](readings/decomp.pdf), [Fortran](readings/fortran.pdf), [QR algorithm](readings/qr.pdf), [Quicksort](readings/qsort.pdf), [FFT](readings/fft.pdf), [Integer relation](readings/integer.pdf), [FMM](readings/fmm.pdf)  
+[Metropolis](../readings/metropolis.pdf), [Simplex](../readings/simplex.pdf), [Krylov](../readings/krylov.pdf), [Matrix decomposition](../readings/decomp.pdf), [Fortran](../readings/fortran.pdf), [QR algorithm](../readings/qr.pdf), [Quicksort](../readings/qsort.pdf), [FFT](../readings/fft.pdf), [Integer relation](../readings/integer.pdf), [FMM](../readings/fmm.pdf)  
 
 | Week | Tuesday | Thursday | Homework |
 |:-----------|:-----------|:------------|:------------|
