@@ -27,8 +27,8 @@ Office hours: Tue/Thu 3pm-4pm @ Zoom <https://ucla.zoom.us/j/507925583>
 
 ### Teaching Assistant
 
-Brendon Chau <brendonchau@ucla.edu>  
-Office hours: Mon, Wed, Fri ??? @ Zoom <???>
+Brendon Chau: <brendonchau@ucla.edu>  
+Office hours: Mon, Wed, Fri 3pm-4pm @ Zoom <https://ucla.zoom.us/j/9604889769>  
 
 ### Course Topics
 
