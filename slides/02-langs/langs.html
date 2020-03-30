@@ -13413,7 +13413,7 @@ function (N, thin)
 <div class="output_text output_subarea output_execute_result">
 <pre>RObject{RealSxp}
    user  system elapsed 
- 21.627   1.613  23.273 
+ 21.894   1.589  23.575 
 </pre>
 </div>
 
@@ -13513,7 +13513,7 @@ function (N, thin)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>0.365280908</pre>
+<pre>0.356247839</pre>
 </div>
 
 </div>
@@ -13722,12 +13722,12 @@ function (N, thin)
   memory estimate:  0 bytes
   allocs estimate:  0
   --------------
-  minimum time:     1.071 ms (0.00% GC)
-  median time:      1.161 ms (0.00% GC)
-  mean time:        1.170 ms (0.00% GC)
-  maximum time:     1.791 ms (0.00% GC)
+  minimum time:     1.068 ms (0.00% GC)
+  median time:      1.157 ms (0.00% GC)
+  mean time:        1.176 ms (0.00% GC)
+  maximum time:     1.869 ms (0.00% GC)
   --------------
-  samples:          4263
+  samples:          4241
   evals/sample:     1</pre>
 </div>
 
@@ -13765,7 +13765,7 @@ function (N, thin)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>1.1614</pre>
+<pre>1.156884</pre>
 </div>
 
 </div>
@@ -13816,7 +13816,7 @@ function (N, thin)
 # A tibble: 1 x 13
   expression   min median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time
   &lt;bch:expr&gt; &lt;bch&gt; &lt;bch:&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;   &lt;bch:tm&gt;
-1 sum(y)     880µs  926µs     1064.        0B        0   532     0      500ms
+1 sum(y)     906µs  979µs      995.        0B        0   498     0      500ms
 # … with 4 more variables: result &lt;list&gt;, memory &lt;list&gt;, time &lt;list&gt;, gc &lt;list&gt;
 </pre>
 </div>
@@ -13853,7 +13853,7 @@ function (N, thin)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>0.9263999999973294</pre>
+<pre>0.978866000004075</pre>
 </div>
 
 </div>
@@ -13911,7 +13911,7 @@ function (N, thin)
 # A tibble: 1 x 13
   expression    min median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time
   &lt;bch:expr&gt; &lt;bch:&gt; &lt;bch:&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;   &lt;bch:tm&gt;
-1 sum_r(y)   16.3ms 17.3ms      57.7    12.7KB        0    29     0      502ms
+1 sum_r(y)   16.3ms 16.9ms      57.3    12.7KB        0    29     0      506ms
 # … with 4 more variables: result &lt;list&gt;, memory &lt;list&gt;, time &lt;list&gt;, gc &lt;list&gt;
 </pre>
 </div>
@@ -13948,7 +13948,7 @@ function (N, thin)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>17.271602999997526</pre>
+<pre>16.864020999989293</pre>
 </div>
 
 </div>
@@ -14003,7 +14003,7 @@ function (N, thin)
 <div class="output_text output_subarea output_execute_result">
 <pre>RObject{ClosSxp}
 function (x) 
-.Call(&lt;pointer: 0x14d5a2d20&gt;, x)
+.Call(&lt;pointer: 0x14d3cad20&gt;, x)
 </pre>
 </div>
 
@@ -14043,7 +14043,7 @@ function (x)
 # A tibble: 1 x 13
   expression     min median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time
   &lt;bch:expr&gt;  &lt;bch:&gt; &lt;bch:&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;   &lt;bch:tm&gt;
-1 rcpp_sum(y) 1.13ms 1.18ms      834.    2.49KB        0   417     0      500ms
+1 rcpp_sum(y) 1.13ms 1.17ms      843.    2.49KB        0   422     0      501ms
 # … with 4 more variables: result &lt;list&gt;, memory &lt;list&gt;, time &lt;list&gt;, gc &lt;list&gt;
 </pre>
 </div>
@@ -14080,7 +14080,7 @@ function (x)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>1.1792210000010073</pre>
+<pre>1.1647964999923488</pre>
 </div>
 
 </div>
@@ -14113,6 +14113,18 @@ function (x)
 <div class="output_wrapper">
 <div class="output">
 
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>┌ Info: Precompiling PyCall [438e738f-606a-5dbb-bf0a-cddfbfd45ab0]
+└ @ Base loading.jl:1260
+</pre>
+</div>
+</div>
 
 <div class="output_area">
 
@@ -14161,12 +14173,12 @@ function (x)
   memory estimate:  352 bytes
   allocs estimate:  7
   --------------
-  minimum time:     137.420 ms (0.00% GC)
-  median time:      142.898 ms (0.00% GC)
-  mean time:        143.015 ms (0.00% GC)
-  maximum time:     153.570 ms (0.00% GC)
+  minimum time:     134.547 ms (0.00% GC)
+  median time:      141.002 ms (0.00% GC)
+  mean time:        140.821 ms (0.00% GC)
+  maximum time:     151.273 ms (0.00% GC)
   --------------
-  samples:          35
+  samples:          36
   evals/sample:     1</pre>
 </div>
 
@@ -14201,7 +14213,7 @@ function (x)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>142.897713</pre>
+<pre>141.00172</pre>
 </div>
 
 </div>
@@ -14257,12 +14269,12 @@ function (x)
   memory estimate:  352 bytes
   allocs estimate:  7
   --------------
-  minimum time:     189.016 ms (0.00% GC)
-  median time:      196.741 ms (0.00% GC)
-  mean time:        196.322 ms (0.00% GC)
-  maximum time:     204.886 ms (0.00% GC)
+  minimum time:     183.952 ms (0.00% GC)
+  median time:      204.134 ms (0.00% GC)
+  mean time:        203.615 ms (0.00% GC)
+  maximum time:     215.297 ms (0.00% GC)
   --------------
-  samples:          26
+  samples:          25
   evals/sample:     1</pre>
 </div>
 
@@ -14297,7 +14309,7 @@ function (x)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>196.741373</pre>
+<pre>204.134034</pre>
 </div>
 
 </div>
@@ -14339,7 +14351,7 @@ function (x)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>PyObject &lt;function sum at 0x15a304950&gt;</pre>
+<pre>PyObject &lt;function sum at 0x15a159950&gt;</pre>
 </div>
 
 </div>
@@ -14376,10 +14388,10 @@ function (x)
   memory estimate:  352 bytes
   allocs estimate:  7
   --------------
-  minimum time:     312.877 μs (0.00% GC)
-  median time:      348.824 μs (0.00% GC)
-  mean time:        376.099 μs (0.00% GC)
-  maximum time:     1.393 ms (0.00% GC)
+  minimum time:     308.834 μs (0.00% GC)
+  median time:      333.324 μs (0.00% GC)
+  mean time:        345.477 μs (0.00% GC)
+  maximum time:     947.781 μs (0.00% GC)
   --------------
   samples:          10000
   evals/sample:     1</pre>
@@ -14416,7 +14428,7 @@ function (x)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>0.348824</pre>
+<pre>0.333324</pre>
 </div>
 
 </div>
@@ -14463,7 +14475,7 @@ function (x)
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>  0.000428 seconds (1 allocation: 16 bytes)
+<pre>  0.000420 seconds (1 allocation: 16 bytes)
 </pre>
 </div>
 </div>
@@ -14521,10 +14533,10 @@ function (x)
   memory estimate:  0 bytes
   allocs estimate:  0
   --------------
-  minimum time:     207.824 μs (0.00% GC)
-  median time:      240.267 μs (0.00% GC)
-  mean time:        247.268 μs (0.00% GC)
-  maximum time:     654.839 μs (0.00% GC)
+  minimum time:     269.863 μs (0.00% GC)
+  median time:      304.995 μs (0.00% GC)
+  mean time:        312.732 μs (0.00% GC)
+  maximum time:     774.444 μs (0.00% GC)
   --------------
   samples:          10000
   evals/sample:     1</pre>
@@ -14560,7 +14572,7 @@ function (x)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>0.240267</pre>
+<pre>0.3049955</pre>
 </div>
 
 </div>
@@ -14613,12 +14625,12 @@ function (x)
   memory estimate:  0 bytes
   allocs estimate:  0
   --------------
-  minimum time:     1.077 ms (0.00% GC)
-  median time:      1.143 ms (0.00% GC)
-  mean time:        1.152 ms (0.00% GC)
-  maximum time:     1.922 ms (0.00% GC)
+  minimum time:     1.075 ms (0.00% GC)
+  median time:      1.178 ms (0.00% GC)
+  mean time:        1.188 ms (0.00% GC)
+  maximum time:     1.799 ms (0.00% GC)
   --------------
-  samples:          4329
+  samples:          4197
   evals/sample:     1</pre>
 </div>
 
@@ -14652,7 +14664,7 @@ function (x)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>1.143499</pre>
+<pre>1.178456</pre>
 </div>
 
 </div>
@@ -14701,15 +14713,15 @@ function (x)
 
 <div class="output_text output_subarea output_execute_result">
 <pre>9-element Array{Pair{Any,Any},1}:
-  &#34;Julia builtin&#34; =&gt; 0.240267
-   &#34;Python numpy&#34; =&gt; 0.348824
-      &#34;R builtin&#34; =&gt; 0.9263999999973294
-     &#34;Julia loop&#34; =&gt; 1.143499
-              &#34;C&#34; =&gt; 1.1614
-         &#34;R Rcpp&#34; =&gt; 1.1792210000010073
-         &#34;R loop&#34; =&gt; 17.271602999997526
- &#34;Python builtin&#34; =&gt; 142.897713
-    &#34;Python loop&#34; =&gt; 196.741373</pre>
+  &#34;Julia builtin&#34; =&gt; 0.3049955
+   &#34;Python numpy&#34; =&gt; 0.333324
+      &#34;R builtin&#34; =&gt; 0.978866000004075
+              &#34;C&#34; =&gt; 1.156884
+         &#34;R Rcpp&#34; =&gt; 1.1647964999923488
+     &#34;Julia loop&#34; =&gt; 1.178456
+         &#34;R loop&#34; =&gt; 16.864020999989293
+ &#34;Python builtin&#34; =&gt; 141.00172
+    &#34;Python loop&#34; =&gt; 204.134034</pre>
 </div>
 
 </div>
@@ -14740,7 +14752,7 @@ function (x)
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Take-home-message-for-computational-scientistists">Take home message for computational scientistists<a class="anchor-link" href="#Take-home-message-for-computational-scientistists">&#182;</a></h2><ul>
+<h2 id="Take-home-message-for-computational-scientists">Take home message for computational scientists<a class="anchor-link" href="#Take-home-message-for-computational-scientists">&#182;</a></h2><ul>
 <li><p>High-level language (R, Python, Matlab) programmers should be familiar with existing high-performance packages.  Don't reinvent wheels.</p>
 <ul>
 <li>R: RcppEigen, tidyverse, ...   </li>
@@ -14750,7 +14762,7 @@ function (x)
 <li><p>In most research projects, looping is unavoidable. Then we need to use a low-level language.</p>
 <ul>
 <li>R: Rcpp, ...  </li>
-<li>Python: Cython, ...</li>
+<li>Python: Cython, ...  </li>
 </ul>
 </li>
 <li><p>In this course, we use Julia, which seems to circumvent the two language problem. So we can spend more time on algorithms, not on juggling $\ge 2$ languages.</p>
