@@ -41,4 +41,4 @@ UnicodePlots = "b8865327-cd53-5732-bb35-84acbb429228"
 WoodburyMatrices = "efce3f68-66dc-5838-9240-27a6d6f5f9b6"
 
 [compat]
-julia = "1.4"
+julia = "≥ 1.2"
