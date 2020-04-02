@@ -7,7 +7,7 @@ title: Biostat 257
 
 BIOSTAT 257 tentative schedule and handouts (expect frequent updates)
 
-Zoom link: <https://ucla.zoom.us/j/507925583>
+Zoom link: <https://ucla.zoom.us/j/507925583>, for call in dial +1-669-900-6833 and enter meeting ID 507 925 583
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ucla-biostat-257-2020spring/ucla-biostat-257-2020spring.github.io/master)
 
