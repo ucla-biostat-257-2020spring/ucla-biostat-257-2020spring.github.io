@@ -23,12 +23,12 @@ Thu 2pm-2:50pm (Lab) @ Zoom <https://ucla.zoom.us/j/507925583>
 Office: CHS 21-254A  
 Phone: (310)794-7835  
 Email: <huazhou@ucla.edu>  
-Office hours: Tue/Thu 3pm-4pm @ Zoom <https://ucla.zoom.us/j/507925583>
+Office hours: ~~Tue/Thu 3pm-4pm~~ Mon/Wed 4:30pm-5:30pm @ Zoom <https://ucla.zoom.us/j/507925583>
 
 ### Teaching Assistant
 
 Brendon Chau: <brendonchau@ucla.edu>  
-Office hours: Mon, Wed, Fri 3pm-4pm @ Zoom <https://ucla.zoom.us/j/8699262839>  
+Office hours: ~~Mon, Wed, Fri 3pm-4pm~~ Tue/Thu 11am-12pm and Fri 1pm-2pm @ Zoom <https://ucla.zoom.us/j/8699262839>  
 
 ### Course Topics
 
