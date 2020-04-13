@@ -13121,46 +13121,6 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">versioninfo</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Julia Version 0.6.4
-Commit 9d11f62bcb (2018-07-09 19:09 UTC)
-Platform Info:
-  OS: macOS (x86_64-apple-darwin14.5.0)
-  CPU: Intel(R) Core(TM) i7-6920HQ CPU @ 2.90GHz
-  WORD_SIZE: 64
-  BLAS: libopenblas (USE64BITINT DYNAMIC_ARCH NO_AFFINITY Haswell MAX_THREADS=16)
-  LAPACK: libopenblas64_
-  LIBM: libopenlibm
-  LLVM: libLLVM-3.9.1 (ORCJIT, skylake)
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -13280,21 +13240,59 @@ Platform Info:
 <p>There are at least three paradigms to program GPU in Julia.</p>
 <ul>
 <li><p><strong>CUDA</strong> is an ecosystem exclusively for Nvidia GPUs. There are extensive CUDA libraries for scientific computing: CuBLAS, CuRAND, CuSparse, CuSolve, CuDNN, ...</p>
-<p>The <a href="https://github.com/JuliaGPU/CuArrays.jl">CuArray.jl</a> package allows defining arrays on Nvidia GPUs and overloads many common operations. CuArrays.jl supports Julia v1.0+.</p>
+<p>The <a href="https://github.com/JuliaGPU/CuArrays.jl">CuArrays.jl</a> package allows defining arrays on Nvidia GPUs and overloads many common operations. CuArrays.jl supports Julia v1.0+.</p>
 </li>
 <li><p><strong>OpenCL</strong> is a standard supported multiple manufacturers (Nvidia, AMD, Intel, Apple, ...), but lacks some libraries essential for statistical computing.</p>
-<p>The <a href="https://github.com/JuliaGPU/CLArrays.jl">CLArray.jl</a> package allows defining arrays on OpenCL devices and overloads many common operations. <strong>Currently CLArrays.jl only supports Julia v0.6</strong>.</p>
+<p>The <a href="https://github.com/JuliaGPU/CLArrays.jl">CLArrays.jl</a> package allows defining arrays on OpenCL devices and overloads many common operations.</p>
 </li>
 <li><p><a href="https://arrayfire.com"><strong>ArrayFire</strong></a> is a high performance library that works on both CUDA or OpenCL framework.</p>
 <p>The <a href="https://github.com/JuliaGPU/ArrayFire.jl">ArrayFire.jl</a> package wraps the library for julia.</p>
 </li>
-<li><p><strong>Warning:</strong> Most recent Apple operating system iOS 10.14 (Mojave) does <strong>not</strong> support CUDA yet.</p>
+<li><p><strong>Warning:</strong> Most recent Apple operating system iOS 10.15 (Catalina) does <strong>not</strong> support CUDA yet.</p>
 </li>
 </ul>
-<p>Because my laptop has an AMD Radeon GPU, I'll illustrate using OpenCL on Julia <strong>v0.6.4</strong>.</p>
+<p>I'll illustrate using CuArrays on my Linux box running CentOS 7. It has a NVIDIA GeForce RTX 2080 Ti OC with 11GB GDDR6 (14 Gbps) and 4352 cores.</p>
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">versioninfo</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Julia Version 1.4.0
+Commit b8e9a9ecc6 (2020-03-21 16:36 UTC)
+Platform Info:
+  OS: Linux (x86_64-pc-linux-gnu)
+  CPU: Intel(R) Core(TM) i9-9920X CPU @ 3.50GHz
+  WORD_SIZE: 64
+  LIBM: libopenlibm
+  LLVM: libLLVM-8.0.1 (ORCJIT, skylake)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
@@ -13308,10 +13306,12 @@ Platform Info:
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">CLArrays</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">CuArrays</span><span class="p">,</span> <span class="n">CUDAdrv</span>
 
-<span class="c"># check available devices on this machine</span>
-<span class="n">CLArrays</span><span class="o">.</span><span class="n">devices</span><span class="p">()</span>
+<span class="c"># check available devices on this machine and show their capability</span>
+<span class="k">for</span> <span class="n">device</span> <span class="kp">in</span> <span class="n">CuArrays</span><span class="o">.</span><span class="n">devices</span><span class="p">()</span>
+    <span class="nd">@show</span> <span class="n">capability</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="k">end</span>
 </pre></div>
 
     </div>
@@ -13324,32 +13324,35 @@ Platform Info:
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[2]:</div>
+    <div class="prompt"></div>
 
 
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>3-element Array{OpenCL.cl.Device,1}:
- OpenCL.Device(Intel(R) HD Graphics 530 on Apple @0x0000000001024500)                 
- OpenCL.Device(AMD Radeon Pro 460 Compute Engine on Apple @0x0000000001021c00)        
- OpenCL.Device(Intel(R) Core(TM) i7-6920HQ CPU @ 2.90GHz on Apple @0x00000000ffffffff)</pre>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>capability(device) = v&#34;7.5.0&#34;
+</pre>
 </div>
-
 </div>
 
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Transfer-data-between-main-memory-and-GPU">Transfer data between main memory and GPU<a class="anchor-link" href="#Transfer-data-between-main-memory-and-GPU">&#182;</a></h2>
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># use the AMD Radeon Pro 460 GPU</span>
-<span class="n">dev</span> <span class="o">=</span> <span class="n">CLArrays</span><span class="o">.</span><span class="n">devices</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span>
-<span class="n">CLArrays</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># generate data on CPU</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="kt">Float32</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="c"># transfer data form CPU to GPU</span>
+<span class="n">xd</span> <span class="o">=</span> <span class="n">CuArray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13368,15 +13371,10 @@ Platform Info:
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>OpenCL context with:
-CL version: OpenCL 1.2 
-Device: CL AMD Radeon Pro 460 Compute Engine
-            threads: 256
-             blocks: (256, 256, 256)
-      global_memory: 4294.967296 mb
- free_global_memory: NaN mb
-       local_memory: 0.032768 mb
-</pre>
+<pre>3×3 CuArray{Float32,2,Nothing}:
+ 0.181051  0.114813  0.10958
+ 0.360586  0.211851  0.66229
+ 0.773347  0.581369  0.874378</pre>
 </div>
 
 </div>
@@ -13384,21 +13382,14 @@ Device: CL AMD Radeon Pro 460 Compute Engine
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Generate-arrays-on-GPU-devices">Generate arrays on GPU devices<a class="anchor-link" href="#Generate-arrays-on-GPU-devices">&#182;</a></h2>
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># generate GPU arrays</span>
-<span class="n">xd</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="n">CLArray</span><span class="p">{</span><span class="kt">Float32</span><span class="p">},</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># generate array on GPU directly</span>
+<span class="n">yd</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="n">CuArray</span><span class="p">{</span><span class="kt">Float32</span><span class="p">},</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13417,12 +13408,10 @@ Device: CL AMD Radeon Pro 460 Compute Engine
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>GPU: 5×3 Array{Float32,2}:
- 0.935426   0.656262   0.145963 
- 0.255108   0.0626027  0.565825 
- 0.0110094  0.679819   0.767408 
- 0.640347   0.114715   0.0996476
- 0.607266   0.332567   0.492061 </pre>
+<pre>3×3 CuArray{Float32,2,Nothing}:
+ 1.0  1.0  1.0
+ 1.0  1.0  1.0
+ 1.0  1.0  1.0</pre>
 </div>
 
 </div>
@@ -13436,7 +13425,8 @@ Device: CL AMD Radeon Pro 460 Compute Engine
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">yd</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="n">CLArray</span><span class="p">{</span><span class="kt">Float32</span><span class="p">},</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># collect data from GPU to CPU</span>
+<span class="n">collect</span><span class="p">(</span><span class="n">xd</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13455,12 +13445,10 @@ Device: CL AMD Radeon Pro 460 Compute Engine
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>GPU: 5×3 Array{Float32,2}:
- 1.0  1.0  1.0
- 1.0  1.0  1.0
- 1.0  1.0  1.0
- 1.0  1.0  1.0
- 1.0  1.0  1.0</pre>
+<pre>3×3 Array{Float32,2}:
+ 0.181051  0.114813  0.10958
+ 0.360586  0.211851  0.66229
+ 0.773347  0.581369  0.874378</pre>
 </div>
 
 </div>
@@ -13472,7 +13460,7 @@ Device: CL AMD Radeon Pro 460 Compute Engine
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Transfer-data-between-main-memory-and-GPU">Transfer data between main memory and GPU<a class="anchor-link" href="#Transfer-data-between-main-memory-and-GPU">&#182;</a></h2>
+<h2 id="Elementiwise-operations-on-GPU">Elementiwise operations on GPU<a class="anchor-link" href="#Elementiwise-operations-on-GPU">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -13481,9 +13469,7 @@ Device: CL AMD Radeon Pro 460 Compute Engine
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># transfer data from main memory to GPU</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-<span class="n">xd</span> <span class="o">=</span> <span class="n">CLArray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">zd</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="p">(</span><span class="n">yd</span> <span class="o">.+</span> <span class="n">sin</span><span class="o">.</span><span class="p">(</span><span class="n">xd</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -13502,12 +13488,10 @@ Device: CL AMD Radeon Pro 460 Compute Engine
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>GPU: 5×3 Array{Float64,2}:
-  0.0621414  -0.905539    0.795695
- -0.440687    0.427526   -0.235945
-  0.304403    0.0362422  -0.260491
-  1.58347    -0.492863   -0.076589
-  0.193085    0.351561   -0.857394</pre>
+<pre>3×3 CuArray{Float32,2,Nothing}:
+ 0.165569  0.108461  0.103784
+ 0.302193  0.190844  0.479288
+ 0.529766  0.437719  0.569365</pre>
 </div>
 
 </div>
@@ -13521,8 +13505,8 @@ Device: CL AMD Radeon Pro 460 Compute Engine
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># transfer data from main memory to GPU</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="n">xd</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># getting back x</span>
+<span class="n">asin</span><span class="o">.</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="p">(</span><span class="n">zd</span><span class="p">)</span> <span class="o">.-</span> <span class="n">yd</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13541,12 +13525,10 @@ Device: CL AMD Radeon Pro 460 Compute Engine
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>5×3 Array{Float64,2}:
-  0.0621414  -0.905539    0.795695
- -0.440687    0.427526   -0.235945
-  0.304403    0.0362422  -0.260491
-  1.58347    -0.492863   -0.076589
-  0.193085    0.351561   -0.857394</pre>
+<pre>3×3 CuArray{Float32,2,Nothing}:
+ 0.181051  0.114813  0.10958
+ 0.360586  0.211851  0.66229
+ 0.773347  0.581369  0.874377</pre>
 </div>
 
 </div>
@@ -13558,7 +13540,7 @@ Device: CL AMD Radeon Pro 460 Compute Engine
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Elementiwise-operations">Elementiwise operations<a class="anchor-link" href="#Elementiwise-operations">&#182;</a></h2>
+<h2 id="Linear-algebra">Linear algebra<a class="anchor-link" href="#Linear-algebra">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -13567,7 +13549,10 @@ Device: CL AMD Radeon Pro 460 Compute Engine
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">zd</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="p">(</span><span class="n">yd</span> <span class="o">.+</span> <span class="n">sin</span><span class="o">.</span><span class="p">(</span><span class="n">xd</span><span class="p">))</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">LinearAlgebra</span>
+
+<span class="n">zd</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">CuArray</span><span class="p">{</span><span class="kt">Float32</span><span class="p">},</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">mul!</span><span class="p">(</span><span class="n">zd</span><span class="p">,</span> <span class="n">xd</span><span class="p">,</span> <span class="n">yd</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13586,12 +13571,10 @@ Device: CL AMD Radeon Pro 460 Compute Engine
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>GPU: 5×3 Array{Float64,2}:
-  0.0602494  -1.54533     0.539034 
- -0.556103    0.346862   -0.266262 
-  0.262152    0.0355933  -0.297806 
-  0.693107   -0.640839   -0.0795998
-  0.175538    0.295921   -1.41116  </pre>
+<pre>3×3 CuArray{Float32,2,Nothing}:
+ 0.405445  0.405445  0.405445
+ 1.23473   1.23473   1.23473
+ 2.22909   2.22909   2.22909</pre>
 </div>
 
 </div>
@@ -13605,8 +13588,20 @@ Device: CL AMD Radeon Pro 460 Compute Engine
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># getting back x</span>
-<span class="n">asin</span><span class="o">.</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="p">(</span><span class="n">zd</span><span class="p">)</span> <span class="o">.-</span> <span class="n">yd</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">BenchmarkTools</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="mi">1024</span>
+<span class="c"># on CPU</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="kt">Float32</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="kt">Float32</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="kt">Float32</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="c"># on GPU</span>
+<span class="n">xd</span> <span class="o">=</span> <span class="n">CuArray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">yd</span> <span class="o">=</span> <span class="n">CuArray</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="n">zd</span> <span class="o">=</span> <span class="n">CuArray</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+<span class="c"># SP matrix multiplication on GPU</span>
+<span class="nd">@benchmark</span> <span class="n">mul!</span><span class="p">(</span><span class="o">$</span><span class="n">zd</span><span class="p">,</span> <span class="o">$</span><span class="n">xd</span><span class="p">,</span> <span class="o">$</span><span class="n">yd</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13625,12 +13620,17 @@ Device: CL AMD Radeon Pro 460 Compute Engine
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>GPU: 5×3 Array{Float64,2}:
-  0.0621414  -0.905539    0.795695
- -0.440687    0.427526   -0.235945
-  0.304403    0.0362422  -0.260491
-  1.55813    -0.492863   -0.076589
-  0.193085    0.351561   -0.857394</pre>
+<pre>BenchmarkTools.Trial: 
+  memory estimate:  224 bytes
+  allocs estimate:  4
+  --------------
+  minimum time:     4.453 μs (0.00% GC)
+  median time:      175.771 μs (0.00% GC)
+  mean time:        169.631 μs (0.00% GC)
+  maximum time:     1.309 ms (0.00% GC)
+  --------------
+  samples:          4202
+  evals/sample:     7</pre>
 </div>
 
 </div>
@@ -13638,21 +13638,14 @@ Device: CL AMD Radeon Pro 460 Compute Engine
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Linear-algebra">Linear algebra<a class="anchor-link" href="#Linear-algebra">&#182;</a></h2>
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">zd</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">CLArray</span><span class="p">{</span><span class="kt">Float32</span><span class="p">},</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-<span class="n">At_mul_B!</span><span class="p">(</span><span class="n">zd</span><span class="p">,</span> <span class="n">xd</span><span class="p">,</span> <span class="n">yd</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># SP matrix multiplication on CPU</span>
+<span class="nd">@benchmark</span> <span class="n">mul!</span><span class="p">(</span><span class="o">$</span><span class="n">z</span><span class="p">,</span> <span class="o">$</span><span class="n">x</span><span class="p">,</span> <span class="o">$</span><span class="n">y</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13671,119 +13664,16 @@ Device: CL AMD Radeon Pro 460 Compute Engine
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>GPU: 3×3 Array{Float32,2}:
-  1.70241    1.70241    1.70241 
- -0.583072  -0.583072  -0.583072
- -0.634723  -0.634723  -0.634723</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">BenchmarkTools</span>
-
-<span class="n">n</span> <span class="o">=</span> <span class="mi">512</span>
-<span class="n">xd</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="n">CLArray</span><span class="p">{</span><span class="kt">Float32</span><span class="p">},</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
-<span class="n">yd</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="n">CLArray</span><span class="p">{</span><span class="kt">Float32</span><span class="p">},</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
-<span class="n">zd</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">CLArray</span><span class="p">{</span><span class="kt">Float32</span><span class="p">},</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
-
-<span class="c"># SP matrix multiplication on GPU</span>
-<span class="nd">@benchmark</span> <span class="n">A_mul_B!</span><span class="p">(</span><span class="o">$</span><span class="n">zd</span><span class="p">,</span> <span class="o">$</span><span class="n">xd</span><span class="p">,</span> <span class="o">$</span><span class="n">yd</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>base64 binary data: G1s5MW1FUlJPUiAodW5oYW5kbGVkIHRhc2sgZmFpbHVyZSk6IBtbOTFtT3BlbkNMIEVycm9yOiBPcGVuQ0wuQ29udGV4dCBlcnJvcjoggMMiBYB/G1szOW0KU3RhY2t0cmFjZToKIFsxXSAbWzFtcmFpc2VfY29udGV4dF9lcnJvchtbMjJtG1syMm0bWzFtKBtbMjJtG1syMm06OlN0cmluZywgOjpTdHJpbmcbWzFtKRtbMjJtG1syMm0gYXQgG1sxbS9Vc2Vycy9odWF6aG91Ly5qdWxpYS92MC42L09wZW5DTC9zcmMvY29udGV4dC5qbDoxMDkbWzIybRtbMjJtCiBbMl0gG1sxbW1hY3JvIGV4cGFuc2lvbhtbMjJtG1syMm0gYXQgG1sxbS9Vc2Vycy9odWF6aG91Ly5qdWxpYS92MC42L09wZW5DTC9zcmMvY29udGV4dC5qbDoxNDgbWzIybRtbMjJtIFtpbmxpbmVkXQogWzNdIBtbMW0oOjpPcGVuQ0wuY2wuIyM0MyM0NCkbWzIybRtbMjJtG1sxbSgbWzIybRtbMjJtG1sxbSkbWzIybRtbMjJtIGF0IBtbMW0uL3Rhc2suamw6MzM1G1syMm0bWzIybQobWzM5bQ==
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[11]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>BenchmarkTools.Trial: 
-  memory estimate:  2.86 KiB
-  allocs estimate:  96
-  --------------
-  minimum time:     18.158 μs (0.00% GC)
-  median time:      23.084 μs (0.00% GC)
-  mean time:        26.206 μs (3.11% GC)
-  maximum time:     17.951 ms (45.33% GC)
-  --------------
-  samples:          10000
-  evals/sample:     1</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="kt">Float32</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="kt">Float32</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
-<span class="n">z</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="kt">Float32</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
-
-<span class="c"># SP matrix multiplication on CPU</span>
-<span class="nd">@benchmark</span> <span class="n">A_mul_B!</span><span class="p">(</span><span class="o">$</span><span class="n">z</span><span class="p">,</span> <span class="o">$</span><span class="n">x</span><span class="p">,</span> <span class="o">$</span><span class="n">y</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[12]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
 <pre>BenchmarkTools.Trial: 
   memory estimate:  0 bytes
   allocs estimate:  0
   --------------
-  minimum time:     890.801 μs (0.00% GC)
-  median time:      1.207 ms (0.00% GC)
-  mean time:        1.237 ms (0.00% GC)
-  maximum time:     2.917 ms (0.00% GC)
+  minimum time:     3.752 ms (0.00% GC)
+  median time:      7.810 ms (0.00% GC)
+  mean time:        7.943 ms (0.00% GC)
+  maximum time:     19.237 ms (0.00% GC)
   --------------
-  samples:          4028
+  samples:          629
   evals/sample:     1</pre>
 </div>
 
@@ -13792,15 +13682,7 @@ Device: CL AMD Radeon Pro 460 Compute Engine
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>We ses ~50 fold speedup in this matrix multiplication example.</p>
-
-</div>
-</div>
-</div>
+</div>We ses ~40-50 fold speedup in this matrix multiplication example.
     </div>
   </div>
 </body>
