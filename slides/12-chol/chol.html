@@ -2,7 +2,7 @@
 <html>
 <head><meta charset="utf-8" />
 
-<title>gelu</title>
+<title>chol</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -13084,7 +13084,7 @@ div#notebook {
 <script>
 $( document ).ready(function(){
 
-            var cfg = {"colors": {"hover_highlight": "#DAA520", "running_highlight": "#FF0000", "selected_highlight": "#FFD700"}, "moveMenuLeft": true, "nav_menu": {"height": "30px", "width": "252px"}, "navigate_menu": true, "number_sections": true, "sideBar": true, "skip_h1_title": true, "threshold": 4, "toc_cell": true, "toc_section_display": "block", "toc_window_display": true, "widenNotebook": false};
+            var cfg = {"colors": {"hover_highlight": "#DAA520", "running_highlight": "#FF0000", "selected_highlight": "#FFD700"}, "moveMenuLeft": true, "nav_menu": {"height": "118px", "width": "252px"}, "navigate_menu": true, "number_sections": true, "sideBar": true, "skip_h1_title": true, "threshold": 4, "toc_cell": true, "toc_section_display": "block", "toc_window_display": true, "widenNotebook": false};
 
             // fire the main function with these parameters
             require(['nbextensions/toc2/toc2'], function (toc2) {
@@ -13099,7 +13099,24 @@ $( document ).ready(function(){
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Gaussian-Elimination-and-LU-Decomposition">Gaussian Elimination and LU Decomposition<a class="anchor-link" href="#Gaussian-Elimination-and-LU-Decomposition">&#182;</a></h1>
+<h1 id="Cholesky-Decomposition">Cholesky Decomposition<a class="anchor-link" href="#Cholesky-Decomposition">&#182;</a></h1><p><img src="http://www.cerebralmastication.com/wp-content/uploads/2010/09/39-cholesky-250x300.jpg" width="200" align="center"/></p>
+<ul>
+<li>A basic tenet in numerical analysis: </li>
+</ul>
+<blockquote><p><strong>The structure should be exploited whenever solving a problem.</strong></p>
+</blockquote>
+<p>Common structures include: symmetry, positive (semi)definiteness, sparsity, Kronecker product, low rank, ...</p>
+<ul>
+<li><p>LU decomposition (Gaussian Elimination) is <strong>not</strong> used in statistics so often because most of time statisticians deal with positive (semi)definite matrix. (That's why I hate to see <code>solve()</code> in R code.)</p>
+</li>
+<li><p>For example, in the normal equation 
+$$
+  \mathbf{X}^T \mathbf{X} \beta = \mathbf{X}^T \mathbf{y}
+$$
+for linear regression, the coefficient matrix $\mathbf{X}^T \mathbf{X}$ is symmetric and positive semidefinite. How to exploit this structure?</p>
+</li>
+</ul>
+
 </div>
 </div>
 </div>
@@ -13147,21 +13164,66 @@ Environment:
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<ul>
-<li><p>Goal: solve linear equation
+<h2 id="Cholesky-decomposition">Cholesky decomposition<a class="anchor-link" href="#Cholesky-decomposition">&#182;</a></h2><ul>
+<li><p><strong>Theorem</strong>: Let $\mathbf{A} \in \mathbb{R}^{n \times n}$ be symmetric and positive definite. Then $\mathbf{A} = \mathbf{L} \mathbf{L}^T$, where $\mathbf{L}$ is lower triangular with positive diagonal entries and is unique.<br>
+<strong>Proof</strong> (by induction):<br>
+If $n=1$, then $\ell = \sqrt{a}$. For $n&gt;1$, the block equation
 $$
-\mathbf{A} \mathbf{x} = \mathbf{b}.
+\begin{eqnarray*}
+\begin{pmatrix}
+a_{11} &amp; \mathbf{a}^T \\ \mathbf{a} &amp; \mathbf{A}_{22}
+\end{pmatrix} =
+\begin{pmatrix}
+  \ell_{11} &amp; \mathbf{0}_{n-1}^T \\ \mathbf{l} &amp; \mathbf{L}_{22}
+\end{pmatrix}
+\begin{pmatrix}
+  \ell_{11} &amp; \mathbf{l}^T \\ \mathbf{0}_{n-1} &amp; \mathbf{L}_{22}^T
+\end{pmatrix}
+\end{eqnarray*}
 $$
-For simplicity we consider a square matrix $\mathbf{A} \in \mathbb{R}^{n \times n}$.</p>
+has solution
+$$
+\begin{eqnarray*}
+  \ell_{11} &amp;=&amp; \sqrt{a_{11}} \\
+  \mathbf{l} &amp;=&amp; \ell_{11}^{-1} \mathbf{a}    \\
+  \mathbf{L}_{22} \mathbf{L}_{22}^T &amp;=&amp; \mathbf{A}_{22}  - \mathbf{l} \mathbf{l}^T = \mathbf{A}_{22}  - a_{11}^{-1} \mathbf{a} \mathbf{a}^T.
+\end{eqnarray*}
+$$<br>
+Now $a_{11}&gt;0$ (why?), so $\ell_{11}$ and $\mathbf{l}$ are uniquely determined. $\mathbf{A}_{22} - a_{11}^{-1} \mathbf{a} \mathbf{a}^T$ is positive definite because $\mathbf{A}$ is positive definite (why?). By induction hypothesis, $\mathbf{L}_{22}$ exists and is unique.</p>
 </li>
-<li><p>History: Chinese mathematical text <a href="https://en.wikipedia.org/wiki/The_Nine_Chapters_on_the_Mathematical_Art">The Nine Chapters on the Mathematical Art</a>, Issac Newton and Carl Friedrich Gauss.</p>
+<li><p>The constructive proof completely specifies the algorithm:</p>
 </li>
 </ul>
-<p><img src="./google_doodle_gauss.png"></p>
+<p><img src="http://www.netlib.org/utk/papers/factor/_25826_figure440.gif" width="500" align="center"/></p>
 <ul>
-<li>A <a href="https://en.wikipedia.org/wiki/Gaussian_elimination#Example_of_the_algorithm">toy example</a>.</li>
+<li><p>Computational cost: 
+$$
+\frac{1}{2} [2(n-1)^2 + 2(n-2)^2 + \cdots + 2 \cdot 1^2] \approx \frac{1}{3} n^3 \quad \text{flops}
+$$ 
+plus $n$ square roots. Half the cost of LU decomposition by utilizing symmetry.</p>
+</li>
+<li><p>In general Cholesky decomposition is very stable. Failure of the decomposition simply means $\mathbf{A}$ is not positive definite. It is an efficient way to test positive definiteness.</p>
+</li>
 </ul>
-
+<h2 id="Pivoting">Pivoting<a class="anchor-link" href="#Pivoting">&#182;</a></h2><ul>
+<li><p>When $\mathbf{A}$ does not have full rank, e.g., $\mathbf{X}^T \mathbf{X}$ with a non-full column rank $\mathbf{X}$, we encounter $a_{kk} = 0$ during the procedure.</p>
+</li>
+<li><p><strong>Symmetric pivoting</strong>. At each stage $k$, we permute both row and column such that $\max_{k \le i \le n} a_{ii}$ becomes the pivot. If we encounter $\max_{k \le i \le n} a_{ii} = 0$, then $\mathbf{A}[k:n,k:n] = \mathbf{0}$ (why?) and the algorithm terminates.</p>
+</li>
+<li><p>With symmetric pivoting: 
+$$
+\mathbf{P} \mathbf{A} \mathbf{P}^T = \mathbf{L} \mathbf{L}^T,
+$$
+where $\mathbf{P}$ is a permutation matrix and $\mathbf{L} \in \mathbb{R}^{n \times r}$, $r = \text{rank}(\mathbf{A})$.</p>
+</li>
+</ul>
+<h2 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h2><ul>
+<li><p>LAPACK functions: <a href="http://www.netlib.org/lapack/explore-html/d1/d7a/group__double_p_ocomputational_ga2f55f604a6003d03b5cd4a0adcfb74d6.html#ga2f55f604a6003d03b5cd4a0adcfb74d6"><code>?potrf</code></a> (without pivoting), <a href="http://www.netlib.org/lapack/explore-html/da/dba/group__double_o_t_h_e_rcomputational_ga31cdc13a7f4ad687f4aefebff870e1cc.html#ga31cdc13a7f4ad687f4aefebff870e1cc"><code>?pstrf</code></a> (with pivoting).</p>
+</li>
+<li><p>Julia functions: <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.cholesky"><code>cholesky</code></a>, <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.cholesky!"><code>cholesky!</code></a>, or call LAPACK wrapper functions <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.LAPACK.potrf!"><code>potrf!</code></a> and <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.LAPACK.pstrf!"><code>pstrf!</code></a></p>
+</li>
+</ul>
+<h3 id="Example:-positive-definite-matrix.">Example: positive definite matrix.<a class="anchor-link" href="#Example:-positive-definite-matrix.">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -13170,7 +13232,9 @@ For simplicity we consider a square matrix $\mathbf{A} \in \mathbb{R}^{n \times 
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.0</span> <span class="mf">1.0</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">;</span> <span class="o">-</span><span class="mf">3.0</span> <span class="o">-</span><span class="mf">1.0</span> <span class="mf">2.0</span><span class="p">;</span> <span class="o">-</span><span class="mf">2.0</span> <span class="mf">1.0</span> <span class="mf">2.0</span><span class="p">]</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">LinearAlgebra</span>
+
+<span class="n">A</span> <span class="o">=</span> <span class="p">[</span><span class="mf">4.0</span> <span class="mi">12</span> <span class="o">-</span><span class="mi">16</span><span class="p">;</span> <span class="mi">12</span> <span class="mi">37</span> <span class="o">-</span><span class="mi">43</span><span class="p">;</span> <span class="o">-</span><span class="mi">16</span> <span class="o">-</span><span class="mi">43</span> <span class="mi">98</span><span class="p">]</span>
 </pre></div>
 
     </div>
@@ -13190,9 +13254,9 @@ For simplicity we consider a square matrix $\mathbf{A} \in \mathbb{R}^{n \times 
 
 <div class="output_text output_subarea output_execute_result">
 <pre>3×3 Array{Float64,2}:
-  2.0   1.0  -1.0
- -3.0  -1.0   2.0
- -2.0   1.0   2.0</pre>
+   4.0   12.0  -16.0
+  12.0   37.0  -43.0
+ -16.0  -43.0   98.0</pre>
 </div>
 
 </div>
@@ -13206,7 +13270,8 @@ For simplicity we consider a square matrix $\mathbf{A} \in \mathbb{R}^{n \times 
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="mf">8.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">11.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.0</span><span class="p">]</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># Cholesky without pivoting</span>
+<span class="n">Achol</span> <span class="o">=</span> <span class="n">cholesky</span><span class="p">(</span><span class="kt">Symmetric</span><span class="p">(</span><span class="n">A</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -13225,10 +13290,12 @@ For simplicity we consider a square matrix $\mathbf{A} \in \mathbb{R}^{n \times 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3-element Array{Float64,1}:
-   8.0
- -11.0
-  -3.0</pre>
+<pre>Cholesky{Float64,Array{Float64,2}}
+U factor:
+3×3 UpperTriangular{Float64,Array{Float64,2}}:
+ 2.0  6.0  -8.0
+  ⋅   1.0   5.0
+  ⋅    ⋅    3.0</pre>
 </div>
 
 </div>
@@ -13242,9 +13309,7 @@ For simplicity we consider a square matrix $\mathbf{A} \in \mathbb{R}^{n \times 
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># Julia way to solve linear equation</span>
-<span class="c"># equivalent to `solve(A, b)` in R</span>
-<span class="n">A</span> <span class="o">\</span> <span class="n">b</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">typeof</span><span class="p">(</span><span class="n">Achol</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13263,10 +13328,7 @@ For simplicity we consider a square matrix $\mathbf{A} \in \mathbb{R}^{n \times 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3-element Array{Float64,1}:
-  2.0000000000000004
-  2.9999999999999996
- -0.9999999999999994</pre>
+<pre>Cholesky{Float64,Array{Float64,2}}</pre>
 </div>
 
 </div>
@@ -13274,75 +13336,13 @@ For simplicity we consider a square matrix $\mathbf{A} \in \mathbb{R}^{n \times 
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>What happens when we call <code>A \ b</code> to solve a linear equation?</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Elementary-operator-matrix">Elementary operator matrix<a class="anchor-link" href="#Elementary-operator-matrix">&#182;</a></h2><ul>
-<li><p><strong>Elementary operator matrix</strong> is the identity matrix with the 0 in position $(j,k)$ replaced by $c$
-$$
-  \mathbf{E}_{jk}(c) = \begin{pmatrix}
-  1 &amp; &amp; \\
-  &amp; \ddots &amp; \\
-  &amp; &amp; 1 &amp; \\
-  &amp; &amp; &amp; \ddots &amp; \\
-  &amp; &amp; c &amp; &amp; 1 &amp; \\
-  &amp; &amp; &amp; &amp; &amp; \ddots \\
-  &amp; &amp; &amp; &amp; &amp; &amp; 1
-  \end{pmatrix} = \mathbf{I} + c \mathbf{e}_j \mathbf{e}_k^T.
-$$</p>
-</li>
-<li><p>$\mathbf{E}_{jk}(c)$ is unit triangular, full rank, and its inverse is
-$$
-  \mathbf{E}_{jk}^{-1}(c) = \mathbf{E}_{jk}(-c).
-$$</p>
-</li>
-<li><p>$\mathbf{E}_{jk}(c)$ left-multiplies an $n \times m$ matrix $\mathbf{X}$ effectively replace its $j$-th row $\mathbf{x}_{j\cdot}$ by $c \mathbf{x}_{k \cdot} + \mathbf{x}_{j \cdot}$
-$$
-  \mathbf{E}_{jk}(c) \times \mathbf{X} = \mathbf{E}_{jk}(c) \times \begin{pmatrix}
-  &amp; &amp; \\
-  \cdots &amp; \mathbf{x}_{k\cdot} &amp; \cdots \\
-  &amp; &amp; \\
-  \cdots &amp; \mathbf{x}_{j\cdot} &amp; \cdots \\
-  &amp; &amp; 
-  \end{pmatrix} = \begin{pmatrix}
-  &amp; &amp; \\
-  \cdots &amp; \mathbf{x}_{k\cdot} &amp; \cdots \\
-  &amp; &amp; \\
-  \cdots &amp; c \mathbf{x}_{k\cdot} + \mathbf{x}_{j\cdot} &amp; \cdots \\
-  &amp; &amp; 
-  \end{pmatrix}.
-$$
-$2m$ flops.</p>
-</li>
-<li><p>Gaussian elimination applies a sequence of elementary operator matrices to transform the linear system $\mathbf{A} \mathbf{x} = \mathbf{b}$ to an upper triangular system
-$$
-\begin{eqnarray*}
-  \mathbf{E}_{n,n-1}(c_{n,n-1}) \cdots \mathbf{E}_{21}(c_{21}) \mathbf{A} \mathbf{x} &amp;=&amp; \mathbf{E}_{n,n-1}(c_{n,n-1}) \cdots \mathbf{E}_{21}(c_{21}) \mathbf{b} \\
-  \mathbf{U} \mathbf{x} &amp;=&amp; \mathbf{b}_{\text{new}}.
-\end{eqnarray*}
-$$</p>
-<p>Column 1:</p>
-</li>
-</ul>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">E21</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span> <span class="mf">0.0</span> <span class="mf">0.0</span><span class="p">;</span> <span class="mf">1.5</span> <span class="mf">1.0</span> <span class="mf">0.0</span><span class="p">;</span> <span class="mf">0.0</span> <span class="mf">0.0</span> <span class="mf">1.0</span><span class="p">]</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">fieldnames</span><span class="p">(</span><span class="n">typeof</span><span class="p">(</span><span class="n">Achol</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -13361,10 +13361,7 @@ $$</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3×3 Array{Float64,2}:
- 1.0  0.0  0.0
- 1.5  1.0  0.0
- 0.0  0.0  1.0</pre>
+<pre>(:factors, :uplo, :info)</pre>
 </div>
 
 </div>
@@ -13378,8 +13375,8 @@ $$</p>
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># zero (2, 1) entry</span>
-<span class="n">E21</span> <span class="o">*</span> <span class="n">A</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># retrieve the lower triangular Cholesky factor</span>
+<span class="n">Achol</span><span class="o">.</span><span class="n">L</span>
 </pre></div>
 
     </div>
@@ -13398,10 +13395,10 @@ $$</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3×3 Array{Float64,2}:
-  2.0  1.0  -1.0
-  0.0  0.5   0.5
- -2.0  1.0   2.0</pre>
+<pre>3×3 LowerTriangular{Float64,Array{Float64,2}}:
+  2.0   ⋅    ⋅ 
+  6.0  1.0   ⋅ 
+ -8.0  5.0  3.0</pre>
 </div>
 
 </div>
@@ -13415,7 +13412,8 @@ $$</p>
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">E31</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span> <span class="mf">0.0</span> <span class="mf">0.0</span><span class="p">;</span> <span class="mf">0.0</span> <span class="mf">1.0</span> <span class="mf">0.0</span><span class="p">;</span> <span class="mf">1.0</span> <span class="mf">0.0</span> <span class="mf">1.0</span><span class="p">]</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># retrieve the upper triangular Cholesky factor</span>
+<span class="n">Achol</span><span class="o">.</span><span class="n">U</span>
 </pre></div>
 
     </div>
@@ -13434,10 +13432,10 @@ $$</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3×3 Array{Float64,2}:
- 1.0  0.0  0.0
- 0.0  1.0  0.0
- 1.0  0.0  1.0</pre>
+<pre>3×3 UpperTriangular{Float64,Array{Float64,2}}:
+ 2.0  6.0  -8.0
+  ⋅   1.0   5.0
+  ⋅    ⋅    3.0</pre>
 </div>
 
 </div>
@@ -13451,8 +13449,8 @@ $$</p>
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># zero (3, 1) entry</span>
-<span class="n">E31</span> <span class="o">*</span> <span class="n">E21</span> <span class="o">*</span> <span class="n">A</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">;</span> <span class="mf">2.0</span><span class="p">;</span> <span class="mf">3.0</span><span class="p">]</span>
+<span class="n">A</span> <span class="o">\</span> <span class="n">b</span> <span class="c"># this does LU; wasteful!; 2/3 n^3 + 2n^2</span>
 </pre></div>
 
     </div>
@@ -13471,10 +13469,10 @@ $$</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3×3 Array{Float64,2}:
- 2.0  1.0  -1.0
- 0.0  0.5   0.5
- 0.0  2.0   1.0</pre>
+<pre>3-element Array{Float64,1}:
+ 28.58333333333338
+ -7.666666666666679
+  1.3333333333333353</pre>
 </div>
 
 </div>
@@ -13482,22 +13480,13 @@ $$</p>
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-
-<pre><code>Column 2:</code></pre>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">E32</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span> <span class="mf">0.0</span> <span class="mf">0.0</span><span class="p">;</span> <span class="mf">0.0</span> <span class="mf">1.0</span> <span class="mf">0.0</span><span class="p">;</span> <span class="mf">0.0</span> <span class="o">-</span><span class="mf">4.0</span> <span class="mf">1.0</span><span class="p">]</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">Achol</span> <span class="o">\</span> <span class="n">b</span> <span class="c"># two triangular solves; only 2n^2 flops</span>
 </pre></div>
 
     </div>
@@ -13516,10 +13505,10 @@ $$</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3×3 Array{Float64,2}:
- 1.0   0.0  0.0
- 0.0   1.0  0.0
- 0.0  -4.0  1.0</pre>
+<pre>3-element Array{Float64,1}:
+ 28.583333333333332
+ -7.666666666666666
+  1.3333333333333333</pre>
 </div>
 
 </div>
@@ -13533,8 +13522,7 @@ $$</p>
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># zero (3, 2) entry</span>
-<span class="n">E32</span> <span class="o">*</span> <span class="n">E31</span> <span class="o">*</span> <span class="n">E21</span> <span class="o">*</span> <span class="n">A</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">det</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="c"># this actually does LU; wasteful!</span>
 </pre></div>
 
     </div>
@@ -13553,10 +13541,7 @@ $$</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3×3 Array{Float64,2}:
- 2.0  1.0  -1.0
- 0.0  0.5   0.5
- 0.0  0.0  -1.0</pre>
+<pre>35.99999999999994</pre>
 </div>
 
 </div>
@@ -13564,45 +13549,13 @@ $$</p>
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Gauss-transformations">Gauss transformations<a class="anchor-link" href="#Gauss-transformations">&#182;</a></h2><ul>
-<li><p>For the first column,
-$$
-  \mathbf{M}_1 = \mathbf{E}_{n1}(c_{n1}) \cdots \mathbf{E}_{31}(c_{31}) \mathbf{E}_{21}(c_{21}) = \begin{pmatrix}
-  1 &amp; \\
-  c_{21} &amp; \\
-  &amp; \ddots &amp; \\
-  c_{n1} &amp; &amp; 1
-  \end{pmatrix}
-$$<br>
-For the $k$-th column,
-$$
-  \mathbf{M}_k = \mathbf{E}_{nk}(c_{nk}) \cdots \mathbf{E}_{k+1,k}(c_{k+1,k}) = \begin{pmatrix}
-  1 &amp; \\
-  &amp; \ddots \\
-  &amp; &amp; 1 &amp; \\
-  &amp; &amp; c_{k+1,k} &amp; 1\\
-  &amp; &amp; \vdots &amp; &amp; \ddots \\
-  &amp; &amp;  c_{n,k} &amp; &amp; &amp; 1
-  \end{pmatrix}.
-$$</p>
-</li>
-<li><p>$\mathbf{M}_1, \ldots, \mathbf{M}_{n-1}$ are called the <strong>Gauss transformations</strong>.</p>
-</li>
-</ul>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">M1</span> <span class="o">=</span> <span class="n">E31</span> <span class="o">*</span> <span class="n">E21</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">det</span><span class="p">(</span><span class="n">Achol</span><span class="p">)</span> <span class="c"># cheap</span>
 </pre></div>
 
     </div>
@@ -13621,10 +13574,7 @@ $$</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3×3 Array{Float64,2}:
- 1.0  0.0  0.0
- 1.5  1.0  0.0
- 1.0  0.0  1.0</pre>
+<pre>36.0</pre>
 </div>
 
 </div>
@@ -13638,7 +13588,7 @@ $$</p>
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">M2</span> <span class="o">=</span> <span class="n">E32</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">inv</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="c"># this does LU!</span>
 </pre></div>
 
     </div>
@@ -13658,9 +13608,9 @@ $$</p>
 
 <div class="output_text output_subarea output_execute_result">
 <pre>3×3 Array{Float64,2}:
- 1.0   0.0  0.0
- 0.0   1.0  0.0
- 0.0  -4.0  1.0</pre>
+  49.3611   -13.5556     2.11111
+ -13.5556     3.77778   -0.555556
+   2.11111   -0.555556   0.111111</pre>
 </div>
 
 </div>
@@ -13668,33 +13618,13 @@ $$</p>
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<ul>
-<li>Gauss transformations $\mathbf{M}_k$ are unit triangular, full rank, with inverse
-$$
-  \mathbf{M}_k^{-1} = \mathbf{E}_{k+1,k}^{-1}(c_{k+1,k}) \cdots \mathbf{E}_{nk}^{-1}(c_{nk}) = \begin{pmatrix}
-  1 &amp; \\
-  &amp; \ddots \\
-  &amp; &amp; 1 &amp; \\
-  &amp; &amp; - c_{k+1,k}\\
-  &amp; &amp; \vdots &amp; &amp; \ddots \\
-  &amp; &amp; - c_{n,k} &amp; &amp; &amp; 1
-  \end{pmatrix}.
-$$</li>
-</ul>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">inv</span><span class="p">(</span><span class="n">M1</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">inv</span><span class="p">(</span><span class="n">Achol</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13714,9 +13644,9 @@ $$</li>
 
 <div class="output_text output_subarea output_execute_result">
 <pre>3×3 Array{Float64,2}:
-  1.0  0.0  0.0
- -1.5  1.0  0.0
- -1.0  0.0  1.0</pre>
+  49.3611   -13.5556     2.11111
+ -13.5556     3.77778   -0.555556
+   2.11111   -0.555556   0.111111</pre>
 </div>
 
 </div>
@@ -13724,13 +13654,24 @@ $$</li>
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Example:-positive-semi-definite-matrix.">Example: positive semi-definite matrix.<a class="anchor-link" href="#Example:-positive-semi-definite-matrix.">&#182;</a></h3>
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">inv</span><span class="p">(</span><span class="n">M2</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">Random</span>
+
+<span class="n">Random</span><span class="o">.</span><span class="n">seed!</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span> <span class="c"># seed</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">A</span> <span class="o">*</span> <span class="n">transpose</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="c"># A has rank 3</span>
 </pre></div>
 
     </div>
@@ -13749,10 +13690,12 @@ $$</li>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3×3 Array{Float64,2}:
- 1.0  0.0  0.0
- 0.0  1.0  0.0
- 0.0  4.0  1.0</pre>
+<pre>5×5 Array{Float64,2}:
+  1.97375    2.0722    1.71191    0.253774   -0.544089
+  2.0722     5.86947   3.01646    0.93344    -1.50292
+  1.71191    3.01646   2.10156    0.21341    -0.965213
+  0.253774   0.93344   0.21341    0.393107   -0.0415803
+ -0.544089  -1.50292  -0.965213  -0.0415803   0.546021</pre>
 </div>
 
 </div>
@@ -13760,147 +13703,13 @@ $$</li>
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="LU-decomposition">LU decomposition<a class="anchor-link" href="#LU-decomposition">&#182;</a></h2><p>Gaussian elimination does
-$$
-\mathbf{M}_{n-1} \cdots \mathbf{M}_1 \mathbf{A} = \mathbf{U}.
-$$<br>
-Let</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-\begin{equation*}
-\mathbf{L} = \mathbf{M}_1^{-1} \cdots \mathbf{M}_{n-1}^{-1} = \begin{pmatrix}  
-    1 &amp; &amp; &amp; &amp; \\
-    - c_{21} &amp; \ddots &amp; &amp; &amp; \\
-    &amp; &amp; 1 &amp; &amp; \\
-    - c_{k+1,1} &amp; &amp; - c_{k+1,k} &amp; &amp; \\
-    &amp; &amp; \vdots &amp; &amp; \ddots \\
-    - c_{n1} &amp; &amp; - c_{nk} &amp; &amp; &amp; 1
-    \end{pmatrix}.
-\end{equation*}<p>Thus we have the <strong>LU decomposition</strong>
-$$
-\mathbf{A} = \mathbf{L} \mathbf{U},
-$$
-where $\mathbf{L}$ is unit lower triangular and $\mathbf{U}$ is upper triangular.</p>
-<ul>
-<li><p>The whole LU algorithm is done in place, i.e., $\mathbf{A}$ is overwritten by $\mathbf{L}$ and $\mathbf{U}$.</p>
-</li>
-<li><p>LU decomposition exists if the principal sub-matrix $\mathbf{A}[1:k, 1:k]$ is non-singular for $k=1,\ldots,n-1$.</p>
-</li>
-<li><p>If the LU decomposition exists and $\mathbf{A}$ is non-singular, then the LU decmpositon is unique and
-$$
-  \det(\mathbf{A}) = \det(\mathbf{L}) \det(\mathbf{U}) = \prod_{k=1}^n u_{kk}.
-$$</p>
-</li>
-<li><p>The LU decomposition costs
-$$
-  2(n-1)^2 + 2(n-2)^2 + \cdots + 2 \cdot 1^2 \approx \frac 23 n^3 \quad \text{flops}.
-$$</p>
-</li>
-</ul>
-<p><img src="http://www.netlib.org/utk/papers/factor/_25826_figure159.gif" width="500" align="center"/></p>
-<ul>
-<li><p>Actual implementations can differ: outer product LU ($kij$ loop), block outer product LU (higher level-3 fraction), Crout's algorithm ($jki$ loop).</p>
-</li>
-<li><p>Given LU decomposition $\mathbf{A} = \mathbf{L} \mathbf{U}$, solving $(\mathbf{L} \mathbf{U}) \mathbf{x} = \mathbf{b}$ for one right hand side costs $2n^2$ flops:</p>
-<ul>
-<li>One forward substitution ($n^2$ flops) to solve
-$$
-\mathbf{L} \mathbf{y} = \mathbf{b}
-$$</li>
-<li>One back substitution ($n^2$ flops) to solve
-$$
-\mathbf{U} \mathbf{x} = \mathbf{y}
-$$</li>
-</ul>
-</li>
-<li><p>Therefore to solve $\mathbf{A} \mathbf{x} = \mathbf{b}$ via LU, we need a total of
-$$
-  \frac 23 n^3 + 2n^2 \quad \text{flops}.
-$$</p>
-</li>
-<li><p>If there are multiple right hand sides, LU only needs to be done once.</p>
-</li>
-</ul>
-<h2 id="Matrix-inversion">Matrix inversion<a class="anchor-link" href="#Matrix-inversion">&#182;</a></h2><ul>
-<li><p>For matrix inversion, there are $n$ right hand sides $\mathbf{e}_1, \ldots, \mathbf{e}_n$. Taking advantage of 0s reduces $2n^3$ flops to $\frac 43 n^3$ flops. So <strong>matrix inversion via LU</strong> costs
-$$
-\frac 23 n^3 + \frac 43 n^3 = 2n^3 \quad \text{flops}.
-$$</p>
-</li>
-<li><p><strong>No inversion mentality</strong>:</p>
-<blockquote><p><strong>Whenever we see matrix inverse, we should think in terms of solving linear equations.</strong></p>
-</blockquote>
-<p>We do not compute matrix inverse unless</p>
-<ol>
-<li>it is necessary to compute standard errors  </li>
-<li>number of right hand sides is much larger than $n$  </li>
-<li>$n$ is small</li>
-</ol>
-</li>
-</ul>
-<h2 id="Pivoting">Pivoting<a class="anchor-link" href="#Pivoting">&#182;</a></h2><ul>
-<li><p>Let
-$$
-  \mathbf{A} = \begin{pmatrix}
-  0 &amp; 1 \\
-  1 &amp; 0 \\
-  \end{pmatrix}.
-$$
-Is there a solution to $\mathbf{A} \mathbf{x} = \mathbf{b}$ for an arbitrary $\mathbf{b}$? Does GE/LU work for $\mathbf{A}$?</p>
-</li>
-<li><p>What if, during LU procedure, the <strong>pivot</strong> $a_{kk}$ is 0 or nearly 0 due to underflow?<br>
-  Solution: pivoting.</p>
-</li>
-<li><p><strong>Partial pivoting</strong>: before zeroing the $k$-th column, the row with $\max_{i=k}^n |a_{ik}|$ is moved into the $k$-th row.</p>
-</li>
-<li><p>LU with partial pivoting yields
-$$
-  \mathbf{P} \mathbf{A} = \mathbf{L} \mathbf{U},
-$$
-where $\mathbf{P}$ is a permutation matrix, $\mathbf{L}$ is unit lower triangular with $|\ell_{ij}| \le 1$, and $\mathbf{U}$ is upper triangular.</p>
-</li>
-<li><p>Complete pivoting: Do both row and column interchanges so that the largest entry in the sub matrix <code>A[k:n, k:n]</code> is permuted to the $(k,k)$-th entry. This yields the decomposition 
-$$
-\mathbf{P} \mathbf{A} \mathbf{Q} = \mathbf{L} \mathbf{U},
-$$
-where $|\ell_{ij}| \le 1$.</p>
-</li>
-<li><p>LU decomposition with partial pivoting is the most commonly used methods for solving <strong>general</strong> linear systems. Complete pivoting is the most stable but costs more computation. Partial pivoting is stable most of times.</p>
-</li>
-</ul>
-<h2 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h2><ul>
-<li><p>LAPACK: <a href="http://www.netlib.org/lapack/explore-html/dd/d9a/group__double_g_ecomputational_ga0019443faea08275ca60a734d0593e60.html#ga0019443faea08275ca60a734d0593e60"><code>?GETRF</code></a> does $\mathbf{P} \mathbf{A} = \mathbf{L} \mathbf{U}$ (LU decomposition with partial pivoting) in place.</p>
-</li>
-<li><p>R: <code>solve()</code> implicitly performs LU decomposition (wrapper of LAPACK routine <code>DGESV</code>). <code>solve()</code> allows specifying a single or multiple right hand sides. If none, it computes the matrix inverse. The <code>matrix</code> package contains <code>lu()</code> function that outputs <code>L</code>, <code>U</code>, and <code>pivot</code>.</p>
-</li>
-<li><p>Julia:</p>
-<ul>
-<li><a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.lu"><code>LinearAlgebra.lu</code></a>.</li>
-<li><a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.lu!"><code>LinearAlgebra.lu!</code></a>. In-place version. Input matrix gets overwritten with L and U.</li>
-<li>Or call LAPACK wrapper function <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.LAPACK.getrf!"><code>getrf!</code></a> directly.</li>
-<li>Other LU-related LAPACK wrapper functions: <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.LAPACK.gesv!"><code>gesv</code></a>, <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.LAPACK.gesvx!"><code>gesvx</code></a>, <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.LAPACK.trtri!"><code>trtri</code></a> (inverse of triangular matrix), <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.LAPACK.trtrs!"><code>trtrs</code></a>.</li>
-</ul>
-</li>
-</ul>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">A</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">Achol</span> <span class="o">=</span> <span class="n">cholesky</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="kt">Val</span><span class="p">(</span><span class="kc">true</span><span class="p">))</span> <span class="c"># 2nd argument requests pivoting</span>
 </pre></div>
 
     </div>
@@ -13913,18 +13722,21 @@ where $|\ell_{ij}| \le 1$.</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[15]:</div>
+    <div class="prompt"></div>
 
 
+<div class="output_subarea output_text output_error">
+<pre>
+RankDeficientException(1)
 
-
-<div class="output_text output_subarea output_execute_result">
-<pre>3×3 Array{Float64,2}:
-  2.0   1.0  -1.0
- -3.0  -1.0   2.0
- -2.0   1.0   2.0</pre>
+Stacktrace:
+ [1] chkfullrank at /Users/julia/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.4/LinearAlgebra/src/cholesky.jl:606 [inlined]
+ [2] cholesky!(::Hermitian{Float64,Array{Float64,2}}, ::Val{true}; tol::Float64, check::Bool) at /Users/julia/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.4/LinearAlgebra/src/cholesky.jl:268
+ [3] cholesky!(::Array{Float64,2}, ::Val{true}; tol::Float64, check::Bool) at /Users/julia/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.4/LinearAlgebra/src/cholesky.jl:294
+ [4] #cholesky#137 at /Users/julia/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.4/LinearAlgebra/src/cholesky.jl:369 [inlined]
+ [5] cholesky(::Array{Float64,2}, ::Val{true}) at /Users/julia/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.4/LinearAlgebra/src/cholesky.jl:369
+ [6] top-level scope at In[15]:1</pre>
 </div>
-
 </div>
 
 </div>
@@ -13936,11 +13748,7 @@ where $|\ell_{ij}| \le 1$.</p>
 <div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">LinearAlgebra</span>
-
-<span class="c"># second argument indicates partial pivoting (default) or not</span>
-<span class="n">alu</span> <span class="o">=</span> <span class="n">lu</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
-<span class="n">typeof</span><span class="p">(</span><span class="n">alu</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">Achol</span> <span class="o">=</span> <span class="n">cholesky</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="kt">Val</span><span class="p">(</span><span class="kc">true</span><span class="p">),</span> <span class="n">check</span><span class="o">=</span><span class="kc">false</span><span class="p">)</span> <span class="c"># turn off checking pd</span>
 </pre></div>
 
     </div>
@@ -13959,7 +13767,21 @@ where $|\ell_{ij}| \le 1$.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>LU{Float64,Array{Float64,2}}</pre>
+<pre>CholeskyPivoted{Float64,Array{Float64,2}}
+U factor with rank 4:
+5×5 UpperTriangular{Float64,Array{Float64,2}}:
+ 2.4227  0.855329   0.38529    -0.620349     1.24508
+  ⋅      1.11452   -0.0679895  -0.0121011    0.580476
+  ⋅       ⋅         0.489935    0.4013      -0.463002
+  ⋅       ⋅          ⋅          1.49012e-8   0.0
+  ⋅       ⋅          ⋅           ⋅           0.0
+permutation:
+5-element Array{Int64,1}:
+ 2
+ 1
+ 4
+ 5
+ 3</pre>
 </div>
 
 </div>
@@ -13973,7 +13795,7 @@ where $|\ell_{ij}| \le 1$.</p>
 <div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">dump</span><span class="p">(</span><span class="n">alu</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">rank</span><span class="p">(</span><span class="n">Achol</span><span class="p">)</span> <span class="c"># determine rank from Cholesky factor</span>
 </pre></div>
 
     </div>
@@ -13986,16 +13808,15 @@ where $|\ell_{ij}| \le 1$.</p>
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+    <div class="prompt output_prompt">Out[17]:</div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>LU{Float64,Array{Float64,2}}
-  factors: Array{Float64}((3, 3)) [-3.0 -1.0 2.0; 0.6666666666666666 1.6666666666666665 0.6666666666666667; -0.6666666666666666 0.20000000000000004 0.19999999999999996]
-  ipiv: Array{Int64}((3,)) [2, 3, 3]
-  info: Int64 0
-</pre>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>4</pre>
 </div>
+
 </div>
 
 </div>
@@ -14007,7 +13828,7 @@ where $|\ell_{ij}| \le 1$.</p>
 <div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">alu</span><span class="o">.</span><span class="n">L</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">rank</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="c"># determine rank from SVD, which is more numerically stable</span>
 </pre></div>
 
     </div>
@@ -14026,10 +13847,7 @@ where $|\ell_{ij}| \le 1$.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3×3 Array{Float64,2}:
-  1.0       0.0  0.0
-  0.666667  1.0  0.0
- -0.666667  0.2  1.0</pre>
+<pre>3</pre>
 </div>
 
 </div>
@@ -14043,7 +13861,7 @@ where $|\ell_{ij}| \le 1$.</p>
 <div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">alu</span><span class="o">.</span><span class="n">U</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">Achol</span><span class="o">.</span><span class="n">L</span>
 </pre></div>
 
     </div>
@@ -14062,10 +13880,12 @@ where $|\ell_{ij}| \le 1$.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3×3 Array{Float64,2}:
- -3.0  -1.0      2.0
-  0.0   1.66667  0.666667
-  0.0   0.0      0.2</pre>
+<pre>5×5 LowerTriangular{Float64,Array{Float64,2}}:
+  2.4227      ⋅           ⋅         ⋅           ⋅ 
+  0.855329   1.11452      ⋅         ⋅           ⋅ 
+  0.38529   -0.0679895   0.489935   ⋅           ⋅ 
+ -0.620349  -0.0121011   0.4013    1.49012e-8   ⋅ 
+  1.24508    0.580476   -0.463002  0.0         0.0</pre>
 </div>
 
 </div>
@@ -14079,7 +13899,7 @@ where $|\ell_{ij}| \le 1$.</p>
 <div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">alu</span><span class="o">.</span><span class="n">p</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">Achol</span><span class="o">.</span><span class="n">U</span>
 </pre></div>
 
     </div>
@@ -14098,10 +13918,12 @@ where $|\ell_{ij}| \le 1$.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3-element Array{Int64,1}:
- 2
- 3
- 1</pre>
+<pre>5×5 UpperTriangular{Float64,Array{Float64,2}}:
+ 2.4227  0.855329   0.38529    -0.620349     1.24508
+  ⋅      1.11452   -0.0679895  -0.0121011    0.580476
+  ⋅       ⋅         0.489935    0.4013      -0.463002
+  ⋅       ⋅          ⋅          1.49012e-8   0.0
+  ⋅       ⋅          ⋅           ⋅           0.0</pre>
 </div>
 
 </div>
@@ -14115,7 +13937,7 @@ where $|\ell_{ij}| \le 1$.</p>
 <div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">alu</span><span class="o">.</span><span class="n">P</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">Achol</span><span class="o">.</span><span class="n">p</span>
 </pre></div>
 
     </div>
@@ -14134,10 +13956,12 @@ where $|\ell_{ij}| \le 1$.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3×3 Array{Float64,2}:
- 0.0  1.0  0.0
- 0.0  0.0  1.0
- 1.0  0.0  0.0</pre>
+<pre>5-element Array{Int64,1}:
+ 2
+ 1
+ 4
+ 5
+ 3</pre>
 </div>
 
 </div>
@@ -14151,7 +13975,8 @@ where $|\ell_{ij}| \le 1$.</p>
 <div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">alu</span><span class="o">.</span><span class="n">L</span> <span class="o">*</span> <span class="n">alu</span><span class="o">.</span><span class="n">U</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># P A P&#39; = L U</span>
+<span class="n">norm</span><span class="p">(</span><span class="n">Achol</span><span class="o">.</span><span class="n">P</span> <span class="o">*</span> <span class="n">A</span> <span class="o">*</span> <span class="n">Achol</span><span class="o">.</span><span class="n">P</span> <span class="o">-</span> <span class="n">Achol</span><span class="o">.</span><span class="n">L</span> <span class="o">*</span> <span class="n">Achol</span><span class="o">.</span><span class="n">U</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14170,10 +13995,7 @@ where $|\ell_{ij}| \le 1$.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3×3 Array{Float64,2}:
- -3.0  -1.0   2.0
- -2.0   1.0   2.0
-  2.0   1.0  -1.0</pre>
+<pre>7.5285903934693295</pre>
 </div>
 
 </div>
@@ -14181,13 +14003,58 @@ where $|\ell_{ij}| \le 1$.</p>
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Applications">Applications<a class="anchor-link" href="#Applications">&#182;</a></h2><ul>
+<li><strong>No inversion</strong> mentality: Whenever we see matrix inverse, we should think in terms of solving linear equations. If the matrix is positive (semi)definite, use Cholesky decomposition, which is twice cheaper than LU decomposition.</li>
+</ul>
+<h3 id="Multivariate-normal-density">Multivariate normal density<a class="anchor-link" href="#Multivariate-normal-density">&#182;</a></h3><p>Multivariate normal density $\text{MVN}(0, \Sigma)$, where $\Sigma$ is p.d., is</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+$$
+- \frac{n}{2} \log (2\pi) - \frac{1}{2} \log \det \Sigma - \frac{1}{2} \mathbf{y}^T \Sigma^{-1} \mathbf{y}.
+$$<ul>
+<li><p>Method 1: (a) compute explicit inverse $\Sigma^{-1}$ ($2n^3$ flops), (b) compute quadratic form ($2n^2 + 2n$ flops), (c) compute determinant ($2n^3/3$ flops).</p>
+</li>
+<li><p>Method 2: (a) Cholesky decomposition $\Sigma = \mathbf{L} \mathbf{L}^T$ ($n^3/3$ flops), (b) Solve $\mathbf{L} \mathbf{x} = \mathbf{y}$ by forward substitutions ($n^2$ flops), (c) compute quadratic form $\mathbf{x}^T \mathbf{x}$ ($2n$ flops), and (d) compute determinant from Cholesky factor ($n$ flops).</p>
+</li>
+</ul>
+<p><strong>Which method is better?</strong></p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">A</span><span class="p">[</span><span class="n">alu</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="o">:</span><span class="p">]</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># this is a person w/o numerical analysis training</span>
+<span class="k">function</span> <span class="n">logpdf_mvn_1</span><span class="p">(</span><span class="n">y</span><span class="o">::</span><span class="kt">Vector</span><span class="p">,</span> <span class="n">Σ</span><span class="o">::</span><span class="kt">Matrix</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="o">-</span> <span class="p">(</span><span class="n">n</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="nb">π</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">logdet</span><span class="p">(</span><span class="kt">Symmetric</span><span class="p">(</span><span class="n">Σ</span><span class="p">))</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">transpose</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">inv</span><span class="p">(</span><span class="n">Σ</span><span class="p">)</span> <span class="o">*</span> <span class="n">y</span>
+<span class="k">end</span>
+
+<span class="c"># this is a computing-savvy person </span>
+<span class="k">function</span> <span class="n">logpdf_mvn_2</span><span class="p">(</span><span class="n">y</span><span class="o">::</span><span class="kt">Vector</span><span class="p">,</span> <span class="n">Σ</span><span class="o">::</span><span class="kt">Matrix</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">Σchol</span> <span class="o">=</span> <span class="n">cholesky</span><span class="p">(</span><span class="kt">Symmetric</span><span class="p">(</span><span class="n">Σ</span><span class="p">))</span>
+    <span class="o">-</span> <span class="p">(</span><span class="n">n</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="nb">π</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">logdet</span><span class="p">(</span><span class="n">Σchol</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">sum</span><span class="p">(</span><span class="n">abs2</span><span class="p">,</span> <span class="n">Σchol</span><span class="o">.</span><span class="n">L</span> <span class="o">\</span> <span class="n">y</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="c"># better memory efficiency - input Σ is overwritten</span>
+<span class="k">function</span> <span class="n">logpdf_mvn_3</span><span class="p">(</span><span class="n">y</span><span class="o">::</span><span class="kt">Vector</span><span class="p">,</span> <span class="n">Σ</span><span class="o">::</span><span class="kt">Matrix</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">Σchol</span> <span class="o">=</span> <span class="n">cholesky!</span><span class="p">(</span><span class="kt">Symmetric</span><span class="p">(</span><span class="n">Σ</span><span class="p">))</span> <span class="c"># Σ is overwritten</span>
+    <span class="o">-</span> <span class="p">(</span><span class="n">n</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="nb">π</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">logdet</span><span class="p">(</span><span class="n">Σchol</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">dot</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">Σchol</span> <span class="o">\</span> <span class="n">y</span><span class="p">)</span>
+<span class="k">end</span>
 </pre></div>
 
     </div>
@@ -14206,10 +14073,7 @@ where $|\ell_{ij}| \le 1$.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3×3 Array{Float64,2}:
- -3.0  -1.0   2.0
- -2.0   1.0   2.0
-  2.0   1.0  -1.0</pre>
+<pre>logpdf_mvn_3 (generic function with 1 method)</pre>
 </div>
 
 </div>
@@ -14223,8 +14087,20 @@ where $|\ell_{ij}| \le 1$.</p>
 <div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># this is doing two triangular solves, 2n^2 flops</span>
-<span class="n">alu</span> <span class="o">\</span> <span class="n">b</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">BenchmarkTools</span><span class="p">,</span> <span class="n">Distributions</span><span class="p">,</span> <span class="n">Random</span>
+
+<span class="n">Random</span><span class="o">.</span><span class="n">seed!</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span> <span class="c"># seed</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="c"># a pd matrix</span>
+<span class="n">Σ</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="kt">Matrix</span><span class="p">{</span><span class="kt">Float64</span><span class="p">},</span> <span class="kt">Symmetric</span><span class="p">([</span><span class="n">i</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="kp">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span><span class="p">,</span> <span class="n">j</span> <span class="kp">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span><span class="p">]))</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="n">MvNormal</span><span class="p">(</span><span class="n">Σ</span><span class="p">))</span> <span class="c"># one random sample from N(0, Σ)</span>
+
+<span class="c"># at least they should give the same answer</span>
+<span class="nd">@show</span> <span class="n">logpdf_mvn_1</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">Σ</span><span class="p">)</span>
+<span class="nd">@show</span> <span class="n">logpdf_mvn_2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">Σ</span><span class="p">)</span>
+<span class="n">Σc</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">Σ</span><span class="p">)</span>
+<span class="nd">@show</span> <span class="n">logpdf_mvn_3</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">Σc</span><span class="p">);</span>
 </pre></div>
 
     </div>
@@ -14237,18 +14113,15 @@ where $|\ell_{ij}| \le 1$.</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[24]:</div>
+    <div class="prompt"></div>
 
 
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>3-element Array{Float64,1}:
-  2.0000000000000004
-  2.9999999999999996
- -0.9999999999999994</pre>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>logpdf_mvn_1(y, Σ) = -4878.375103770505
+logpdf_mvn_2(y, Σ) = -4878.375103770553
+logpdf_mvn_3(y, Σc) = -4878.375103770553
+</pre>
 </div>
-
 </div>
 
 </div>
@@ -14260,7 +14133,7 @@ where $|\ell_{ij}| \le 1$.</p>
 <div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">det</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="c"># this does LU!</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="nd">@benchmark</span> <span class="n">logpdf_mvn_1</span><span class="p">(</span><span class="o">$</span><span class="n">y</span><span class="p">,</span> <span class="o">$</span><span class="n">Σ</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14279,7 +14152,17 @@ where $|\ell_{ij}| \le 1$.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>-0.9999999999999998</pre>
+<pre>BenchmarkTools.Trial: 
+  memory estimate:  15.78 MiB
+  allocs estimate:  14
+  --------------
+  minimum time:     36.727 ms (0.00% GC)
+  median time:      42.156 ms (0.00% GC)
+  mean time:        45.957 ms (2.45% GC)
+  maximum time:     98.028 ms (4.02% GC)
+  --------------
+  samples:          109
+  evals/sample:     1</pre>
 </div>
 
 </div>
@@ -14293,7 +14176,7 @@ where $|\ell_{ij}| \le 1$.</p>
 <div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">det</span><span class="p">(</span><span class="n">alu</span><span class="p">)</span> <span class="c"># this is cheap</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="nd">@benchmark</span> <span class="n">logpdf_mvn_2</span><span class="p">(</span><span class="o">$</span><span class="n">y</span><span class="p">,</span> <span class="o">$</span><span class="n">Σ</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14312,7 +14195,17 @@ where $|\ell_{ij}| \le 1$.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>-0.9999999999999998</pre>
+<pre>BenchmarkTools.Trial: 
+  memory estimate:  15.27 MiB
+  allocs estimate:  10
+  --------------
+  minimum time:     8.683 ms (0.00% GC)
+  median time:      10.112 ms (0.00% GC)
+  mean time:        10.693 ms (10.41% GC)
+  maximum time:     22.599 ms (34.22% GC)
+  --------------
+  samples:          468
+  evals/sample:     1</pre>
 </div>
 
 </div>
@@ -14326,7 +14219,7 @@ where $|\ell_{ij}| \le 1$.</p>
 <div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">inv</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="c"># this does LU!</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="nd">@benchmark</span> <span class="n">logpdf_mvn_3</span><span class="p">(</span><span class="o">$</span><span class="n">y</span><span class="p">,</span> <span class="o">$</span><span class="n">Σc</span><span class="p">)</span> <span class="n">setup</span><span class="o">=</span><span class="p">(</span><span class="n">copy!</span><span class="p">(</span><span class="n">Σc</span><span class="p">,</span> <span class="n">Σ</span><span class="p">))</span> <span class="n">evals</span><span class="o">=</span><span class="mi">1</span>
 </pre></div>
 
     </div>
@@ -14345,46 +14238,17 @@ where $|\ell_{ij}| \le 1$.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3×3 Array{Float64,2}:
-  4.0   3.0  -1.0
- -2.0  -2.0   1.0
-  5.0   4.0  -1.0</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[28]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">inv</span><span class="p">(</span><span class="n">alu</span><span class="p">)</span> <span class="c"># this is cheap</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[28]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>3×3 Array{Float64,2}:
-  4.0   3.0  -1.0
- -2.0  -2.0   1.0
-  5.0   4.0  -1.0</pre>
+<pre>BenchmarkTools.Trial: 
+  memory estimate:  8.05 KiB
+  allocs estimate:  5
+  --------------
+  minimum time:     5.814 ms (0.00% GC)
+  median time:      6.882 ms (0.00% GC)
+  mean time:        7.400 ms (0.00% GC)
+  maximum time:     27.172 ms (0.00% GC)
+  --------------
+  samples:          607
+  evals/sample:     1</pre>
 </div>
 
 </div>
@@ -14396,14 +14260,49 @@ where $|\ell_{ij}| \le 1$.</p>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading">&#182;</a></h2><ul>
-<li><p>Sections II.5.2 and II.5.3 of <a href="http://ucla.worldcat.org/title/computational-statistics/oclc/437345409&amp;referer=brief_results">Computational Statistics</a> by James Gentle (2010).</p>
+<ul>
+<li>To evaluate same multivariate normal density at many observations $y_1, y_2, \ldots$, we pre-compute the Cholesky decomposition ($n^3/3$ flops), then each evaluation costs $n^2$ flops.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Linear-regression">Linear regression<a class="anchor-link" href="#Linear-regression">&#182;</a></h3><ul>
+<li><p>Cholesky decomposition is <strong>one</strong> approach to solve linear regression<br>
+$$
+\widehat{\boldsymbol{\beta}} = (\mathbf{X}^T \mathbf{X})^{-1} \mathbf{X}^T \mathbf{y}.
+$$</p>
 </li>
-<li><p>A definite reference is Chapter 3 of the book <a href="http://catalog.library.ucla.edu/vwebv/holdingsInfo?bibId=7122088">Matrix Computation</a> by Gene Golub and Charles Van Loan.</p>
+<li><p>Assume $\mathbf{X} \in \mathbb{R}^{n \times p}$ and $\mathbf{y} \in \mathbb{R}^n$.</p>
+<ul>
+<li>Compute $\mathbf{X}^T \mathbf{X}$: $np^2$ flops  </li>
+<li>Compute $\mathbf{X}^T \mathbf{y}$: $2np$ flops  </li>
+<li>Cholesky decomposition of $\mathbf{X}^T \mathbf{X}$: $\frac{1}{3} p^3$ flops  </li>
+<li>Solve normal equation $\mathbf{X}^T \mathbf{X} \beta = \mathbf{X}^T \mathbf{y}$: $2p^2$ flops  </li>
+<li>If need standard errors, another $(4/3)p^3$ flops</li>
+</ul>
+</li>
+<li><p>Total computational cost is $np^2 + (1/3) p^3$ (without s.e.) or $np^2 + (5/3) p^3$ (with s.e.) flops.</p>
 </li>
 </ul>
-<p><img src="https://images-na.ssl-images-amazon.com/images/I/41Cs04RRiTL._SX309_BO1,204,203,200_.jpg" width="250" align="center"/></p>
-<p><img src="https://images-na.ssl-images-amazon.com/images/I/41f5vxegABL._SY344_BO1,204,203,200_.jpg" width="250" align="center"/></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading">&#182;</a></h2><ul>
+<li><p>Section 7.7 of <a href="http://ucla.worldcat.org/title/numerical-analysis-for-statisticians/oclc/793808354&amp;referer=brief_results">Numerical Analysis for Statisticians</a> of Kenneth Lange (2010).</p>
+</li>
+<li><p>Section II.5.3 of <a href="http://ucla.worldcat.org/title/computational-statistics/oclc/437345409&amp;referer=brief_results">Computational Statistics</a> by James Gentle (2010).</p>
+</li>
+<li><p>Section 4.2 of <a href="http://catalog.library.ucla.edu/vwebv/holdingsInfo?bibId=7122088">Matrix Computation</a> by Gene Golub and Charles Van Loan (2013).</p>
+</li>
+</ul>
 
 </div>
 </div>
