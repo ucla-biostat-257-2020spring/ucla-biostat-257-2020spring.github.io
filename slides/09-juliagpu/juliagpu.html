@@ -13372,9 +13372,9 @@ Platform Info:
 
 <div class="output_text output_subarea output_execute_result">
 <pre>3×3 CuArray{Float32,2,Nothing}:
- 0.181051  0.114813  0.10958
- 0.360586  0.211851  0.66229
- 0.773347  0.581369  0.874378</pre>
+ 0.165096   0.0554169  0.635211
+ 0.57003    0.133835   0.161483
+ 0.0529914  0.528684   0.239954</pre>
 </div>
 
 </div>
@@ -13426,7 +13426,7 @@ Platform Info:
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># collect data from GPU to CPU</span>
-<span class="n">collect</span><span class="p">(</span><span class="n">xd</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="n">xd</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13446,89 +13446,9 @@ Platform Info:
 
 <div class="output_text output_subarea output_execute_result">
 <pre>3×3 Array{Float32,2}:
- 0.181051  0.114813  0.10958
- 0.360586  0.211851  0.66229
- 0.773347  0.581369  0.874378</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Elementiwise-operations-on-GPU">Elementiwise operations on GPU<a class="anchor-link" href="#Elementiwise-operations-on-GPU">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">zd</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="p">(</span><span class="n">yd</span> <span class="o">.+</span> <span class="n">sin</span><span class="o">.</span><span class="p">(</span><span class="n">xd</span><span class="p">))</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[6]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>3×3 CuArray{Float32,2,Nothing}:
- 0.165569  0.108461  0.103784
- 0.302193  0.190844  0.479288
- 0.529766  0.437719  0.569365</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># getting back x</span>
-<span class="n">asin</span><span class="o">.</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="p">(</span><span class="n">zd</span><span class="p">)</span> <span class="o">.-</span> <span class="n">yd</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[7]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>3×3 CuArray{Float32,2,Nothing}:
- 0.181051  0.114813  0.10958
- 0.360586  0.211851  0.66229
- 0.773347  0.581369  0.874377</pre>
+ 0.165096   0.0554169  0.635211
+ 0.57003    0.133835   0.161483
+ 0.0529914  0.528684   0.239954</pre>
 </div>
 
 </div>
@@ -13546,49 +13466,10 @@ Platform Info:
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">LinearAlgebra</span>
-
-<span class="n">zd</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">CuArray</span><span class="p">{</span><span class="kt">Float32</span><span class="p">},</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-<span class="n">mul!</span><span class="p">(</span><span class="n">zd</span><span class="p">,</span> <span class="n">xd</span><span class="p">,</span> <span class="n">yd</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[8]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>3×3 CuArray{Float32,2,Nothing}:
- 0.405445  0.405445  0.405445
- 1.23473   1.23473   1.23473
- 2.22909   2.22909   2.22909</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">BenchmarkTools</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">BenchmarkTools</span><span class="p">,</span> <span class="n">LinearAlgebra</span>
 
 <span class="n">n</span> <span class="o">=</span> <span class="mi">1024</span>
 <span class="c"># on CPU</span>
@@ -13614,23 +13495,23 @@ Platform Info:
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[9]:</div>
+    <div class="prompt output_prompt">Out[6]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
 <pre>BenchmarkTools.Trial: 
-  memory estimate:  224 bytes
-  allocs estimate:  4
+  memory estimate:  192 bytes
+  allocs estimate:  2
   --------------
-  minimum time:     4.453 μs (0.00% GC)
-  median time:      175.771 μs (0.00% GC)
-  mean time:        169.631 μs (0.00% GC)
-  maximum time:     1.309 ms (0.00% GC)
+  minimum time:     5.202 μs (0.00% GC)
+  median time:      178.213 μs (0.00% GC)
+  mean time:        172.120 μs (0.00% GC)
+  maximum time:     354.750 μs (0.00% GC)
   --------------
-  samples:          4202
-  evals/sample:     7</pre>
+  samples:          7242
+  evals/sample:     4</pre>
 </div>
 
 </div>
@@ -13641,11 +13522,164 @@ Platform Info:
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># SP matrix multiplication on CPU</span>
 <span class="nd">@benchmark</span> <span class="n">mul!</span><span class="p">(</span><span class="o">$</span><span class="n">z</span><span class="p">,</span> <span class="o">$</span><span class="n">x</span><span class="p">,</span> <span class="o">$</span><span class="n">y</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[7]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>BenchmarkTools.Trial: 
+  memory estimate:  0 bytes
+  allocs estimate:  0
+  --------------
+  minimum time:     3.739 ms (0.00% GC)
+  median time:      3.939 ms (0.00% GC)
+  mean time:        5.227 ms (0.00% GC)
+  maximum time:     25.302 ms (0.00% GC)
+  --------------
+  samples:          955
+  evals/sample:     1</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>We ses ~40-50 fold speedup in this matrix multiplication example.
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># cholesky on Gram matrix</span>
+<span class="n">xtxd</span> <span class="o">=</span> <span class="n">xd</span><span class="o">&#39;</span><span class="n">xd</span> <span class="o">+</span> <span class="nb">I</span>
+<span class="nd">@benchmark</span> <span class="n">cholesky</span><span class="p">(</span><span class="kt">Symmetric</span><span class="p">(</span><span class="o">$</span><span class="n">xtxd</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>┌ Warning: Performing scalar operations on GPU arrays: This is very slow, consider disallowing these operations with `allowscalar(false)`
+└ @ GPUArrays /home/huazhou/.julia/packages/GPUArrays/QDGmr/src/host/indexing.jl:43
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[8]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>BenchmarkTools.Trial: 
+  memory estimate:  3.30 KiB
+  allocs estimate:  107
+  --------------
+  minimum time:     825.752 μs (0.00% GC)
+  median time:      847.795 μs (0.00% GC)
+  mean time:        849.622 μs (0.20% GC)
+  maximum time:     16.199 ms (32.08% GC)
+  --------------
+  samples:          5869
+  evals/sample:     1</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">xtx</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="n">xtxd</span><span class="p">)</span>
+<span class="nd">@benchmark</span> <span class="n">cholesky</span><span class="p">(</span><span class="kt">Symmetric</span><span class="p">(</span><span class="o">$</span><span class="n">xtx</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[9]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>BenchmarkTools.Trial: 
+  memory estimate:  4.00 MiB
+  allocs estimate:  6
+  --------------
+  minimum time:     3.583 ms (0.00% GC)
+  median time:      5.106 ms (0.00% GC)
+  mean time:        5.656 ms (3.02% GC)
+  maximum time:     23.339 ms (0.00% GC)
+  --------------
+  samples:          883
+  evals/sample:     1</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Elementiwise-operations-on-GPU">Elementiwise operations on GPU<a class="anchor-link" href="#Elementiwise-operations-on-GPU">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># elementwise function on GPU arrays</span>
+<span class="n">fill!</span><span class="p">(</span><span class="n">yd</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="nd">@benchmark</span> <span class="o">$</span><span class="n">zd</span> <span class="o">.=</span> <span class="n">log</span><span class="o">.</span><span class="p">(</span><span class="o">$</span><span class="n">yd</span> <span class="o">.+</span> <span class="n">sin</span><span class="o">.</span><span class="p">(</span><span class="o">$</span><span class="n">xd</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -13665,15 +13699,60 @@ Platform Info:
 
 <div class="output_text output_subarea output_execute_result">
 <pre>BenchmarkTools.Trial: 
+  memory estimate:  3.66 KiB
+  allocs estimate:  84
+  --------------
+  minimum time:     7.997 μs (0.00% GC)
+  median time:      31.707 μs (0.00% GC)
+  mean time:        30.660 μs (1.32% GC)
+  maximum time:     2.623 ms (97.72% GC)
+  --------------
+  samples:          10000
+  evals/sample:     3</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># elementwise function on CPU arrays</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">collect</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">collect</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="nd">@benchmark</span> <span class="o">$</span><span class="n">z</span> <span class="o">.=</span> <span class="n">log</span><span class="o">.</span><span class="p">(</span><span class="o">$</span><span class="n">y</span> <span class="o">.+</span> <span class="n">sin</span><span class="o">.</span><span class="p">(</span><span class="o">$</span><span class="n">x</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[11]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>BenchmarkTools.Trial: 
   memory estimate:  0 bytes
   allocs estimate:  0
   --------------
-  minimum time:     3.752 ms (0.00% GC)
-  median time:      7.810 ms (0.00% GC)
-  mean time:        7.943 ms (0.00% GC)
-  maximum time:     19.237 ms (0.00% GC)
+  minimum time:     16.787 ms (0.00% GC)
+  median time:      17.736 ms (0.00% GC)
+  mean time:        24.681 ms (0.00% GC)
+  maximum time:     44.265 ms (0.00% GC)
   --------------
-  samples:          629
+  samples:          203
   evals/sample:     1</pre>
 </div>
 
@@ -13682,7 +13761,7 @@ Platform Info:
 </div>
 </div>
 
-</div>We ses ~40-50 fold speedup in this matrix multiplication example.
+</div>
     </div>
   </div>
 </body>
