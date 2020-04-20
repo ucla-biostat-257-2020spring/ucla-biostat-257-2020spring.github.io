@@ -13125,10 +13125,10 @@ $( document ).ready(function(){
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Julia Version 1.4.0
-Commit b8e9a9ecc6 (2020-03-21 16:36 UTC)
+<pre>Julia Version 1.4.1
+Commit 381693d3df* (2020-04-14 17:20 UTC)
 Platform Info:
-  OS: macOS (x86_64-apple-darwin18.6.0)
+  OS: macOS (x86_64-apple-darwin18.7.0)
   CPU: Intel(R) Core(TM) i7-6920HQ CPU @ 2.90GHz
   WORD_SIZE: 64
   LIBM: libopenlibm
@@ -13147,7 +13147,7 @@ Environment:
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>For the couple of lectures, we consider computer algorithms for solving linear equations $\mathbf{A} \mathbf{x} = \mathbf{b}$, a ubiquitous task in statistics.</p>
+<p>For the next couple of lectures, we consider computer algorithms for solving linear equations $\mathbf{A} \mathbf{x} = \mathbf{b}$, a ubiquitous task in statistics.</p>
 <p>Idea: turning original problem into an <strong>easy</strong> one, e.g., triangular system.</p>
 
 </div>
@@ -13232,15 +13232,15 @@ $$</p>
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h2><ul>
-<li><p>BLAS level 2 function: <a href="http://www.netlib.org/lapack/explore-html/d6/d96/dtrsv_8f.html"><code>?trsv</code></a> (triangular solve with one right hand side).</p>
+<li><p>BLAS level 2 function: <a href="http://www.netlib.org/lapack/explore-html/d6/d96/dtrsv_8f.html">trsv</a> (triangular solve with one right hand side).</p>
 </li>
-<li><p>BLAS level 3 function: <a href="http://www.netlib.org/lapack/explore-html/de/da7/dtrsm_8f.html"><code>?trsm</code></a> (matrix triangular solve, i.e., multiple right hand sides).</p>
+<li><p>BLAS level 3 function: <a href="http://www.netlib.org/lapack/explore-html/de/da7/dtrsm_8f.html">trsm</a> (matrix triangular solve, i.e., multiple right hand sides).</p>
 </li>
 <li><p>Julia</p>
 <ul>
 <li>The left divide <code>\</code> operator in Julia is used for solving linear equations or least squares problem.  </li>
 <li>If <code>A</code> is a triangular matrix, the command <code>A \ b</code> uses forward or backward substitution  </li>
-<li>Or we can call the BLAS wrapper functions directly: <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.BLAS.trsv!"><code>trsv!</code></a>, <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.BLAS.trsv"><code>trsv</code></a>, <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.BLAS.trsm!"><code>trsm!</code></a>, <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.BLAS.trsm"><code>trsm</code></a></li>
+<li>Or we can call the BLAS wrapper functions directly: <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.BLAS.trsv!">trsv!</a>, <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.BLAS.trsv">trsv</a>, <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.BLAS.trsm!">trsm!</a>, <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.BLAS.trsm">trsm</a></li>
 </ul>
 </li>
 </ul>
@@ -13426,7 +13426,7 @@ $$</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>(Ptr{Float64} @0x0000000113c444d0, Ptr{Float64} @0x0000000113c444d0)</pre>
+<pre>(Ptr{Float64} @0x0000000113670710, Ptr{Float64} @0x0000000113670710)</pre>
 </div>
 
 </div>
@@ -13551,7 +13551,7 @@ $$</p>
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li>Some other BLAS functions for triangular systems: <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.BLAS.trmv"><code>trmv</code></a>, <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.BLAS.trmv!"><code>trmv!</code></a>, <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.BLAS.trmm"><code>trmm</code></a>, <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.BLAS.trmm!"><code>trmm!</code></a></li>
+<li>Some other BLAS functions for triangular systems: <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.BLAS.trmv">trmv</a>, <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.BLAS.trmv!">trmv!</a>, <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.BLAS.trmm">trmm</a>, <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.BLAS.trmm!">trmm!</a></li>
 </ul>
 
 </div>
@@ -13592,7 +13592,7 @@ $$</p>
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">A</span>
 </pre></div>
 
     </div>
@@ -13612,11 +13612,11 @@ $$</p>
 
 <div class="output_text output_subarea output_execute_result">
 <pre>5×5 Array{Float64,2}:
- 0.48      0.031831  0.570613  0.234544   0.122594
- 0.790201  0.900681  0.203997  0.0976698  0.110365
- 0.356221  0.940299  0.37498   0.627093   0.51468
- 0.900925  0.621379  0.759755  0.946697   0.628172
- 0.529253  0.348173  0.19178   0.546904   0.0334755</pre>
+  1.19027   -0.664713   -0.339366   0.368002  -0.979539
+  2.04818    0.980968   -0.843878  -0.281133   0.260402
+  1.14265   -0.0754831  -0.888936  -0.734886  -0.468489
+  0.459416   0.273815    0.327215  -0.71741   -0.880897
+ -0.396679  -0.194229    0.592403  -0.77507    0.277726</pre>
 </div>
 
 </div>
@@ -13650,11 +13650,11 @@ $$</p>
 
 <div class="output_text output_subarea output_execute_result">
 <pre>5×5 LowerTriangular{Float64,Array{Float64,2}}:
- 0.48       ⋅         ⋅         ⋅         ⋅ 
- 0.790201  0.900681   ⋅         ⋅         ⋅ 
- 0.356221  0.940299  0.37498    ⋅         ⋅ 
- 0.900925  0.621379  0.759755  0.946697   ⋅ 
- 0.529253  0.348173  0.19178   0.546904  0.0334755</pre>
+  1.19027     ⋅           ⋅          ⋅        ⋅ 
+  2.04818    0.980968     ⋅          ⋅        ⋅ 
+  1.14265   -0.0754831  -0.888936    ⋅        ⋅ 
+  0.459416   0.273815    0.327215  -0.71741   ⋅ 
+ -0.396679  -0.194229    0.592403  -0.77507  0.277726</pre>
 </div>
 
 </div>
@@ -13688,11 +13688,11 @@ $$</p>
 
 <div class="output_text output_subarea output_execute_result">
 <pre>5×5 UnitLowerTriangular{Float64,Array{Float64,2}}:
- 1.0        ⋅         ⋅         ⋅         ⋅ 
- 0.790201  1.0        ⋅         ⋅         ⋅ 
- 0.356221  0.940299  1.0        ⋅         ⋅ 
- 0.900925  0.621379  0.759755  1.0        ⋅ 
- 0.529253  0.348173  0.19178   0.546904  1.0</pre>
+  1.0         ⋅          ⋅          ⋅        ⋅ 
+  2.04818    1.0         ⋅          ⋅        ⋅ 
+  1.14265   -0.0754831  1.0         ⋅        ⋅ 
+  0.459416   0.273815   0.327215   1.0       ⋅ 
+ -0.396679  -0.194229   0.592403  -0.77507  1.0</pre>
 </div>
 
 </div>
@@ -13724,7 +13724,7 @@ $$</p>
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># if we don&#39;t tell Julia it&#39;s triangular: O(n^3) complexity</span>
 <span class="c"># tril(A) returns a full triangular matrix, same as Matlab</span>
-<span class="nd">@benchmark</span> <span class="n">eigvals</span><span class="p">(</span><span class="n">tril</span><span class="p">(</span><span class="o">$</span><span class="n">A</span><span class="p">))</span>
+<span class="nd">@benchmark</span> <span class="n">eigvals</span><span class="p">(</span><span class="o">$</span><span class="p">(</span><span class="n">tril</span><span class="p">(</span><span class="n">A</span><span class="p">)))</span>
 </pre></div>
 
     </div>
@@ -13744,15 +13744,15 @@ $$</p>
 
 <div class="output_text output_subarea output_execute_result">
 <pre>BenchmarkTools.Trial: 
-  memory estimate:  15.55 MiB
-  allocs estimate:  16
+  memory estimate:  7.92 MiB
+  allocs estimate:  14
   --------------
-  minimum time:     47.155 ms (0.00% GC)
-  median time:      50.428 ms (0.00% GC)
-  mean time:        50.377 ms (1.56% GC)
-  maximum time:     56.406 ms (0.00% GC)
+  minimum time:     45.466 ms (0.00% GC)
+  median time:      47.869 ms (0.00% GC)
+  mean time:        48.044 ms (0.78% GC)
+  maximum time:     54.783 ms (4.32% GC)
   --------------
-  samples:          100
+  samples:          105
   evals/sample:     1</pre>
 </div>
 
@@ -13768,7 +13768,7 @@ $$</p>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># if we tell Julia it&#39;s triangular: O(n) complexity</span>
-<span class="nd">@benchmark</span> <span class="n">eigvals</span><span class="p">(</span><span class="kt">LowerTriangular</span><span class="p">(</span><span class="o">$</span><span class="n">A</span><span class="p">))</span>
+<span class="nd">@benchmark</span> <span class="n">eigvals</span><span class="p">(</span><span class="o">$</span><span class="p">(</span><span class="kt">LowerTriangular</span><span class="p">(</span><span class="n">A</span><span class="p">)))</span>
 </pre></div>
 
     </div>
@@ -13791,13 +13791,13 @@ $$</p>
   memory estimate:  7.94 KiB
   allocs estimate:  1
   --------------
-  minimum time:     1.625 μs (0.00% GC)
-  median time:      2.101 μs (0.00% GC)
-  mean time:        3.111 μs (26.46% GC)
-  maximum time:     612.338 μs (99.38% GC)
+  minimum time:     1.869 μs (0.00% GC)
+  median time:      2.499 μs (0.00% GC)
+  mean time:        3.408 μs (19.26% GC)
+  maximum time:     678.285 μs (99.34% GC)
   --------------
   samples:          10000
-  evals/sample:     10</pre>
+  evals/sample:     9</pre>
 </div>
 
 </div>
@@ -13813,7 +13813,7 @@ $$</p>
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># if we don&#39;t tell Julia it&#39;s triangular: O(n^3) complexity</span>
 <span class="c"># tril(A) returns a full triangular matrix, same as Matlab</span>
-<span class="nd">@benchmark</span> <span class="n">det</span><span class="p">(</span><span class="n">tril</span><span class="p">(</span><span class="o">$</span><span class="n">A</span><span class="p">))</span>
+<span class="nd">@benchmark</span> <span class="n">det</span><span class="p">(</span><span class="o">$</span><span class="p">(</span><span class="n">tril</span><span class="p">(</span><span class="n">A</span><span class="p">)))</span>
 </pre></div>
 
     </div>
@@ -13833,15 +13833,15 @@ $$</p>
 
 <div class="output_text output_subarea output_execute_result">
 <pre>BenchmarkTools.Trial: 
-  memory estimate:  7.64 MiB
-  allocs estimate:  4
+  memory estimate:  7.95 KiB
+  allocs estimate:  2
   --------------
-  minimum time:     1.698 ms (0.00% GC)
-  median time:      1.814 ms (0.00% GC)
-  mean time:        2.232 ms (21.05% GC)
-  maximum time:     5.882 ms (67.35% GC)
+  minimum time:     367.726 μs (0.00% GC)
+  median time:      372.298 μs (0.00% GC)
+  mean time:        390.626 μs (0.00% GC)
+  maximum time:     1.005 ms (0.00% GC)
   --------------
-  samples:          2232
+  samples:          10000
   evals/sample:     1</pre>
 </div>
 
@@ -13857,7 +13857,7 @@ $$</p>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># if we tell Julia it&#39;s triangular: O(n) complexity</span>
-<span class="nd">@benchmark</span> <span class="n">det</span><span class="p">(</span><span class="kt">LowerTriangular</span><span class="p">(</span><span class="o">$</span><span class="n">A</span><span class="p">))</span>
+<span class="nd">@benchmark</span> <span class="n">det</span><span class="p">(</span><span class="o">$</span><span class="p">(</span><span class="kt">LowerTriangular</span><span class="p">(</span><span class="n">A</span><span class="p">)))</span>
 </pre></div>
 
     </div>
@@ -13877,16 +13877,16 @@ $$</p>
 
 <div class="output_text output_subarea output_execute_result">
 <pre>BenchmarkTools.Trial: 
-  memory estimate:  7.95 KiB
-  allocs estimate:  2
+  memory estimate:  7.94 KiB
+  allocs estimate:  1
   --------------
-  minimum time:     2.007 μs (0.00% GC)
-  median time:      2.591 μs (0.00% GC)
-  mean time:        3.410 μs (20.96% GC)
-  maximum time:     716.480 μs (99.06% GC)
+  minimum time:     2.117 μs (0.00% GC)
+  median time:      2.652 μs (0.00% GC)
+  mean time:        3.692 μs (23.81% GC)
+  maximum time:     852.119 μs (99.34% GC)
   --------------
   samples:          10000
-  evals/sample:     10</pre>
+  evals/sample:     9</pre>
 </div>
 
 </div>
@@ -13900,7 +13900,7 @@ $$</p>
 <div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="nd">@benchmark</span> <span class="n">det</span><span class="p">(</span><span class="kt">LowerTriangular</span><span class="p">(</span><span class="n">A</span><span class="p">))</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="nd">@benchmark</span> <span class="n">det</span><span class="p">(</span><span class="o">$</span><span class="p">(</span><span class="kt">LowerTriangular</span><span class="p">(</span><span class="n">A</span><span class="p">)))</span>
 </pre></div>
 
     </div>
@@ -13920,13 +13920,13 @@ $$</p>
 
 <div class="output_text output_subarea output_execute_result">
 <pre>BenchmarkTools.Trial: 
-  memory estimate:  7.97 KiB
-  allocs estimate:  3
+  memory estimate:  7.94 KiB
+  allocs estimate:  1
   --------------
-  minimum time:     2.221 μs (0.00% GC)
-  median time:      2.851 μs (0.00% GC)
-  mean time:        3.909 μs (23.48% GC)
-  maximum time:     703.393 μs (99.05% GC)
+  minimum time:     2.126 μs (0.00% GC)
+  median time:      2.647 μs (0.00% GC)
+  mean time:        3.565 μs (24.99% GC)
+  maximum time:     784.466 μs (99.28% GC)
   --------------
   samples:          10000
   evals/sample:     9</pre>
