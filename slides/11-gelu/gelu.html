@@ -13125,10 +13125,10 @@ $( document ).ready(function(){
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Julia Version 1.4.0
-Commit b8e9a9ecc6 (2020-03-21 16:36 UTC)
+<pre>Julia Version 1.4.1
+Commit 381693d3df* (2020-04-14 17:20 UTC)
 Platform Info:
-  OS: macOS (x86_64-apple-darwin18.6.0)
+  OS: macOS (x86_64-apple-darwin18.7.0)
   CPU: Intel(R) Core(TM) i7-6920HQ CPU @ 2.90GHz
   WORD_SIZE: 64
   LIBM: libopenlibm
@@ -13768,28 +13768,140 @@ $$</li>
 $$
 \mathbf{M}_{n-1} \cdots \mathbf{M}_1 \mathbf{A} = \mathbf{U}.
 $$<br>
-Let</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
+Let
 \begin{equation*}
 \mathbf{L} = \mathbf{M}_1^{-1} \cdots \mathbf{M}_{n-1}^{-1} = \begin{pmatrix}  
     1 &amp; &amp; &amp; &amp; \\
-    - c_{21} &amp; \ddots &amp; &amp; &amp; \\
+    \,- c_{21} &amp; \ddots &amp; &amp; &amp; \\
     &amp; &amp; 1 &amp; &amp; \\
-    - c_{k+1,1} &amp; &amp; - c_{k+1,k} &amp; &amp; \\
+    \, - c_{k+1,1} &amp; &amp; - c_{k+1,k} &amp; &amp; \\
     &amp; &amp; \vdots &amp; &amp; \ddots \\
-    - c_{n1} &amp; &amp; - c_{nk} &amp; &amp; &amp; 1
+    \,- c_{n1} &amp; &amp; - c_{nk} &amp; &amp; &amp; 1
     \end{pmatrix}.
-\end{equation*}<p>Thus we have the <strong>LU decomposition</strong>
+\end{equation*}
+Thus we have the <strong>LU decomposition</strong>
 $$
 \mathbf{A} = \mathbf{L} \mathbf{U},
 $$
 where $\mathbf{L}$ is unit lower triangular and $\mathbf{U}$ is upper triangular.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># collect negative multipliers into a unit lower triangular matrix</span>
+<span class="n">L</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">;</span> <span class="o">-</span><span class="mi">3</span><span class="o">/</span><span class="mi">2</span> <span class="mi">1</span> <span class="mi">0</span><span class="p">;</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">4</span> <span class="mi">1</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[15]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>3×3 Array{Float64,2}:
+  1.0  0.0  0.0
+ -1.5  1.0  0.0
+ -1.0  4.0  1.0</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># upper triangular matrix after Gaussian elimination</span>
+<span class="n">U</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span> <span class="mi">1</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="mi">0</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span> <span class="mi">0</span> <span class="mi">0</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[16]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>3×3 Array{Float64,2}:
+ 2.0  1.0  -1.0
+ 0.0  0.5   0.5
+ 0.0  0.0  -1.0</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># recovers original matrix</span>
+<span class="n">L</span> <span class="o">*</span> <span class="n">U</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[17]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>3×3 Array{Float64,2}:
+  2.0   1.0  -1.0
+ -3.0  -1.0   2.0
+ -2.0   1.0   2.0</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <ul>
 <li><p>The whole LU algorithm is done in place, i.e., $\mathbf{A}$ is overwritten by $\mathbf{L}$ and $\mathbf{U}$.</p>
 </li>
@@ -13830,6 +13942,13 @@ $$</p>
 <li><p>If there are multiple right hand sides, LU only needs to be done once.</p>
 </li>
 </ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Matrix-inversion">Matrix inversion<a class="anchor-link" href="#Matrix-inversion">&#182;</a></h2><ul>
 <li><p>For matrix inversion, there are $n$ right hand sides $\mathbf{e}_1, \ldots, \mathbf{e}_n$. Taking advantage of 0s reduces $2n^3$ flops to $\frac 43 n^3$ flops. So <strong>matrix inversion via LU</strong> costs
 $$
@@ -13847,6 +13966,13 @@ $$</p>
 </ol>
 </li>
 </ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Pivoting">Pivoting<a class="anchor-link" href="#Pivoting">&#182;</a></h2><ul>
 <li><p>Let
 $$
@@ -13877,17 +14003,24 @@ where $|\ell_{ij}| \le 1$.</p>
 <li><p>LU decomposition with partial pivoting is the most commonly used methods for solving <strong>general</strong> linear systems. Complete pivoting is the most stable but costs more computation. Partial pivoting is stable most of times.</p>
 </li>
 </ul>
-<h2 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h2><ul>
-<li><p>LAPACK: <a href="http://www.netlib.org/lapack/explore-html/dd/d9a/group__double_g_ecomputational_ga0019443faea08275ca60a734d0593e60.html#ga0019443faea08275ca60a734d0593e60"><code>?GETRF</code></a> does $\mathbf{P} \mathbf{A} = \mathbf{L} \mathbf{U}$ (LU decomposition with partial pivoting) in place.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="LAPACK-and-Julia-implementation">LAPACK and Julia implementation<a class="anchor-link" href="#LAPACK-and-Julia-implementation">&#182;</a></h2><ul>
+<li><p>LAPACK: <a href="http://www.netlib.org/lapack/explore-html/dd/d9a/group__double_g_ecomputational_ga0019443faea08275ca60a734d0593e60.html#ga0019443faea08275ca60a734d0593e60">?getrf</a> does $\mathbf{P} \mathbf{A} = \mathbf{L} \mathbf{U}$ (LU decomposition with partial pivoting) in place.</p>
 </li>
-<li><p>R: <code>solve()</code> implicitly performs LU decomposition (wrapper of LAPACK routine <code>DGESV</code>). <code>solve()</code> allows specifying a single or multiple right hand sides. If none, it computes the matrix inverse. The <code>matrix</code> package contains <code>lu()</code> function that outputs <code>L</code>, <code>U</code>, and <code>pivot</code>.</p>
+<li><p>R: <code>solve()</code> implicitly performs LU decomposition (wrapper of LAPACK routine <code>dgesv</code>). <code>solve()</code> allows specifying a single or multiple right hand sides. If none, it computes the matrix inverse. The <code>matrix</code> package contains <code>lu()</code> function that outputs <code>L</code>, <code>U</code>, and <code>pivot</code>.</p>
 </li>
 <li><p>Julia:</p>
 <ul>
-<li><a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.lu"><code>LinearAlgebra.lu</code></a>.</li>
-<li><a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.lu!"><code>LinearAlgebra.lu!</code></a>. In-place version. Input matrix gets overwritten with L and U.</li>
-<li>Or call LAPACK wrapper function <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.LAPACK.getrf!"><code>getrf!</code></a> directly.</li>
-<li>Other LU-related LAPACK wrapper functions: <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.LAPACK.gesv!"><code>gesv</code></a>, <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.LAPACK.gesvx!"><code>gesvx</code></a>, <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.LAPACK.trtri!"><code>trtri</code></a> (inverse of triangular matrix), <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.LAPACK.trtrs!"><code>trtrs</code></a>.</li>
+<li><a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.lu">LinearAlgebra.lu</a>.</li>
+<li><a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.lu!">LinearAlgebra.lu!</a>. In-place version. Input matrix gets overwritten with L and U.</li>
+<li>Or call LAPACK wrapper function <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.LAPACK.getrf!">getrf!</a> directly.</li>
+<li>Other LU-related LAPACK wrapper functions: <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.LAPACK.gesv!">gesv</a>, <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.LAPACK.gesvx!">gesvx</a>, <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.LAPACK.trtri!">trtri</a> (inverse of triangular matrix), <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.LAPACK.trtrs!">trtrs</a>.</li>
 </ul>
 </li>
 </ul>
@@ -13897,7 +14030,7 @@ where $|\ell_{ij}| \le 1$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">A</span>
@@ -13913,7 +14046,7 @@ where $|\ell_{ij}| \le 1$.</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[15]:</div>
+    <div class="prompt output_prompt">Out[18]:</div>
 
 
 
@@ -13933,13 +14066,13 @@ where $|\ell_{ij}| \le 1$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">LinearAlgebra</span>
 
 <span class="c"># second argument indicates partial pivoting (default) or not</span>
-<span class="n">alu</span> <span class="o">=</span> <span class="n">lu</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">alu</span> <span class="o">=</span> <span class="n">lu</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="kt">Val</span><span class="p">(</span><span class="kc">false</span><span class="p">))</span>
 <span class="n">typeof</span><span class="p">(</span><span class="n">alu</span><span class="p">)</span>
 </pre></div>
 
@@ -13953,7 +14086,7 @@ where $|\ell_{ij}| \le 1$.</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[16]:</div>
+    <div class="prompt output_prompt">Out[19]:</div>
 
 
 
@@ -13970,7 +14103,7 @@ where $|\ell_{ij}| \le 1$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">dump</span><span class="p">(</span><span class="n">alu</span><span class="p">)</span>
@@ -13991,8 +14124,8 @@ where $|\ell_{ij}| \le 1$.</p>
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>LU{Float64,Array{Float64,2}}
-  factors: Array{Float64}((3, 3)) [-3.0 -1.0 2.0; 0.6666666666666666 1.6666666666666665 0.6666666666666667; -0.6666666666666666 0.20000000000000004 0.19999999999999996]
-  ipiv: Array{Int64}((3,)) [2, 3, 3]
+  factors: Array{Float64}((3, 3)) [2.0 1.0 -1.0; -1.5 0.5 0.5; -1.0 4.0 -1.0]
+  ipiv: Array{Int64}((3,)) [1, 2, 3]
   info: Int64 0
 </pre>
 </div>
@@ -14004,118 +14137,10 @@ where $|\ell_{ij}| \le 1$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">alu</span><span class="o">.</span><span class="n">L</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[18]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>3×3 Array{Float64,2}:
-  1.0       0.0  0.0
-  0.666667  1.0  0.0
- -0.666667  0.2  1.0</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">alu</span><span class="o">.</span><span class="n">U</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[19]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>3×3 Array{Float64,2}:
- -3.0  -1.0      2.0
-  0.0   1.66667  0.666667
-  0.0   0.0      0.2</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">alu</span><span class="o">.</span><span class="n">p</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[20]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>3-element Array{Int64,1}:
- 2
- 3
- 1</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
 <div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">alu</span><span class="o">.</span><span class="n">P</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">alu</span><span class="o">.</span><span class="n">L</span>
 </pre></div>
 
     </div>
@@ -14135,9 +14160,9 @@ where $|\ell_{ij}| \le 1$.</p>
 
 <div class="output_text output_subarea output_execute_result">
 <pre>3×3 Array{Float64,2}:
- 0.0  1.0  0.0
- 0.0  0.0  1.0
- 1.0  0.0  0.0</pre>
+  1.0  0.0  0.0
+ -1.5  1.0  0.0
+ -1.0  4.0  1.0</pre>
 </div>
 
 </div>
@@ -14151,7 +14176,7 @@ where $|\ell_{ij}| \le 1$.</p>
 <div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">alu</span><span class="o">.</span><span class="n">L</span> <span class="o">*</span> <span class="n">alu</span><span class="o">.</span><span class="n">U</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">alu</span><span class="o">.</span><span class="n">U</span>
 </pre></div>
 
     </div>
@@ -14171,9 +14196,9 @@ where $|\ell_{ij}| \le 1$.</p>
 
 <div class="output_text output_subarea output_execute_result">
 <pre>3×3 Array{Float64,2}:
- -3.0  -1.0   2.0
- -2.0   1.0   2.0
-  2.0   1.0  -1.0</pre>
+ 2.0  1.0  -1.0
+ 0.0  0.5   0.5
+ 0.0  0.0  -1.0</pre>
 </div>
 
 </div>
@@ -14187,7 +14212,7 @@ where $|\ell_{ij}| \le 1$.</p>
 <div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">A</span><span class="p">[</span><span class="n">alu</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="o">:</span><span class="p">]</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">alu</span><span class="o">.</span><span class="n">p</span>
 </pre></div>
 
     </div>
@@ -14206,10 +14231,10 @@ where $|\ell_{ij}| \le 1$.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3×3 Array{Float64,2}:
- -3.0  -1.0   2.0
- -2.0   1.0   2.0
-  2.0   1.0  -1.0</pre>
+<pre>3-element Array{Int64,1}:
+ 1
+ 2
+ 3</pre>
 </div>
 
 </div>
@@ -14223,8 +14248,7 @@ where $|\ell_{ij}| \le 1$.</p>
 <div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># this is doing two triangular solves, 2n^2 flops</span>
-<span class="n">alu</span> <span class="o">\</span> <span class="n">b</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">alu</span><span class="o">.</span><span class="n">P</span>
 </pre></div>
 
     </div>
@@ -14243,10 +14267,10 @@ where $|\ell_{ij}| \le 1$.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>3-element Array{Float64,1}:
-  2.0000000000000004
-  2.9999999999999996
- -0.9999999999999994</pre>
+<pre>3×3 Array{Float64,2}:
+ 1.0  0.0  0.0
+ 0.0  1.0  0.0
+ 0.0  0.0  1.0</pre>
 </div>
 
 </div>
@@ -14260,7 +14284,7 @@ where $|\ell_{ij}| \le 1$.</p>
 <div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">det</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="c"># this does LU!</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">alu</span><span class="o">.</span><span class="n">L</span> <span class="o">*</span> <span class="n">alu</span><span class="o">.</span><span class="n">U</span>
 </pre></div>
 
     </div>
@@ -14279,7 +14303,10 @@ where $|\ell_{ij}| \le 1$.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>-0.9999999999999998</pre>
+<pre>3×3 Array{Float64,2}:
+  2.0   1.0  -1.0
+ -3.0  -1.0   2.0
+ -2.0   1.0   2.0</pre>
 </div>
 
 </div>
@@ -14293,7 +14320,7 @@ where $|\ell_{ij}| \le 1$.</p>
 <div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">det</span><span class="p">(</span><span class="n">alu</span><span class="p">)</span> <span class="c"># this is cheap</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">A</span><span class="p">[</span><span class="n">alu</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="o">:</span><span class="p">]</span>
 </pre></div>
 
     </div>
@@ -14312,7 +14339,10 @@ where $|\ell_{ij}| \le 1$.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>-0.9999999999999998</pre>
+<pre>3×3 Array{Float64,2}:
+  2.0   1.0  -1.0
+ -3.0  -1.0   2.0
+ -2.0   1.0   2.0</pre>
 </div>
 
 </div>
@@ -14326,7 +14356,8 @@ where $|\ell_{ij}| \le 1$.</p>
 <div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">inv</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="c"># this does LU!</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># this is doing two triangular solves, 2n^2 flops</span>
+<span class="n">alu</span> <span class="o">\</span> <span class="n">b</span>
 </pre></div>
 
     </div>
@@ -14340,6 +14371,108 @@ where $|\ell_{ij}| \le 1$.</p>
 <div class="output_area">
 
     <div class="prompt output_prompt">Out[27]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>3-element Array{Float64,1}:
+  2.0
+  3.0
+ -1.0</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">det</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="c"># this does LU! O(n^3)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[28]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>-0.9999999999999998</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">det</span><span class="p">(</span><span class="n">alu</span><span class="p">)</span> <span class="c"># this is cheap O(n)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[29]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>-1.0</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">inv</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="c"># this does LU! O(n^3)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[30]:</div>
 
 
 
@@ -14359,10 +14492,10 @@ where $|\ell_{ij}| \le 1$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="prompt input_prompt">In&nbsp;[31]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">inv</span><span class="p">(</span><span class="n">alu</span><span class="p">)</span> <span class="c"># this is cheap</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">inv</span><span class="p">(</span><span class="n">alu</span><span class="p">)</span> <span class="c"># this is cheap O(n^2)</span>
 </pre></div>
 
     </div>
@@ -14375,7 +14508,7 @@ where $|\ell_{ij}| \le 1$.</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[28]:</div>
+    <div class="prompt output_prompt">Out[31]:</div>
 
 
 
