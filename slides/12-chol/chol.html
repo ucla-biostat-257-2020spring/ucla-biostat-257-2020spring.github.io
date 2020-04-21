@@ -13107,7 +13107,9 @@ $( document ).ready(function(){
 </blockquote>
 <p>Common structures include: symmetry, positive (semi)definiteness, sparsity, Kronecker product, low rank, ...</p>
 <ul>
-<li><p>LU decomposition (Gaussian Elimination) is <strong>not</strong> used in statistics so often because most of time statisticians deal with positive (semi)definite matrix. (That's why I hate to see <code>solve()</code> in R code.)</p>
+<li><p>LU decomposition (Gaussian Elimination) is <strong>not</strong> used in statistics so often because most of time statisticians deal with positive (semi)definite matrix.</p>
+</li>
+<li><p>That's why I often criticize use of the <code>solve()</code> function in base R code, which inverts a matrix using LU decomposition. First, most likely we don't need a matrix inverse. Second, most likely we are dealing with a pd/psd matrix and should use Cholesky.</p>
 </li>
 <li><p>For example, in the normal equation 
 $$
@@ -13142,10 +13144,10 @@ for linear regression, the coefficient matrix $\mathbf{X}^T \mathbf{X}$ is symme
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Julia Version 1.4.0
-Commit b8e9a9ecc6 (2020-03-21 16:36 UTC)
+<pre>Julia Version 1.4.1
+Commit 381693d3df* (2020-04-14 17:20 UTC)
 Platform Info:
-  OS: macOS (x86_64-apple-darwin18.6.0)
+  OS: macOS (x86_64-apple-darwin18.7.0)
   CPU: Intel(R) Core(TM) i7-6920HQ CPU @ 2.90GHz
   WORD_SIZE: 64
   LIBM: libopenlibm
@@ -13205,6 +13207,13 @@ plus $n$ square roots. Half the cost of LU decomposition by utilizing symmetry.<
 <li><p>In general Cholesky decomposition is very stable. Failure of the decomposition simply means $\mathbf{A}$ is not positive definite. It is an efficient way to test positive definiteness.</p>
 </li>
 </ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Pivoting">Pivoting<a class="anchor-link" href="#Pivoting">&#182;</a></h2><ul>
 <li><p>When $\mathbf{A}$ does not have full rank, e.g., $\mathbf{X}^T \mathbf{X}$ with a non-full column rank $\mathbf{X}$, we encounter $a_{kk} = 0$ during the procedure.</p>
 </li>
@@ -13217,13 +13226,27 @@ $$
 where $\mathbf{P}$ is a permutation matrix and $\mathbf{L} \in \mathbb{R}^{n \times r}$, $r = \text{rank}(\mathbf{A})$.</p>
 </li>
 </ul>
-<h2 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h2><ul>
-<li><p>LAPACK functions: <a href="http://www.netlib.org/lapack/explore-html/d1/d7a/group__double_p_ocomputational_ga2f55f604a6003d03b5cd4a0adcfb74d6.html#ga2f55f604a6003d03b5cd4a0adcfb74d6"><code>?potrf</code></a> (without pivoting), <a href="http://www.netlib.org/lapack/explore-html/da/dba/group__double_o_t_h_e_rcomputational_ga31cdc13a7f4ad687f4aefebff870e1cc.html#ga31cdc13a7f4ad687f4aefebff870e1cc"><code>?pstrf</code></a> (with pivoting).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="LAPACK-and-Julia-implementation">LAPACK and Julia implementation<a class="anchor-link" href="#LAPACK-and-Julia-implementation">&#182;</a></h2><ul>
+<li><p>LAPACK functions: <a href="http://www.netlib.org/lapack/explore-html/d1/d7a/group__double_p_ocomputational_ga2f55f604a6003d03b5cd4a0adcfb74d6.html#ga2f55f604a6003d03b5cd4a0adcfb74d6">?potrf</a> (without pivoting), <a href="http://www.netlib.org/lapack/explore-html/da/dba/group__double_o_t_h_e_rcomputational_ga31cdc13a7f4ad687f4aefebff870e1cc.html#ga31cdc13a7f4ad687f4aefebff870e1cc">?pstrf</a> (with pivoting).</p>
 </li>
-<li><p>Julia functions: <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.cholesky"><code>cholesky</code></a>, <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.cholesky!"><code>cholesky!</code></a>, or call LAPACK wrapper functions <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.LAPACK.potrf!"><code>potrf!</code></a> and <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.LAPACK.pstrf!"><code>pstrf!</code></a></p>
+<li><p>Julia functions: <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.cholesky">cholesky</a>, <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.cholesky!">cholesky!</a>, or call LAPACK wrapper functions <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.LAPACK.potrf!">potrf!</a> and <a href="https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.LAPACK.pstrf!">pstrf!</a></p>
 </li>
 </ul>
-<h3 id="Example:-positive-definite-matrix.">Example: positive definite matrix.<a class="anchor-link" href="#Example:-positive-definite-matrix.">&#182;</a></h3>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Example:-positive-definite-matrix">Example: positive definite matrix<a class="anchor-link" href="#Example:-positive-definite-matrix">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -13342,7 +13365,7 @@ U factor:
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">fieldnames</span><span class="p">(</span><span class="n">typeof</span><span class="p">(</span><span class="n">Achol</span><span class="p">))</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">dump</span><span class="p">(</span><span class="n">Achol</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13355,15 +13378,16 @@ U factor:
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[5]:</div>
+    <div class="prompt"></div>
 
 
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>(:factors, :uplo, :info)</pre>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Cholesky{Float64,Array{Float64,2}}
+  factors: Array{Float64}((3, 3)) [2.0 6.0 -8.0; 12.0 1.0 5.0; -16.0 -43.0 3.0]
+  uplo: Char &#39;U&#39;
+  info: Int64 0
+</pre>
 </div>
-
 </div>
 
 </div>
@@ -13450,7 +13474,7 @@ U factor:
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">;</span> <span class="mf">2.0</span><span class="p">;</span> <span class="mf">3.0</span><span class="p">]</span>
-<span class="n">A</span> <span class="o">\</span> <span class="n">b</span> <span class="c"># this does LU; wasteful!; 2/3 n^3 + 2n^2</span>
+<span class="n">A</span> <span class="o">\</span> <span class="n">b</span> <span class="c"># this does LU; wasteful!!!; 2/3 n^3 + 2n^2</span>
 </pre></div>
 
     </div>
@@ -13522,7 +13546,7 @@ U factor:
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">det</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="c"># this actually does LU; wasteful!</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">det</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="c"># this actually does LU; wasteful!!!</span>
 </pre></div>
 
     </div>
@@ -13828,7 +13852,7 @@ permutation:
 <div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">rank</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="c"># determine rank from SVD, which is more numerically stable</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="n">rank</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="c"># determine rank from SVD (default), which is more numerically stable</span>
 </pre></div>
 
     </div>
@@ -14010,7 +14034,6 @@ permutation:
 <h2 id="Applications">Applications<a class="anchor-link" href="#Applications">&#182;</a></h2><ul>
 <li><strong>No inversion</strong> mentality: Whenever we see matrix inverse, we should think in terms of solving linear equations. If the matrix is positive (semi)definite, use Cholesky decomposition, which is twice cheaper than LU decomposition.</li>
 </ul>
-<h3 id="Multivariate-normal-density">Multivariate normal density<a class="anchor-link" href="#Multivariate-normal-density">&#182;</a></h3><p>Multivariate normal density $\text{MVN}(0, \Sigma)$, where $\Sigma$ is p.d., is</p>
 
 </div>
 </div>
@@ -14018,12 +14041,14 @@ permutation:
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Multivariate-normal-density">Multivariate normal density<a class="anchor-link" href="#Multivariate-normal-density">&#182;</a></h3><p>Multivariate normal density $\text{MVN}(0, \Sigma)$, where $\Sigma$ is p.d., is
 $$
-- \frac{n}{2} \log (2\pi) - \frac{1}{2} \log \det \Sigma - \frac{1}{2} \mathbf{y}^T \Sigma^{-1} \mathbf{y}.
-$$<ul>
-<li><p>Method 1: (a) compute explicit inverse $\Sigma^{-1}$ ($2n^3$ flops), (b) compute quadratic form ($2n^2 + 2n$ flops), (c) compute determinant ($2n^3/3$ flops).</p>
+\, - \frac{n}{2} \log (2\pi) - \frac{1}{2} \log \det \Sigma - \frac{1}{2} \mathbf{y}^T \Sigma^{-1} \mathbf{y}.
+$$</p>
+<ul>
+<li><p><strong>Method 1</strong>: (a) compute explicit inverse $\Sigma^{-1}$ ($2n^3$ flops), (b) compute quadratic form ($2n^2 + 2n$ flops), (c) compute determinant ($2n^3/3$ flops).</p>
 </li>
-<li><p>Method 2: (a) Cholesky decomposition $\Sigma = \mathbf{L} \mathbf{L}^T$ ($n^3/3$ flops), (b) Solve $\mathbf{L} \mathbf{x} = \mathbf{y}$ by forward substitutions ($n^2$ flops), (c) compute quadratic form $\mathbf{x}^T \mathbf{x}$ ($2n$ flops), and (d) compute determinant from Cholesky factor ($n$ flops).</p>
+<li><p><strong>Method 2</strong>: (a) Cholesky decomposition $\Sigma = \mathbf{L} \mathbf{L}^T$ ($n^3/3$ flops), (b) Solve $\mathbf{L} \mathbf{x} = \mathbf{y}$ by forward substitutions ($n^2$ flops), (c) compute quadratic form $\mathbf{x}^T \mathbf{x}$ ($2n$ flops), and (d) compute determinant from Cholesky factor ($n$ flops).</p>
 </li>
 </ul>
 <p><strong>Which method is better?</strong></p>
@@ -14046,7 +14071,7 @@ $$<ul>
 <span class="k">function</span> <span class="n">logpdf_mvn_2</span><span class="p">(</span><span class="n">y</span><span class="o">::</span><span class="kt">Vector</span><span class="p">,</span> <span class="n">Σ</span><span class="o">::</span><span class="kt">Matrix</span><span class="p">)</span>
     <span class="n">n</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
     <span class="n">Σchol</span> <span class="o">=</span> <span class="n">cholesky</span><span class="p">(</span><span class="kt">Symmetric</span><span class="p">(</span><span class="n">Σ</span><span class="p">))</span>
-    <span class="o">-</span> <span class="p">(</span><span class="n">n</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="nb">π</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">logdet</span><span class="p">(</span><span class="n">Σchol</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">sum</span><span class="p">(</span><span class="n">abs2</span><span class="p">,</span> <span class="n">Σchol</span><span class="o">.</span><span class="n">L</span> <span class="o">\</span> <span class="n">y</span><span class="p">)</span>
+    <span class="o">-</span> <span class="p">(</span><span class="n">n</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="nb">π</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">logdet</span><span class="p">(</span><span class="n">Σchol</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">abs2</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">Σchol</span><span class="o">.</span><span class="n">L</span> <span class="o">\</span> <span class="n">y</span><span class="p">))</span>
 <span class="k">end</span>
 
 <span class="c"># better memory efficiency - input Σ is overwritten</span>
@@ -14156,12 +14181,12 @@ logpdf_mvn_3(y, Σc) = -4878.375103770553
   memory estimate:  15.78 MiB
   allocs estimate:  14
   --------------
-  minimum time:     36.727 ms (0.00% GC)
-  median time:      42.156 ms (0.00% GC)
-  mean time:        45.957 ms (2.45% GC)
-  maximum time:     98.028 ms (4.02% GC)
+  minimum time:     37.024 ms (0.00% GC)
+  median time:      39.435 ms (0.00% GC)
+  mean time:        40.348 ms (2.57% GC)
+  maximum time:     49.761 ms (0.00% GC)
   --------------
-  samples:          109
+  samples:          124
   evals/sample:     1</pre>
 </div>
 
@@ -14199,12 +14224,12 @@ logpdf_mvn_3(y, Σc) = -4878.375103770553
   memory estimate:  15.27 MiB
   allocs estimate:  10
   --------------
-  minimum time:     8.683 ms (0.00% GC)
-  median time:      10.112 ms (0.00% GC)
-  mean time:        10.693 ms (10.41% GC)
-  maximum time:     22.599 ms (34.22% GC)
+  minimum time:     8.668 ms (0.00% GC)
+  median time:      10.227 ms (0.00% GC)
+  mean time:        10.502 ms (9.92% GC)
+  maximum time:     14.383 ms (21.85% GC)
   --------------
-  samples:          468
+  samples:          476
   evals/sample:     1</pre>
 </div>
 
@@ -14242,12 +14267,12 @@ logpdf_mvn_3(y, Σc) = -4878.375103770553
   memory estimate:  8.05 KiB
   allocs estimate:  5
   --------------
-  minimum time:     5.814 ms (0.00% GC)
-  median time:      6.882 ms (0.00% GC)
-  mean time:        7.400 ms (0.00% GC)
-  maximum time:     27.172 ms (0.00% GC)
+  minimum time:     5.866 ms (0.00% GC)
+  median time:      6.347 ms (0.00% GC)
+  mean time:        6.468 ms (0.00% GC)
+  maximum time:     8.954 ms (0.00% GC)
   --------------
-  samples:          607
+  samples:          685
   evals/sample:     1</pre>
 </div>
 
