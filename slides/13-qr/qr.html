@@ -13158,7 +13158,7 @@ Environment:
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">Random</span>
 
-<span class="n">Random</span><span class="o">.</span><span class="n">seed!</span><span class="p">(</span><span class="mi">280</span><span class="p">)</span> <span class="c"># seed</span>
+<span class="n">Random</span><span class="o">.</span><span class="n">seed!</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span> <span class="c"># seed</span>
 
 <span class="n">n</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span>
 <span class="n">X</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="c"># predictor matrix</span>
@@ -13185,9 +13185,9 @@ Environment:
 
 <div class="output_text output_subarea output_execute_result">
 <pre>3-element Array{Float64,1}:
- 0.3795466676698624
- 0.6508866456093488
- 0.392250419565355</pre>
+ -0.34483821442437135
+ -0.24238187529008184
+ -0.5680218867143888</pre>
 </div>
 
 </div>
@@ -13422,7 +13422,7 @@ for any orthogonal matrix $\mathbf{Q}$.</p>
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">Random</span><span class="p">,</span> <span class="n">LinearAlgebra</span>
 
-<span class="n">Random</span><span class="o">.</span><span class="n">seed!</span><span class="p">(</span><span class="mi">280</span><span class="p">)</span> <span class="c"># seed</span>
+<span class="n">Random</span><span class="o">.</span><span class="n">seed!</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span> <span class="c"># seed</span>
 
 <span class="n">y</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>    <span class="c"># response vector</span>
 <span class="n">X</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="c"># predictor matrix</span>
@@ -13445,11 +13445,11 @@ for any orthogonal matrix $\mathbf{Q}$.</p>
 
 <div class="output_text output_subarea output_execute_result">
 <pre>5×3 Array{Float64,2}:
- -1.12783   -0.88267   -1.79426
-  1.14786    1.71384    1.09138
- -1.35471   -0.733952   0.426628
- -0.237065   1.08182   -0.624434
- -0.680994  -0.170406   0.0320486</pre>
+ -0.664713   -0.339366   0.368002
+  0.980968   -0.843878  -0.281133
+ -0.0754831  -0.888936  -0.734886
+  0.273815    0.327215  -0.71741
+ -0.194229    0.592403  -0.77507</pre>
 </div>
 
 </div>
@@ -13483,9 +13483,9 @@ for any orthogonal matrix $\mathbf{Q}$.</p>
 
 <div class="output_text output_subarea output_execute_result">
 <pre>3-element Array{Float64,1}:
- -0.6130947263291079
- -0.7800615507222621
-  0.3634934302764104</pre>
+  0.18340687133699127
+ -1.4932671978337329
+ -0.4272132681192984</pre>
 </div>
 
 </div>
@@ -13520,9 +13520,9 @@ for any orthogonal matrix $\mathbf{Q}$.</p>
 
 <div class="output_text output_subarea output_execute_result">
 <pre>3-element Array{Float64,1}:
- -0.6130947263291078
- -0.7800615507222622
-  0.3634934302764104</pre>
+  0.18340687133699146
+ -1.4932671978337326
+ -0.42721326811929844</pre>
 </div>
 
 </div>
@@ -13556,9 +13556,9 @@ for any orthogonal matrix $\mathbf{Q}$.</p>
 
 <div class="output_text output_subarea output_execute_result">
 <pre>3-element Array{Float64,1}:
- -0.6130947263291076
- -0.7800615507222624
-  0.3634934302764099</pre>
+  0.18340687133699174
+ -1.4932671978337329
+ -0.4272132681192984</pre>
 </div>
 
 </div>
@@ -13595,16 +13595,16 @@ for any orthogonal matrix $\mathbf{Q}$.</p>
 <pre>QRPivoted{Float64,Array{Float64,2}}
 Q factor:
 5×5 LinearAlgebra.QRPackedQ{Float64,Array{Float64,2}}:
- -0.377941   -0.70935    -0.0804225  -0.586254   -0.0618207
-  0.733832    0.161768   -0.101458   -0.650763   -0.039191
- -0.314263    0.384947   -0.75494    -0.116185   -0.411851
-  0.463213   -0.565162   -0.483764    0.464867   -0.12608
- -0.0729644   0.0553323  -0.423411   -0.0566828   0.899514
+ -0.235562   0.277875  -0.58908    0.472464    0.545031
+ -0.585756  -0.184387   0.616253   0.0162577   0.492809
+ -0.617031  -0.51529   -0.449499  -0.150725   -0.359139
+  0.227128  -0.533254   0.152934   0.786846   -0.146754
+  0.411201  -0.582154  -0.218584  -0.366972    0.556384
 R factor:
 3×3 Array{Float64,2}:
- 2.33547  1.05335  1.6342
- 0.0      1.96822  0.560522
- 0.0      0.0      1.39999
+ 1.44067  0.0497823  -0.389127
+ 0.0      1.36655    -0.359631
+ 0.0      0.0         1.11435
 permutation:
 3-element Array{Int64,1}:
  2
@@ -13643,9 +13643,9 @@ permutation:
 
 <div class="output_text output_subarea output_execute_result">
 <pre>3-element Array{Float64,1}:
- -0.6130947263291079
- -0.7800615507222621
-  0.3634934302764104</pre>
+  0.18340687133699127
+ -1.4932671978337329
+ -0.4272132681192984</pre>
 </div>
 
 </div>
@@ -13679,7 +13679,7 @@ permutation:
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>9.924559042135032e-16</pre>
+<pre>3.510833468576701e-16</pre>
 </div>
 
 </div>
