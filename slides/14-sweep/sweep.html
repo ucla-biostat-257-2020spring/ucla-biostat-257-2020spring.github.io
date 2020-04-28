@@ -13469,6 +13469,42 @@ In total $np^2 + p^3$ flops.</p>
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">LinearAlgebra</span>
+
+<span class="c"># sweep! function only changes the upper triangular part</span>
+<span class="kt">UpperTriangular</span><span class="p">(</span><span class="n">inv</span><span class="p">(</span><span class="n">A</span><span class="p">))</span> <span class="n">≈</span> <span class="kt">UpperTriangular</span><span class="p">(</span><span class="o">-</span> <span class="n">B</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[7]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>true</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># inverse sweep to bring negative inverse back to original matrix</span>
 <span class="n">sweep!</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">1</span><span class="o">:</span><span class="mi">3</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
 </pre></div>
@@ -13483,7 +13519,7 @@ In total $np^2 + p^3$ flops.</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[7]:</div>
+    <div class="prompt output_prompt">Out[8]:</div>
 
 
 
