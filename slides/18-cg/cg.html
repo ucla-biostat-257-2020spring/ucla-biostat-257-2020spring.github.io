@@ -13199,7 +13199,7 @@ Denote $\nabla f(\mathbf{x}) = \mathbf{A} \mathbf{x} - \mathbf{b} =: r(\mathbf{x
 </ul>
 <p><img src="coordinate_descent.png" width="400" align="center"/></p>
 <ul>
-<li><p>A set of vectors $\{\mathbf{x}^{(0)},\ldots,\mathbf{x}^{(l)}\}$ is said to be <strong>conjugate with respect to $\mathbf{A}$</strong> if
+<li><p>A set of vectors $\{\mathbf{p}^{(0)},\ldots,\mathbf{p}^{(l)}\}$ is said to be <strong>conjugate with respect to $\mathbf{A}$</strong> if
 $$
 \begin{eqnarray*}
   \mathbf{p}_i^T \mathbf{A} \mathbf{p}_j = 0, \quad \text{for all } i \ne j.
@@ -13425,32 +13425,32 @@ populating internal database...
 
 <div class="output_text output_subarea output_execute_result">
 <pre>30401×30401 SparseMatrixCSC{Float64,Int64} with 471601 stored entries:
-  [1    ,     1]  =  1.46057
-  [2    ,     1]  =  -1.46057
-  [3    ,     1]  =  0.486858
-  [202  ,     1]  =  -1.46057
-  [203  ,     1]  =  -1.94743
-  [303  ,     1]  =  0.486858
-  [304  ,     1]  =  -1.94743
-  [305  ,     1]  =  0.730286
-  [1    ,     2]  =  -1.46057
-  [2    ,     2]  =  7.78972
-  [3    ,     2]  =  -1.46057
-  [202  ,     2]  =  4.86858
+  [1    ,     1]  =  12.0837
+  [2    ,     1]  =  -12.0837
+  [3    ,     1]  =  4.02789
+  [202  ,     1]  =  -12.0837
+  [203  ,     1]  =  -16.1116
+  [303  ,     1]  =  4.02789
+  [304  ,     1]  =  -16.1116
+  [305  ,     1]  =  6.04184
+  [1    ,     2]  =  -12.0837
+  [2    ,     2]  =  64.4463
+  [3    ,     2]  =  -12.0837
+  [202  ,     2]  =  40.2789
   ⋮
-  [30199, 30400]  =  39.5154
-  [30200, 30400]  =  39.5154
-  [30399, 30400]  =  -11.8546
-  [30400, 30400]  =  63.2246
-  [30401, 30400]  =  -11.8546
-  [30097, 30401]  =  5.9273
-  [30098, 30401]  =  -15.8061
-  [30099, 30401]  =  3.95154
-  [30199, 30401]  =  -15.8061
-  [30200, 30401]  =  -11.8546
-  [30399, 30401]  =  3.95154
-  [30400, 30401]  =  -11.8546
-  [30401, 30401]  =  11.8546</pre>
+  [30199, 30400]  =  43.846
+  [30200, 30400]  =  43.846
+  [30399, 30400]  =  -13.1538
+  [30400, 30400]  =  70.1537
+  [30401, 30400]  =  -13.1538
+  [30097, 30401]  =  6.5769
+  [30098, 30401]  =  -17.5384
+  [30099, 30401]  =  4.3846
+  [30199, 30401]  =  -17.5384
+  [30200, 30401]  =  -13.1538
+  [30399, 30401]  =  4.3846
+  [30400, 30401]  =  -13.1538
+  [30401, 30401]  =  13.1538</pre>
 </div>
 
 </div>
@@ -13584,12 +13584,12 @@ populating internal database...
   memory estimate:  1.16 MiB
   allocs estimate:  19
   --------------
-  minimum time:     155.759 ms (0.00% GC)
-  median time:      167.881 ms (0.00% GC)
-  mean time:        179.752 ms (0.00% GC)
-  maximum time:     256.758 ms (0.00% GC)
+  minimum time:     127.777 ms (0.00% GC)
+  median time:      136.830 ms (0.00% GC)
+  mean time:        139.442 ms (0.00% GC)
+  maximum time:     166.014 ms (0.00% GC)
   --------------
-  samples:          29
+  samples:          36
   evals/sample:     1</pre>
 </div>
 
@@ -13630,7 +13630,7 @@ populating internal database...
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>  4.914150 seconds (2.65 M allocations: 160.260 MiB, 1.43% gc time)
+<pre>  3.036170 seconds (2.65 M allocations: 160.260 MiB, 1.22% gc time)
 </pre>
 </div>
 </div>
@@ -13643,9 +13643,48 @@ populating internal database...
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>CholeskyPreconditioner{Float64,SparseMatrixCSC{Float64,Int64}}([6.163019674991656 0.0 … 0.0 0.0; 0.0 9.276386327136859 … 0.0 0.0; … ; 0.0 0.0 … 3.117420760952082 0.0; 0.0 0.0 … 0.0 7.702003331069142], 2)</pre>
+<pre>CholeskyPreconditioner{Float64,SparseMatrixCSC{Float64,Int64}}([8.482921389220447 0.0 … 0.0 0.0; 0.0 9.783314534285035 … 0.0 0.0; … ; 0.0 0.0 … 3.0062008407758603 0.0; 0.0 0.0 … 0.0 5.078289433706915], 2)</pre>
 </div>
 
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">dump</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>CholeskyPreconditioner{Float64,SparseMatrixCSC{Float64,Int64}}
+  L: LowerTriangular{Float64,SparseMatrixCSC{Float64,Int64}}
+    data: SparseMatrixCSC{Float64,Int64}
+      m: Int64 30401
+      n: Int64 30401
+      colptr: Array{Int64}((30402,)) [1, 14, 27, 40, 58, 70, 83, 96, 109, 127  …  295442, 295446, 295451, 295455, 295460, 295464, 295467, 295469, 295470, 295471]
+      rowval: Array{Int64}((295470,)) [1, 3, 4, 5, 11, 12, 1557, 1558, 1559, 1599  …  30398, 30399, 30400, 30398, 30399, 30400, 30399, 30400, 30400, 30401]
+      nzval: Array{Float64}((295470,)) [8.482921389220447, 3.582445749502563, -1.5905477604788336, 1.719380118760215, 1.3755040950081718, -0.6877520475040859, 3.582445749502563, -1.5905477604788336, -0.6877520475040858, 1.719380118760215  …  -0.36404899331249946, -0.9804562443363167, 0.4902281221681582, 3.8912457972540184, 0.09021789227107349, -0.045108946135536634, 6.029655618518573, -0.22661562787578912, 3.0062008407758603, 5.078289433706915]
+  memory: Int64 2
+</pre>
+</div>
 </div>
 
 </div>
@@ -13662,7 +13701,7 @@ populating internal database...
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># solver Ax=b by PCG</span>
@@ -13681,13 +13720,13 @@ populating internal database...
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[7]:</div>
+    <div class="prompt output_prompt">Out[8]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>6.227655000492937e-7</pre>
+<pre>9.846186305322548e-7</pre>
 </div>
 
 </div>
@@ -13698,7 +13737,7 @@ populating internal database...
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># PCG is &gt;10 fold faster than CG</span>
@@ -13715,22 +13754,171 @@ populating internal database...
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[8]:</div>
+    <div class="prompt output_prompt">Out[9]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
 <pre>BenchmarkTools.Trial: 
-  memory estimate:  1.18 MiB
-  allocs estimate:  971
+  memory estimate:  1.17 MiB
+  allocs estimate:  906
   --------------
-  minimum time:     2.063 s (0.00% GC)
-  median time:      2.086 s (0.00% GC)
-  mean time:        2.083 s (0.00% GC)
-  maximum time:     2.099 s (0.00% GC)
+  minimum time:     1.825 s (0.00% GC)
+  median time:      1.835 s (0.00% GC)
+  mean time:        1.832 s (0.00% GC)
+  maximum time:     1.837 s (0.00% GC)
   --------------
   samples:          3
+  evals/sample:     1</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>There seems a regression of the either Preconditioners.jl or IterativeSolvers.jl package. We should see &gt;10x speedup by using incomplete Cholesky preconditioner. Let's try the AMG preconditioner.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">AlgebraicMultigrid</span>
+<span class="nd">@time</span> <span class="n">ml</span> <span class="o">=</span> <span class="n">ruge_stuben</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="c"># Construct a Ruge-Stuben solver</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>  2.160228 seconds (6.68 M allocations: 385.879 MiB, 5.01% gc time)
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[10]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Multilevel Solver
+-----------------
+Operator Complexity: 1.136
+Grid Complexity: 1.136
+No. of Levels: 8
+Coarse Solver: AlgebraicMultigrid.Pinv{Float64}([0.00028138627004160264 2.682229196020754e-21 -5.033939465621391e-10 1.838206809851328e-18; 2.681638469824768e-21 8.012871628351383e-5 -1.5660977461778565e-15 4.303011148781924e-20; -5.033939465621397e-10 -1.566082912783449e-15 0.00029386480580064823 -1.073084590880709e-12; 1.8382068098516955e-18 -2.009986123387573e-20 -1.0730845908807133e-12 0.00026183292567878133])
+Level     Unknowns     NonZeros
+-----     --------     --------
+    1        30401       471601 [87.99%]
+    2         3610        45320 [ 8.46%]
+    3         1107        13437 [ 2.51%]
+    4          365         3943 [ 0.74%]
+    5          122         1206 [ 0.23%]
+    6           43          347 [ 0.06%]
+    7           14           84 [ 0.02%]
+    8            4           12 [ 0.00%]
+</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># use AMG preconditioner in CG</span>
+<span class="n">pamg</span> <span class="o">=</span> <span class="n">aspreconditioner</span><span class="p">(</span><span class="n">ml</span><span class="p">)</span>
+<span class="n">xamg</span> <span class="o">=</span> <span class="n">cg</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">Pl</span> <span class="o">=</span> <span class="n">pamg</span><span class="p">)</span>
+<span class="c"># same answer?</span>
+<span class="n">norm</span><span class="p">(</span><span class="n">xcg</span> <span class="o">-</span> <span class="n">xamg</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[11]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>5.57594838643218e-7</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="nd">@benchmark</span> <span class="n">cg</span><span class="p">(</span><span class="o">$</span><span class="n">A</span><span class="p">,</span> <span class="o">$</span><span class="n">b</span><span class="p">,</span> <span class="n">Pl</span> <span class="o">=</span> <span class="o">$</span><span class="n">pamg</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[12]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>BenchmarkTools.Trial: 
+  memory estimate:  1.16 MiB
+  allocs estimate:  20
+  --------------
+  minimum time:     87.864 ms (0.00% GC)
+  median time:      88.591 ms (0.00% GC)
+  mean time:        89.067 ms (0.06% GC)
+  maximum time:     95.503 ms (0.00% GC)
+  --------------
+  samples:          57
   evals/sample:     1</pre>
 </div>
 
@@ -13809,7 +13997,7 @@ populating internal database...
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">BenchmarkTools</span><span class="p">,</span> <span class="n">IterativeSolvers</span><span class="p">,</span> <span class="n">LinearAlgebra</span><span class="p">,</span> <span class="n">Random</span><span class="p">,</span> <span class="n">SparseArrays</span>
@@ -13835,7 +14023,7 @@ populating internal database...
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[9]:</div>
+    <div class="prompt output_prompt">Out[13]:</div>
 
 
 
@@ -13845,10 +14033,10 @@ populating internal database...
   memory estimate:  1.42 GiB
   allocs estimate:  37920
   --------------
-  minimum time:     4.373 s (2.27% GC)
-  median time:      4.896 s (2.19% GC)
-  mean time:        4.896 s (2.19% GC)
-  maximum time:     5.418 s (2.12% GC)
+  minimum time:     4.226 s (2.63% GC)
+  median time:      4.414 s (2.49% GC)
+  mean time:        4.414 s (2.49% GC)
+  maximum time:     4.601 s (2.37% GC)
   --------------
   samples:          2
   evals/sample:     1</pre>
@@ -13862,7 +14050,7 @@ populating internal database...
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">β̂_lsqr</span> <span class="o">=</span> <span class="n">lsqr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
@@ -13875,51 +14063,10 @@ populating internal database...
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>norm(β̂_qr - β̂_lsqr) = 9.197167479579084e-5
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[10]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>BenchmarkTools.Trial: 
-  memory estimate:  11.74 MiB
-  allocs estimate:  1212
-  --------------
-  minimum time:     29.160 ms (0.00% GC)
-  median time:      33.942 ms (0.00% GC)
-  mean time:        35.514 ms (5.45% GC)
-  maximum time:     51.517 ms (18.22% GC)
-  --------------
-  samples:          141
-  evals/sample:     1</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">β̂_lsmr</span> <span class="o">=</span> <span class="n">lsmr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
@@ -13929,47 +14076,6 @@ populating internal database...
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>norm(β̂_qr - β̂_lsmr) = 0.024883779408881465
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[11]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>BenchmarkTools.Trial: 
-  memory estimate:  4.32 MiB
-  allocs estimate:  548
-  --------------
-  minimum time:     19.066 ms (0.00% GC)
-  median time:      20.153 ms (0.00% GC)
-  mean time:        21.238 ms (3.13% GC)
-  maximum time:     32.459 ms (21.47% GC)
-  --------------
-  samples:          236
-  evals/sample:     1</pre>
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -13991,7 +14097,7 @@ populating internal database...
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">LinearMaps</span><span class="p">,</span> <span class="n">IterativeSolvers</span>
@@ -14026,26 +14132,6 @@ populating internal database...
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[12]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>LinearMaps.FunctionMap{Float64}(leftdiff!, mrightdiff!, 100, 100; ismutating=true, issymmetric=false, ishermitian=false, isposdef=false)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
@@ -14057,7 +14143,7 @@ populating internal database...
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@show</span> <span class="n">size</span><span class="p">(</span><span class="n">D</span><span class="p">)</span>
@@ -14067,26 +14153,6 @@ populating internal database...
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>size(D) = (100, 100)
-D * v = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-D&#39; * v = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -14101,59 +14167,13 @@ D&#39; * v = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="kt">Matrix</span><span class="p">(</span><span class="n">D</span><span class="p">)</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[14]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>100×100 Array{Float64,2}:
-  1.0   0.0   0.0   0.0   0.0   0.0  …   0.0   0.0   0.0   0.0   0.0  -1.0
- -1.0   1.0   0.0   0.0   0.0   0.0      0.0   0.0   0.0   0.0   0.0   0.0
-  0.0  -1.0   1.0   0.0   0.0   0.0      0.0   0.0   0.0   0.0   0.0   0.0
-  0.0   0.0  -1.0   1.0   0.0   0.0      0.0   0.0   0.0   0.0   0.0   0.0
-  0.0   0.0   0.0  -1.0   1.0   0.0      0.0   0.0   0.0   0.0   0.0   0.0
-  0.0   0.0   0.0   0.0  -1.0   1.0  …   0.0   0.0   0.0   0.0   0.0   0.0
-  0.0   0.0   0.0   0.0   0.0  -1.0      0.0   0.0   0.0   0.0   0.0   0.0
-  0.0   0.0   0.0   0.0   0.0   0.0      0.0   0.0   0.0   0.0   0.0   0.0
-  0.0   0.0   0.0   0.0   0.0   0.0      0.0   0.0   0.0   0.0   0.0   0.0
-  0.0   0.0   0.0   0.0   0.0   0.0      0.0   0.0   0.0   0.0   0.0   0.0
-  0.0   0.0   0.0   0.0   0.0   0.0  …   0.0   0.0   0.0   0.0   0.0   0.0
-  0.0   0.0   0.0   0.0   0.0   0.0      0.0   0.0   0.0   0.0   0.0   0.0
-  0.0   0.0   0.0   0.0   0.0   0.0      0.0   0.0   0.0   0.0   0.0   0.0
-  ⋮                             ⋮    ⋱         ⋮                      
-  0.0   0.0   0.0   0.0   0.0   0.0      0.0   0.0   0.0   0.0   0.0   0.0
-  0.0   0.0   0.0   0.0   0.0   0.0      0.0   0.0   0.0   0.0   0.0   0.0
-  0.0   0.0   0.0   0.0   0.0   0.0  …   0.0   0.0   0.0   0.0   0.0   0.0
-  0.0   0.0   0.0   0.0   0.0   0.0      0.0   0.0   0.0   0.0   0.0   0.0
-  0.0   0.0   0.0   0.0   0.0   0.0      0.0   0.0   0.0   0.0   0.0   0.0
-  0.0   0.0   0.0   0.0   0.0   0.0      0.0   0.0   0.0   0.0   0.0   0.0
-  0.0   0.0   0.0   0.0   0.0   0.0      1.0   0.0   0.0   0.0   0.0   0.0
-  0.0   0.0   0.0   0.0   0.0   0.0  …  -1.0   1.0   0.0   0.0   0.0   0.0
-  0.0   0.0   0.0   0.0   0.0   0.0      0.0  -1.0   1.0   0.0   0.0   0.0
-  0.0   0.0   0.0   0.0   0.0   0.0      0.0   0.0  -1.0   1.0   0.0   0.0
-  0.0   0.0   0.0   0.0   0.0   0.0      0.0   0.0   0.0  -1.0   1.0   0.0
-  0.0   0.0   0.0   0.0   0.0   0.0      0.0   0.0   0.0   0.0  -1.0   1.0</pre>
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -14168,7 +14188,7 @@ D&#39; * v = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">SparseArrays</span>
@@ -14179,56 +14199,10 @@ D&#39; * v = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[15]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>100×100 SparseMatrixCSC{Float64,Int64} with 200 stored entries:
-  [1  ,   1]  =  1.0
-  [2  ,   1]  =  -1.0
-  [2  ,   2]  =  1.0
-  [3  ,   2]  =  -1.0
-  [3  ,   3]  =  1.0
-  [4  ,   3]  =  -1.0
-  [4  ,   4]  =  1.0
-  [5  ,   4]  =  -1.0
-  [5  ,   5]  =  1.0
-  [6  ,   5]  =  -1.0
-  [6  ,   6]  =  1.0
-  [7  ,   6]  =  -1.0
-  ⋮
-  [95 ,  94]  =  -1.0
-  [95 ,  95]  =  1.0
-  [96 ,  95]  =  -1.0
-  [96 ,  96]  =  1.0
-  [97 ,  96]  =  -1.0
-  [97 ,  97]  =  1.0
-  [98 ,  97]  =  -1.0
-  [98 ,  98]  =  1.0
-  [99 ,  98]  =  -1.0
-  [99 ,  99]  =  1.0
-  [100,  99]  =  -1.0
-  [1  , 100]  =  -1.0
-  [100, 100]  =  1.0</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">UnicodePlots</span>
@@ -14236,51 +14210,6 @@ D&#39; * v = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[16]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre><span class="ansi-bold">                    Sparsity Pattern</span>
-<span class="ansi-black-intense-fg">       ┌──────────────────────────────────────────┐</span>    
-     <span class="ansi-black-intense-fg">1</span><span class="ansi-black-intense-fg"> │</span><span class="ansi-magenta-fg">⠳</span><span class="ansi-magenta-fg">⣄</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-blue-fg">⠈</span><span class="ansi-black-intense-fg">│</span> <span class="ansi-red-fg">&gt; 0</span>
-      <span class="ansi-black-intense-fg"> │</span>⠀<span class="ansi-blue-fg">⠈</span><span class="ansi-magenta-fg">⠳</span><span class="ansi-magenta-fg">⣄</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-black-intense-fg">│</span> <span class="ansi-blue-fg">&lt; 0</span>
-      <span class="ansi-black-intense-fg"> │</span>⠀⠀⠀<span class="ansi-blue-fg">⠈</span><span class="ansi-magenta-fg">⠳</span><span class="ansi-magenta-fg">⣄</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-black-intense-fg">│</span>    
-      <span class="ansi-black-intense-fg"> │</span>⠀⠀⠀⠀⠀<span class="ansi-blue-fg">⠈</span><span class="ansi-magenta-fg">⠳</span><span class="ansi-magenta-fg">⣄</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-black-intense-fg">│</span>    
-      <span class="ansi-black-intense-fg"> │</span>⠀⠀⠀⠀⠀⠀⠀<span class="ansi-blue-fg">⠈</span><span class="ansi-magenta-fg">⠳</span><span class="ansi-magenta-fg">⣄</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-black-intense-fg">│</span>    
-      <span class="ansi-black-intense-fg"> │</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-blue-fg">⠈</span><span class="ansi-magenta-fg">⠳</span><span class="ansi-magenta-fg">⣄</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-black-intense-fg">│</span>    
-      <span class="ansi-black-intense-fg"> │</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-blue-fg">⠈</span><span class="ansi-magenta-fg">⠳</span><span class="ansi-magenta-fg">⣄</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-black-intense-fg">│</span>    
-      <span class="ansi-black-intense-fg"> │</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-blue-fg">⠈</span><span class="ansi-magenta-fg">⠳</span><span class="ansi-magenta-fg">⣄</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-black-intense-fg">│</span>    
-      <span class="ansi-black-intense-fg"> │</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-blue-fg">⠈</span><span class="ansi-magenta-fg">⠳</span><span class="ansi-magenta-fg">⣄</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-black-intense-fg">│</span>    
-      <span class="ansi-black-intense-fg"> │</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-blue-fg">⠈</span><span class="ansi-magenta-fg">⠳</span><span class="ansi-magenta-fg">⣄</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-black-intense-fg">│</span>    
-      <span class="ansi-black-intense-fg"> │</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-blue-fg">⠈</span><span class="ansi-magenta-fg">⠳</span><span class="ansi-magenta-fg">⣄</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-black-intense-fg">│</span>    
-      <span class="ansi-black-intense-fg"> │</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-blue-fg">⠈</span><span class="ansi-magenta-fg">⠳</span><span class="ansi-magenta-fg">⣄</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-black-intense-fg">│</span>    
-      <span class="ansi-black-intense-fg"> │</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-blue-fg">⠈</span><span class="ansi-magenta-fg">⠳</span><span class="ansi-magenta-fg">⣄</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-black-intense-fg">│</span>    
-      <span class="ansi-black-intense-fg"> │</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-blue-fg">⠈</span><span class="ansi-magenta-fg">⠳</span><span class="ansi-magenta-fg">⣄</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-black-intense-fg">│</span>    
-      <span class="ansi-black-intense-fg"> │</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-blue-fg">⠈</span><span class="ansi-magenta-fg">⠳</span><span class="ansi-magenta-fg">⣄</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-black-intense-fg">│</span>    
-      <span class="ansi-black-intense-fg"> │</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-blue-fg">⠈</span><span class="ansi-magenta-fg">⠳</span><span class="ansi-magenta-fg">⣄</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-black-intense-fg">│</span>    
-      <span class="ansi-black-intense-fg"> │</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-blue-fg">⠈</span><span class="ansi-magenta-fg">⠳</span><span class="ansi-magenta-fg">⣄</span>⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-black-intense-fg">│</span>    
-      <span class="ansi-black-intense-fg"> │</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-blue-fg">⠈</span><span class="ansi-magenta-fg">⠳</span><span class="ansi-magenta-fg">⣄</span>⠀⠀⠀⠀⠀⠀<span class="ansi-black-intense-fg">│</span>    
-      <span class="ansi-black-intense-fg"> │</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-blue-fg">⠈</span><span class="ansi-magenta-fg">⠳</span><span class="ansi-magenta-fg">⣄</span>⠀⠀⠀⠀<span class="ansi-black-intense-fg">│</span>    
-      <span class="ansi-black-intense-fg"> │</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-blue-fg">⠈</span><span class="ansi-magenta-fg">⠳</span><span class="ansi-magenta-fg">⣄</span>⠀⠀<span class="ansi-black-intense-fg">│</span>    
-   <span class="ansi-black-intense-fg">100</span><span class="ansi-black-intense-fg"> │</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-blue-fg">⠈</span><span class="ansi-magenta-fg">⠳</span><span class="ansi-magenta-fg">⣄</span><span class="ansi-black-intense-fg">│</span>    
-<span class="ansi-black-intense-fg">       └──────────────────────────────────────────┘</span>    
-<span class="ansi-black-intense-fg">       1</span><span class="ansi-black-intense-fg">                    </span><span class="ansi-black-intense-fg">                    100</span>
-                        nz = 200</pre>
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -14295,7 +14224,7 @@ D&#39; * v = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">Arpack</span>
@@ -14306,30 +14235,10 @@ D&#39; * v = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[17]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>(SVD{Float64,Float64,Array{Float64,2}}([0.10000000000008136 -0.06401967660574603 0.12610107456829803; -0.10000000000007188 0.05597539641252003 -0.12987207165686912; … ; 0.10000000000009898 -0.07931951776553751 0.11708293685000663; -0.10000000000009046 0.07181130038321716 -0.12183241414850668], [2.000000000000001, 1.999013120731464, 1.999013120731462], [0.10000000000007694 -0.10000000000006724 … 0.10000000000009518 -0.10000000000008616; -0.06002715628717747 0.05186839557959431 … -0.07560271445014523 0.06794901723269389; 0.1280497579383088 -0.1315662173203493 … 0.11951664975119886 -0.12402794466205547]), 3, 35, 573, [0.04006146048952911, 0.006103979266886141, 0.027888391940845393, 0.07768123438786288, 0.08746002000781894, 0.006028730881254165, 0.21272567240959536, 0.03330117844151449, -0.05232437240318387, 0.1440257860030963  …  0.0837570186848917, 0.09314235374045854, -0.02376721659190838, 0.006776217615203167, 0.042755031399474064, 0.05575257562226809, 0.08875905328781435, 0.10290537025970967, 0.06694867549461433, 0.056254539210939924])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">LinearAlgebra</span>
@@ -14338,52 +14247,6 @@ D&#39; * v = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[18]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>100-element Array{Float64,1}:
- 2.0
- 1.999013120731463
- 1.9990131207314623
- 1.9960534568565431
- 1.9960534568565427
- 1.99112392920616
- 1.9911239292061598
- 1.9842294026289555
- 1.9842294026289549
- 1.9753766811902758
- 1.9753766811902744
- 1.9645745014573777
- 1.9645745014573768
- ⋮
- 0.37476262917144926
- 0.3128689300804618
- 0.31286893008046174
- 0.25066646712860846
- 0.25066646712860846
- 0.18821662663702868
- 0.18821662663702865
- 0.1255810390586268
- 0.12558103905862675
- 0.06282151815625672
- 0.06282151815625658
- 2.5308506128625597e-18</pre>
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -14398,33 +14261,13 @@ D&#39; * v = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">Arpack</span><span class="o">.</span><span class="n">eigs</span><span class="p">(</span><span class="n">D</span><span class="o">&#39;</span><span class="n">D</span><span class="p">,</span> <span class="n">nev</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">which</span><span class="o">=:</span><span class="n">LM</span><span class="p">)</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[19]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>([3.9999999999999996, 3.996053456856549, 3.996053456856541], [0.10000000000001442 -0.009399690541517305 -0.14110863126584589; -0.09999999999999805 0.0005208581321359617 0.14142039706777143; … ; 0.10000000000004713 -0.027011172214425463 -0.13881785395111557; -0.10000000000003083 0.018241426666641105 0.140239974162716], 3, 30, 493, [0.10373555530800047, 0.01009479507883295, 0.02282128100708674, -0.01645029568890466, 0.10995010253432225, 0.08658989180173288, 0.12436205130458157, -0.1619377899117859, -0.09335294304478794, 0.12587749543755128  …  -0.06282464141910746, -0.06370993785599843, 0.09168488021390125, 0.17915496651521923, 0.14871994132486424, 0.21485847359921198, 0.014732237069211233, 0.14664889298986494, -0.20612563892314803, 0.01744642389801523])</pre>
-</div>
-
-</div>
-
 </div>
 </div>
 
