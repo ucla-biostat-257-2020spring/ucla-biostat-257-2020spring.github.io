@@ -99,6 +99,11 @@ git-tree-sha1 = "3663bfffede2ef41358b6fc2e1d8a6d50b3c3904"
 uuid = "6e34b625-4abd-537c-b88f-471c36dfa7a0"
 version = "1.0.6+2"
 
+[[CEnum]]
+git-tree-sha1 = "62847acab40e6855a9b5905ccb99c2b5cf6b3ebb"
+uuid = "fa961155-64e5-5f13-b03f-caf6b980ea82"
+version = "0.2.0"
+
 [[CMake]]
 deps = ["BinDeps"]
 git-tree-sha1 = "50a8b41d2c562fccd9ab841085fc7d1e2706da82"
@@ -110,6 +115,12 @@ deps = ["BinDeps", "CMake", "Libdl", "Parameters", "Test"]
 git-tree-sha1 = "16d4acb3d37dc05b714977ffefa8890843dc8985"
 uuid = "d5fb7624-851a-54ee-a528-d3f3bac0b4a0"
 version = "0.2.3"
+
+[[COSMO]]
+deps = ["DataStructures", "LinearAlgebra", "MathOptInterface", "Pkg", "Printf", "QDLDL", "Random", "SparseArrays", "Statistics", "SuiteSparse", "Test", "UnsafeArrays"]
+git-tree-sha1 = "fc5aad86600e39916f1cdb1c2b78f0d2b9dbbdad"
+uuid = "1e616198-aa4e-51ec-90a2-23f7fbd31d8d"
+version = "0.7.1"
 
 [[CSV]]
 deps = ["CategoricalArrays", "DataFrames", "Dates", "FilePathsBase", "Mmap", "Parsers", "PooledArrays", "Tables", "Unicode", "WeakRefStrings"]
@@ -223,6 +234,12 @@ deps = ["StaticArrays"]
 git-tree-sha1 = "6d56f927b33d3820561b8f89d7de311718683846"
 uuid = "d38c429a-6771-53c6-b99e-75d170b6e991"
 version = "0.5.2"
+
+[[Convex]]
+deps = ["AbstractTrees", "BenchmarkTools", "LinearAlgebra", "MathOptInterface", "OrderedCollections", "SparseArrays", "Test"]
+git-tree-sha1 = "e6d2623466542997041356971d1f02e570b4319a"
+uuid = "f65535da-76fb-5f13-bab9-19810c17039a"
+version = "0.13.3"
 
 [[CoordinateTransformations]]
 deps = ["LinearAlgebra", "Rotations", "StaticArrays"]
@@ -529,6 +546,12 @@ deps = ["CatIndices", "ColorVectorSpace", "ComputationalResources", "DataStructu
 git-tree-sha1 = "c8aebfbdbb2f12665448de007f635a1910b476e4"
 uuid = "6a3955dd-da59-5b1f-98d4-e7296123deb5"
 version = "0.6.11"
+
+[[ImageIO]]
+deps = ["FileIO", "PNGFiles"]
+git-tree-sha1 = "124651759b8958e1f2340ea52a84e745813f8e7e"
+uuid = "82e4d734-157c-48bb-816b-45c225c6df19"
+version = "0.1.1"
 
 [[ImageMetadata]]
 deps = ["AxisArrays", "ColorVectorSpace", "ImageAxes", "ImageCore", "IndirectArrays"]
@@ -842,6 +865,12 @@ git-tree-sha1 = "883be630ab4a25991037c2a2079d7170a5a8908e"
 uuid = "6405355b-0ac2-5fba-af84-adbd65488c0e"
 version = "1.1.3"
 
+[[MosekTools]]
+deps = ["MathOptInterface", "Mosek", "Printf"]
+git-tree-sha1 = "32dfda03b6bfce5fa1d484091026c5faa7457ce2"
+uuid = "1ec41992-ff65-5c91-ac43-2df89e9693a4"
+version = "0.9.3"
+
 [[MultivariateStats]]
 deps = ["Arpack", "LinearAlgebra", "SparseArrays", "Statistics", "StatsBase"]
 git-tree-sha1 = "352fae519b447bf52e6de627b89f448bcd469e4e"
@@ -943,9 +972,9 @@ version = "0.20.1"
 
 [[Opus_jll]]
 deps = ["Libdl", "Pkg"]
-git-tree-sha1 = "c9931bf2fcdb57b48c227395c61ea82603212f7d"
+git-tree-sha1 = "002c18f222a542907e16c83c64a1338992da7e2c"
 uuid = "91d4177d-7536-5919-b921-800302f37372"
-version = "1.3.1+0"
+version = "1.3.1+1"
 
 [[OrderedCollections]]
 deps = ["Random", "Serialization", "Test"]
@@ -958,6 +987,12 @@ deps = ["Arpack", "LinearAlgebra", "SparseArrays", "SuiteSparse", "Test"]
 git-tree-sha1 = "2fc6f50ddd959e462f0a2dbc802ddf2a539c6e35"
 uuid = "90014a1f-27ba-587c-ab20-58faa44d9150"
 version = "0.9.12"
+
+[[PNGFiles]]
+deps = ["CEnum", "ImageCore", "libpng_jll"]
+git-tree-sha1 = "e3205c45c6f4d9cb85d05e5ef7d0ffe54c6992ac"
+uuid = "f57f5aa1-a3ce-4bc8-8ab9-96f992907883"
+version = "0.1.3"
 
 [[PaddedViews]]
 deps = ["OffsetArrays"]
@@ -1060,6 +1095,12 @@ deps = ["Colors", "LaTeXStrings", "PyCall", "Sockets", "Test", "VersionParsing"]
 git-tree-sha1 = "67dde2482fe1a72ef62ed93f8c239f947638e5a2"
 uuid = "d330b81b-6aea-500a-939a-2ce795aea3ee"
 version = "2.9.0"
+
+[[QDLDL]]
+deps = ["AMD", "LinearAlgebra", "Random", "SparseArrays", "Test"]
+git-tree-sha1 = "bdd19e6df448f46d994c7db6c6e7d0dae8b587e8"
+uuid = "bfc457fd-c171-5ab7-bd9e-d5dbfc242d63"
+version = "0.1.3"
 
 [[QuadGK]]
 deps = ["DataStructures", "LinearAlgebra"]
@@ -1310,6 +1351,12 @@ git-tree-sha1 = "af0c29913f108f649999e74098814c7ef0f644de"
 uuid = "b8865327-cd53-5732-bb35-84acbb429228"
 version = "1.2.0"
 
+[[UnsafeArrays]]
+deps = ["Compat"]
+git-tree-sha1 = "460f4f7bab69dd47512ac8ec4b2c14b28c6cb4a0"
+uuid = "c4a57d5a-5b31-53a6-b365-19f8c011fbd6"
+version = "0.3.0"
+
 [[VectorizationBase]]
 deps = ["CpuId", "LinearAlgebra"]
 git-tree-sha1 = "039d1456706ce4d42315b1ee10c217fe2aa614f0"
@@ -1387,11 +1434,17 @@ git-tree-sha1 = "0e4ace600c20714a8dd67700c4502714d8473e8e"
 uuid = "f638f0a6-7fb0-5443-88ba-1cc74229b280"
 version = "0.1.6+1"
 
+[[libpng_jll]]
+deps = ["Libdl", "Pkg", "Zlib_jll"]
+git-tree-sha1 = "594cb058723c13941cf463fd09e5859499594f50"
+uuid = "b53b4c65-9356-5827-b1ea-8c7a1a84506f"
+version = "1.6.37+3"
+
 [[libvorbis_jll]]
 deps = ["Libdl", "Ogg_jll", "Pkg"]
-git-tree-sha1 = "71e54fb89ac3e0344c7185d1876fd96b0f246952"
+git-tree-sha1 = "ba8363e25697b99f438f77aeb0a12e02dee3a4fa"
 uuid = "f27f6e37-5d2b-51aa-960f-b287f2bc3b7a"
-version = "1.3.6+2"
+version = "1.3.6+3"
 
 [[x264_jll]]
 deps = ["Libdl", "Pkg"]
