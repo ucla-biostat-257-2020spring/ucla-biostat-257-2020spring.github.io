@@ -13175,7 +13175,7 @@ In this assignment, we use the nonlinear programming (NLP) approach for optimiza
 <li><p>Prove that the gradient of $\ell_i$ is
 \begin{eqnarray*}
 \nabla_{\boldsymbol{\beta}} \ell_i(\boldsymbol{\beta}, \mathbf{L}, \sigma^2) &amp;=&amp; \mathbf{X}_i^T \boldsymbol{\Omega}_i^{-1} \mathbf{r}_i, \\
-\nabla_{\sigma^2} \ell_i(\boldsymbol{\beta}, \mathbf{L}, \sigma^2) &amp;=&amp; - \frac{1}{2} \operatorname{tr} (\boldsymbol{\Omega}_i^{-1}) + \frac{1}{2} \operatorname{tr}(\mathbf{r}_i^T \boldsymbol{\Omega}_i^{-2} \mathbf{r}_i), \\
+\nabla_{\sigma^2} \ell_i(\boldsymbol{\beta}, \mathbf{L}, \sigma^2) &amp;=&amp; - \frac{1}{2} \operatorname{tr} (\boldsymbol{\Omega}_i^{-1}) + \frac{1}{2} \mathbf{r}_i^T \boldsymbol{\Omega}_i^{-2} \mathbf{r}_i, \\
 \frac{\partial}{\partial \mathbf{L}} \ell_i(\boldsymbol{\beta}, \mathbf{L}, \sigma^2) &amp;=&amp; - \mathbf{Z}_i^T \boldsymbol{\Omega}_i^{-1} \mathbf{Z}_i \mathbf{L} + \mathbf{Z}_i^T \boldsymbol{\Omega}_i^{-1} \mathbf{r}_i \mathbf{r}_i^T \boldsymbol{\Omega}_i^{-1} \mathbf{Z}_i \mathbf{L},
 \end{eqnarray*}
 where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
@@ -13505,7 +13505,7 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Q3.-LmmModel-type">Q3. LmmModel type<a class="anchor-link" href="#Q3.-LmmModel-type">&#182;</a></h2><p>We create a <code>LmmModel</code> type to hold all data points and model parameters. Log-lieklihood/gradient of a <code>LmmModel</code> object is simply the sum of log-likelihood/gradient of individual data points.</p>
+<h2 id="Q3.-LmmModel-type">Q3. LmmModel type<a class="anchor-link" href="#Q3.-LmmModel-type">&#182;</a></h2><p>We create a <code>LmmModel</code> type to hold all data points and model parameters. Log-likelihood/gradient of a <code>LmmModel</code> object is simply the sum of log-likelihood/gradient of individual data points.</p>
 
 </div>
 </div>
@@ -13581,6 +13581,10 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
             <span class="n">BLAS</span><span class="o">.</span><span class="n">axpy!</span><span class="p">(</span><span class="n">T</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">∇Σ</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">∇L</span><span class="p">)</span>
             <span class="n">m</span><span class="o">.</span><span class="n">∇σ²</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">obs</span><span class="o">.</span><span class="n">∇σ²</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="c"># obtain gradient wrt L: m.∇L = m.∇L * L</span>
+    <span class="k">if</span> <span class="n">needgrad</span>
+       <span class="c"># TODO </span>
     <span class="k">end</span>
     <span class="n">logl</span>
 <span class="k">end</span>
@@ -13817,7 +13821,7 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 <h2 id="Q5.-(30-pts)-Starting-point">Q5. (30 pts) Starting point<a class="anchor-link" href="#Q5.-(30-pts)-Starting-point">&#182;</a></h2><p>For numerical optimization, a good starting point is critical. Let's start $\boldsymbol{\beta}$ and $\sigma^2$ from the least sqaures solutions (ignoring intra-individual correlations)
 \begin{eqnarray*}
 \boldsymbol{\beta}^{(0)} &amp;=&amp; \left(\sum_i \mathbf{X}_i^T \mathbf{X}_i\right)^{-1} \left(\sum_i \mathbf{X}_i^T \mathbf{y}_i\right) \\
-\sigma_0^{2(0)} &amp;=&amp; \frac{\sum_i \|\mathbf{r}_i^{(0)}\|_2^2}{\sum_i n_i} = \frac{\sum_i \|\mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}^{(0)}\|_2^2}{\sum_i n_i}.
+\sigma^{2(0)} &amp;=&amp; \frac{\sum_i \|\mathbf{r}_i^{(0)}\|_2^2}{\sum_i n_i} = \frac{\sum_i \|\mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}^{(0)}\|_2^2}{\sum_i n_i}.
 \end{eqnarray*}
 To get a reasonable starting point for $\boldsymbol{\Sigma} = \mathbf{L} \mathbf{L}^T$, we can minimize the least squares criterion (ignoring the noise variance component)
 $$
@@ -14100,7 +14104,7 @@ Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
 <span class="n">init_ls!</span><span class="p">(</span><span class="n">lmm</span><span class="p">)</span>
 <span class="n">println</span><span class="p">(</span><span class="s">&quot;objective value at starting point: &quot;</span><span class="p">,</span> <span class="n">logl!</span><span class="p">(</span><span class="n">lmm</span><span class="p">));</span> <span class="n">println</span><span class="p">()</span>
 
-<span class="nd">@time</span> <span class="n">fit!</span><span class="p">(</span><span class="n">lmm</span><span class="p">,</span> <span class="n">NLopt</span><span class="o">.</span><span class="n">NLoptSolver</span><span class="p">(</span><span class="n">algorithm</span><span class="o">=:</span><span class="n">LD_MMA</span><span class="p">,</span> 
+<span class="nd">@time</span> <span class="n">fit!</span><span class="p">(</span><span class="n">lmm</span><span class="p">,</span> <span class="n">NLopt</span><span class="o">.</span><span class="n">NLoptSolver</span><span class="p">(</span><span class="n">algorithm</span><span class="o">=:</span><span class="n">LD_LBFGS</span><span class="p">,</span> 
         <span class="n">ftol_rel</span> <span class="o">=</span> <span class="mf">1e-12</span><span class="p">,</span> <span class="n">ftol_abs</span> <span class="o">=</span> <span class="mf">1e-12</span><span class="p">,</span> 
         <span class="n">xtol_rel</span> <span class="o">=</span> <span class="mf">1e-12</span><span class="p">,</span> <span class="n">xtol_abs</span> <span class="o">=</span> <span class="mf">1e-12</span><span class="p">,</span> 
         <span class="n">maxeval</span><span class="o">=</span><span class="mi">10000</span><span class="p">));</span>
@@ -14140,7 +14144,7 @@ Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
 <span class="nd">@assert</span> <span class="n">logl!</span><span class="p">(</span><span class="n">lmm</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mf">2.85471e6</span>
 <span class="c"># gradient at solution should be small enough</span>
 <span class="nd">@assert</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">abs2</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">lmm</span><span class="o">.</span><span class="n">∇β</span><span class="p">))</span> <span class="o">+</span> <span class="n">abs2</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">lmm</span><span class="o">.</span><span class="n">∇σ²</span><span class="p">)</span> <span class="o">+</span> 
-        <span class="n">abs2</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="kt">LowerTriangular</span><span class="p">(</span><span class="n">lmm</span><span class="o">.</span><span class="n">∇L</span><span class="p">)))))</span> <span class="o">&lt;</span> <span class="mf">0.0007</span>
+        <span class="n">abs2</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="kt">LowerTriangular</span><span class="p">(</span><span class="n">lmm</span><span class="o">.</span><span class="n">∇L</span><span class="p">)))))</span> <span class="o">&lt;</span> <span class="mf">0.15</span>
 </pre></div>
 
     </div>
@@ -14151,7 +14155,7 @@ Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Efficiency">Efficiency<a class="anchor-link" href="#Efficiency">&#182;</a></h3><p>My median run time 132.5ms. You get 10 points if your median time is within 1s(=1000ms).</p>
+<h3 id="Efficiency">Efficiency<a class="anchor-link" href="#Efficiency">&#182;</a></h3><p>My median run time is 132.5ms. You get 10 points if your median time is within 1s(=1000ms).</p>
 
 </div>
 </div>
@@ -14256,7 +14260,7 @@ Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Q9.-(10-pts)-Compare-with-existing-art">Q9. (10 pts) Compare with existing art<a class="anchor-link" href="#Q9.-(10-pts)-Compare-with-existing-art">&#182;</a></h2><p>Let's compare our method with lme4 package in R and MixedModels.jl package in Julia. Both lme4 and MixedModels.jl are developed mainly by Doug Bates. Summary what you find.</p>
+<h2 id="Q9.-(10-pts)-Compare-with-existing-art">Q9. (10 pts) Compare with existing art<a class="anchor-link" href="#Q9.-(10-pts)-Compare-with-existing-art">&#182;</a></h2><p>Let's compare our method with lme4 package in R and MixedModels.jl package in Julia. Both lme4 and MixedModels.jl are developed mainly by Doug Bates. Summarize what you find.</p>
 
 </div>
 </div>
