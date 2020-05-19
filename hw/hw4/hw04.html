@@ -13135,7 +13135,7 @@ where</p>
 </ul>
 <p>The log-likelihood of the $i$-th datum $(\mathbf{y}_i, \mathbf{X}_i, \mathbf{Z}_i)$ is 
 $$
-    \ell_i(\boldsymbol{\beta}, \mathbf{L}, \sigma_0^2) = - \frac{n_i}{2} \log (2\pi) - \frac{1}{2} \log \det \boldsymbol{\Omega}_i - \frac{1}{2} (\mathbf{y} - \mathbf{X}_i \boldsymbol{\beta})^T \boldsymbol{\Omega}_i^{-1} (\mathbf{y} - \mathbf{X}_i \boldsymbol{\beta}),
+    \ell_i(\boldsymbol{\beta}, \mathbf{L}, \sigma^2) = - \frac{n_i}{2} \log (2\pi) - \frac{1}{2} \log \det \boldsymbol{\Omega}_i - \frac{1}{2} (\mathbf{y} - \mathbf{X}_i \boldsymbol{\beta})^T \boldsymbol{\Omega}_i^{-1} (\mathbf{y} - \mathbf{X}_i \boldsymbol{\beta}),
 $$
 where
 $$
@@ -13144,7 +13144,7 @@ $$
 Because the variance component parameter $\boldsymbol{\Sigma}$ has to be positive semidefinite. We use its Cholesky factor $\mathbf{L}$ as optimization variable.</p>
 <p>Given $m$ independent data points $(\mathbf{y}_i, \mathbf{X}_i, \mathbf{Z}_i)$, $i=1,\ldots,m$, we seek the maximum likelihood estimate (MLE) by maximizing the log-likelihood
 $$
-\ell(\boldsymbol{\beta}, \boldsymbol{\Sigma}, \sigma_0^2) = \sum_{i=1}^m \ell_i(\boldsymbol{\beta}, \boldsymbol{\Sigma}, \sigma_0^2).
+\ell(\boldsymbol{\beta}, \boldsymbol{\Sigma}, \sigma^2) = \sum_{i=1}^m \ell_i(\boldsymbol{\beta}, \boldsymbol{\Sigma}, \sigma^2).
 $$
 In this assignment, we use the nonlinear programming (NLP) approach for optimization. In HW5 and HW6, we will derive an EM (expectation-maximization) algorithm and an MM (minorization-maximization) algorithm for the same problem.</p>
 
@@ -13174,9 +13174,9 @@ In this assignment, we use the nonlinear programming (NLP) approach for optimiza
 <ol>
 <li><p>Prove that the gradient of $\ell_i$ is
 \begin{eqnarray*}
-\nabla_{\boldsymbol{\beta}} \ell_i(\boldsymbol{\beta}, \mathbf{L}, \sigma_0^2) &amp;=&amp; \mathbf{X}_i^T \boldsymbol{\Omega}_i^{-1} \mathbf{r}_i, \\
-\nabla_{\sigma_0^2} \ell_i(\boldsymbol{\beta}, \mathbf{L}, \sigma_0^2) &amp;=&amp; - \frac{1}{2} \operatorname{tr} (\boldsymbol{\Omega}_i^{-1}) + \frac{1}{2} \operatorname{tr}(\mathbf{r}_i^T \boldsymbol{\Omega}_i^{-2} \mathbf{r}_i), \\
-\frac{\partial}{\partial \mathbf{L}} \ell_i(\boldsymbol{\beta}, \mathbf{L}, \sigma_0^2) &amp;=&amp; - \mathbf{Z}_i^T \boldsymbol{\Omega}_i^{-1} \mathbf{Z}_i \mathbf{L} + \mathbf{Z}_i^T \boldsymbol{\Omega}_i^{-1} \mathbf{r}_i \mathbf{r}_i^T \boldsymbol{\Omega}_i^{-1} \mathbf{Z}_i \mathbf{L},
+\nabla_{\boldsymbol{\beta}} \ell_i(\boldsymbol{\beta}, \mathbf{L}, \sigma^2) &amp;=&amp; \mathbf{X}_i^T \boldsymbol{\Omega}_i^{-1} \mathbf{r}_i, \\
+\nabla_{\sigma^2} \ell_i(\boldsymbol{\beta}, \mathbf{L}, \sigma^2) &amp;=&amp; - \frac{1}{2} \operatorname{tr} (\boldsymbol{\Omega}_i^{-1}) + \frac{1}{2} \operatorname{tr}(\mathbf{r}_i^T \boldsymbol{\Omega}_i^{-2} \mathbf{r}_i), \\
+\frac{\partial}{\partial \mathbf{L}} \ell_i(\boldsymbol{\beta}, \mathbf{L}, \sigma^2) &amp;=&amp; - \mathbf{Z}_i^T \boldsymbol{\Omega}_i^{-1} \mathbf{Z}_i \mathbf{L} + \mathbf{Z}_i^T \boldsymbol{\Omega}_i^{-1} \mathbf{r}_i \mathbf{r}_i^T \boldsymbol{\Omega}_i^{-1} \mathbf{Z}_i \mathbf{L},
 \end{eqnarray*}
 where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 </li>
