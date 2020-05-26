@@ -13223,13 +13223,11 @@ $$</li>
 <li><p>Early on we discussed EM algorithm and its variants for maximizing the log-likelihood.</p>
 </li>
 <li><p>Since $t \mapsto - \log t$ is a convex function, we can invoke the supporting hyperplane inequality to minorize the terms $- \log [\nu + \delta (\mathbf{w}_j,\mu;\Sigma)$:
-\begin{eqnarray*}</p>
-<ul>
-<li>\log [\nu + \delta (\mathbf{w}_j,\mu;\Sigma)] &amp;\ge&amp; - \log [\nu^{(t)} + \delta (\mathbf{w}_j,\mu^{(t)};\Sigma^{(t)})] - \frac{\nu + \delta (\mathbf{w}_j,\mu;\Sigma) - \nu^{(t)} - \delta (\mathbf{w}_j,\mu^{(t)};\Sigma^{(t)})}{\nu^{(t)} + \delta (\mathbf{w}_j,\mu^{(t)};\Sigma^{(t)})} \
-&amp;=&amp; - \frac{\nu + \delta (\mathbf{w}_j,\mu;\Sigma)}{\nu^{(t)} + \delta (\mathbf{w}_j,\mu^{(t)};\Sigma^{(t)})} + c^{(t)},
+\begin{eqnarray*}
+  \, - \log [\nu + \delta (\mathbf{w}_j,\mu;\Sigma)] &amp;\ge&amp; - \log [\nu^{(t)} + \delta (\mathbf{w}_j,\mu^{(t)};\Sigma^{(t)})] - \frac{\nu + \delta (\mathbf{w}_j,\mu;\Sigma) - \nu^{(t)} - \delta (\mathbf{w}_j,\mu^{(t)};\Sigma^{(t)})}{\nu^{(t)} + \delta (\mathbf{w}_j,\mu^{(t)};\Sigma^{(t)})} \\
+  &amp;=&amp; - \frac{\nu + \delta (\mathbf{w}_j,\mu;\Sigma)}{\nu^{(t)} + \delta (\mathbf{w}_j,\mu^{(t)};\Sigma^{(t)})} + c^{(t)},
 \end{eqnarray*}
-where $c^{(t)}$ is a constant irrelevant to optimization.</li>
-</ul>
+where $c^{(t)}$ is a constant irrelevant to optimization.</p>
 </li>
 <li><p>This yields a minorization function
 \begin{eqnarray*}
