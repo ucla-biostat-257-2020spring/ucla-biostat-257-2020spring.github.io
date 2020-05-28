@@ -13181,7 +13181,7 @@ f(\boldsymbol{\gamma} \mid \mathbf{y}) &amp;=&amp; \frac{f(\mathbf{y} \mid \bold
 where $f$ denotes corresponding density.</p>
 <p>Show that the posterior distribution of random effects $\boldsymbol{\gamma}$ is a multivariate normal with mean
 \begin{eqnarray*}
-\mathbb{E} (\boldsymbol{\gamma} \mid \mathbf{y}) &amp;=&amp; (\sigma^{-2} \mathbf{Z}^T \mathbf{Z} + \boldsymbol{\Sigma}^{-1})^{-1 } \mathbf{Z}^T (\mathbf{y} - \mathbf{X} \boldsymbol{\beta}) \\
+\mathbb{E} (\boldsymbol{\gamma} \mid \mathbf{y}) &amp;=&amp; \sigma^{-2} (\sigma^{-2} \mathbf{Z}^T \mathbf{Z} + \boldsymbol{\Sigma}^{-1})^{-1 } \mathbf{Z}^T (\mathbf{y} - \mathbf{X} \boldsymbol{\beta}) \\
 &amp;=&amp; \boldsymbol{\Sigma} \mathbf{Z}^T (\mathbf{Z} \boldsymbol{\Sigma} \mathbf{Z}^T + \sigma^2 \mathbf{I})^{-1} (\mathbf{y} - \mathbf{X} \boldsymbol{\beta})
 \end{eqnarray*}
 and covariance
