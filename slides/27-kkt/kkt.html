@@ -13114,6 +13114,23 @@ $$
 f(\mathbf{x}) \ge f(\mathbf{y}) + \nabla f(\mathbf{y})^T (\mathbf{x}-\mathbf{y})
 $$ 
 for all $\mathbf{x}, \mathbf{y} \in \text{dom} f$.</p>
+<p>Proof: For the only if part. 
+  $$
+  f[\lambda x + (1 - \lambda) y)] \le \lambda f(x) + (1 - \lambda) f(y).
+  $$
+  Thus
+  $$
+  \frac{f(y + \lambda (x - y)) - f(y)}{\lambda} \le f(x) - f(y).
+  $$
+  Taking limit $\lambda \to 0$ yields the supporting hyperplane inequality. For the if part, let $z = \lambda x + (1 - \lambda) y$. Then
+  \begin{eqnarray*}
+  f(x) - f(z) &amp;\ge&amp; f'(z) (x - z) \\
+  f(y) - f(z) &amp;\ge&amp; f'(z) (y - z).
+  \end{eqnarray*}
+  Taking $\lambda \cdot (1) + (1 - \lambda) \cdot (2)$ yields the inequality
+  $$
+  f(\lambda x + (1 - \lambda) y) \le \lambda f(x) + (1 - \lambda) f(y).
+  $$</p>
 </li>
 <li><p><strong>Second-order condition for convexity</strong>. A twice differentiable function $f$ is convex if and only if $\nabla^2f(\mathbf{x})$ is psd for all $\mathbf{x} \in \text{dom} f$. It is strictly convex if and only if $\nabla^2f(\mathbf{x})$ is pd for all $\mathbf{x} \in \text{dom} f$.</p>
 </li>
